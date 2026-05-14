@@ -40,22 +40,24 @@ THIRD_PARTY_APPS = [
 ]
 
 LOCAL_APPS = [
-    "apps.accounts",
-    "apps.organisations",
-    "apps.assets",
-    "apps.risk",
-    "apps.evidence",
-    "apps.incidents",
+    "apps.accounts.apps.AccountsConfig",
+    "apps.organisations.apps.OrganisationsConfig",
+    "apps.assets.apps.AssetsConfig",
+    "apps.risk.apps.RiskConfig",
+    "apps.evidence.apps.EvidenceConfig",
+    "apps.incidents.apps.IncidentsConfig",
     "apps.reports",
     "apps.threatboard",
     "apps.loglens",
     "apps.privacy_doctor",
     "apps.misinformation",
-    "apps.auditlog",
-    "apps.common",
+    "apps.auditlog.apps.AuditLogConfig",
+    "apps.common.apps.CommonConfig",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
+
+AUTH_USER_MODEL = "accounts.User"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
