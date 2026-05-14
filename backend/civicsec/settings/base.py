@@ -53,7 +53,7 @@ LOCAL_APPS = [
     "apps.evidence.apps.EvidenceConfig",
     "apps.incidents.apps.IncidentsConfig",
     "apps.reports",
-    "apps.threatboard",
+    "apps.threatboard.apps.ThreatboardConfig",
     "apps.loglens",
     "apps.privacy_doctor",
     "apps.misinformation",

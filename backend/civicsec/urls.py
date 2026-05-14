@@ -32,5 +32,6 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/health/", health_check, name="health-check"),
     path("api/auth/me/", CurrentUserView.as_view(), name="auth-me"),
+    path("api/threatboard/", include("apps.threatboard.urls")),
     path("api/", include(router.urls)),
 ]

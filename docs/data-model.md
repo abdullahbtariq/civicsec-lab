@@ -95,3 +95,68 @@ Fields include organisation, job type, status, started timestamp, finished times
 Validation:
 
 - progress must be between 0 and 100.
+
+## ThreatBoard Models
+
+ThreatBoard adds the first module-specific backend models.
+
+### Vulnerability
+
+Global public vulnerability metadata keyed by `cve_id`.
+
+Fields include CVE ID, title, description, vendor, product, KEV date, due date, ransomware-campaign-use flag, required action, notes, CWE, source, source URL, and timestamps.
+
+Validation:
+
+- CVE IDs are stripped and uppercased.
+- CVE IDs must roughly match `CVE-YYYY-NNNN`.
+
+Sources:
+
+- cisa_kev
+- manual
+- osv
+- other
+
+### VulnerabilityScore
+
+One-to-one scoring metadata for a vulnerability.
+
+Fields include EPSS score, EPSS percentile, CVSS score, CVSS severity, KEV known-exploited flag, last EPSS check timestamp, last scored timestamp, and timestamps.
+
+Validation:
+
+- EPSS score and percentile must be between 0 and 1.
+- CVSS score must be between 0 and 10.
+
+### AssetVulnerabilityMatch
+
+Organisation-scoped match between an asset and a vulnerability.
+
+Fields include organisation, asset, vulnerability, match method, match confidence, exposure score, calculated risk score, risk band, status, remediation status, explanation, notes, first seen, last seen, and timestamps.
+
+Constraints:
+
+- one match per organisation, asset, and vulnerability.
+
+Validation:
+
+- match confidence must be between 0 and 1.
+- exposure score must be between 0 and 100.
+- calculated risk score must be between 0 and 100.
+
+### ThreatIngestionRun
+
+Tracks KEV ingestion, EPSS enrichment, asset matching, and risk scoring runs.
+
+Fields include optional organisation, run type, status, source, timestamps, record counts, error message, metadata, and timestamps.
+
+### Generated Platform Records
+
+High-priority ThreatBoard matches can create or update:
+
+- `RiskEvent`
+- `EvidenceItem`
+- `ActionRecommendation`
+
+These generated records remain organisation-scoped and use the shared CivicSec Lab permission model.

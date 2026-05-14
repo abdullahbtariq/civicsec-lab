@@ -19,6 +19,7 @@ Summarise CivicSec Lab as a modular public-interest security intelligence platfo
 Current foundation:
 
 - Django REST Framework backend with organisation-scoped core APIs.
+- ThreatBoard backend MVP with KEV/EPSS-style ingestion, matching, scoring, and generated risk events.
 - React/Vite/Tailwind frontend with protected routing and a platform layout.
 - PostgreSQL target for local Docker development, with SQLite usable for quick local smoke testing.
 - Redis and Celery wired for future background processing.
@@ -38,10 +39,16 @@ Implemented core models:
 - IncidentTimelineEntry
 - AuditLog
 - ProcessingJob
+- ThreatBoard Vulnerability
+- ThreatBoard VulnerabilityScore
+- ThreatBoard AssetVulnerabilityMatch
+- ThreatBoard ThreatIngestionRun
 
 ## 6. Module Breakdown
 
-Document ThreatBoard, LogLens, DataPrivacy Doctor, Misinformation Observatory, Civic Risk Graph, and IncidentFlow.
+ThreatBoard backend MVP now includes public vulnerability metadata ingestion, EPSS enrichment, conservative asset matching, explainable risk scoring, and RiskEvent generation for high-priority findings.
+
+Document LogLens, DataPrivacy Doctor, Misinformation Observatory, Civic Risk Graph, and IncidentFlow as they are implemented.
 
 ## 7. Security And Privacy Design
 

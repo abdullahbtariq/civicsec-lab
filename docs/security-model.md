@@ -44,6 +44,28 @@ Because this changed the auth model early in the project, existing local databas
 
 The `AuditLog` model and `record_audit_event()` helper exist. Automatic audit middleware is not implemented yet.
 
+## ThreatBoard Security Model
+
+ThreatBoard vulnerability metadata is global public metadata. It does not contain exploit code or private organisation data.
+
+Organisation-scoped ThreatBoard records:
+
+- asset vulnerability matches
+- generated risk events
+- evidence items
+- action recommendations
+- organisation-specific ingestion runs
+
+Access rules:
+
+- Viewer users can read ThreatBoard data available to their organisation.
+- Viewer users cannot trigger ingestion, enrichment, or matching.
+- Analyst and admin users can trigger KEV ingestion, EPSS enrichment, and asset matching.
+- Asset match list and detail endpoints filter by the requesting user's organisation.
+- Superusers can see all organisations' asset matches and ingestion runs.
+
+Live ingestion endpoints call public data sources and should be treated as operational actions. They are POST-only and require authentication.
+
 ## Current Limitations
 
 - No login/logout API is implemented yet.
@@ -51,6 +73,7 @@ The `AuditLog` model and `record_audit_event()` helper exist. Automatic audit mi
 - No object-level permission matrix beyond organisation scoping and role checks is implemented yet.
 - No file upload handling is implemented yet.
 - No Celery tasks are implemented yet.
+- ThreatBoard ingestion is synchronous in the MVP and is not yet protected by rate limiting.
 - The demo seed users use a development password and must not be used in production.
 
 ## Data Safety

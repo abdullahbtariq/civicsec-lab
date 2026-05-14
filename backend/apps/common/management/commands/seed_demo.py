@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 
@@ -8,6 +10,12 @@ from apps.evidence.models import EvidenceItem
 from apps.incidents.models import Incident, IncidentTimelineEntry
 from apps.organisations.models import Organisation
 from apps.risk.models import ActionRecommendation, RiskEvent
+from apps.threatboard.models import AssetVulnerabilityMatch, Vulnerability, VulnerabilityScore
+from apps.threatboard.services.risk_events import create_or_update_risk_event_for_match
+from apps.threatboard.services.scoring import (
+    calculate_exposure_score,
+    calculate_threatboard_risk_score,
+)
 
 
 class Command(BaseCommand):
@@ -30,6 +38,7 @@ class Command(BaseCommand):
         risk_events = self._seed_risk_events(organisation, users, assets)
         self._seed_evidence_and_recommendations(organisation, risk_events)
         self._seed_incidents(organisation, users, risk_events)
+        self._seed_threatboard(organisation, assets)
 
         ProcessingJob.objects.update_or_create(
             organisation=organisation,
@@ -54,6 +63,11 @@ class Command(BaseCommand):
         )
         self.stdout.write(
             f"Incidents: {Incident.objects.filter(organisation=organisation).count()}"
+        )
+        self.stdout.write(f"ThreatBoard vulnerabilities: {Vulnerability.objects.count()}")
+        self.stdout.write(
+            "ThreatBoard matches: "
+            f"{AssetVulnerabilityMatch.objects.filter(organisation=organisation).count()}"
         )
 
     def _seed_users(self, organisation: Organisation) -> dict[str, User]:
@@ -122,8 +136,8 @@ class Command(BaseCommand):
                 "internet_exposed": True,
                 "criticality": Asset.Criticality.MEDIUM,
                 "data_sensitivity": Asset.DataSensitivity.PUBLIC,
-                "vendor": "",
-                "product": "",
+                "vendor": "ExampleCMS",
+                "product": "Public Website",
             },
             {
                 "name": "Research Repository",
@@ -131,8 +145,8 @@ class Command(BaseCommand):
                 "internet_exposed": False,
                 "criticality": Asset.Criticality.MEDIUM,
                 "data_sensitivity": Asset.DataSensitivity.INTERNAL,
-                "vendor": "",
-                "product": "",
+                "vendor": "ExampleDependency",
+                "product": "Research Repository",
             },
             {
                 "name": "Election Monitoring Dataset",
@@ -396,3 +410,108 @@ class Command(BaseCommand):
             )
 
         return [incident]
+
+    def _seed_threatboard(self, organisation: Organisation, assets: dict[str, Asset]) -> None:
+        today = timezone.localdate()
+        vulnerability_specs = [
+            {
+                "cve_id": "CVE-2024-0001",
+                "title": "Fictional Staff Portal Framework Vulnerability",
+                "description": (
+                    "Fictional demo vulnerability for validating ThreatBoard prioritisation."
+                ),
+                "vendor": "Django",
+                "product": "Civic Staff Portal",
+                "due_date": today - timedelta(days=14),
+                "required_action": "Apply vendor patch or mitigation.",
+                "notes": "Fictional demo vulnerability. Not a real CVE.",
+                "score": {
+                    "kev_known_exploited": True,
+                    "epss_percentile": 0.92,
+                    "epss_score": 0.71,
+                },
+                "asset": assets["Staff Portal"],
+            },
+            {
+                "cve_id": "CVE-2024-0002",
+                "title": "Fictional Public Website Component Vulnerability",
+                "description": ("Fictional demo vulnerability for a public website component."),
+                "vendor": "ExampleCMS",
+                "product": "Public Website",
+                "due_date": today + timedelta(days=30),
+                "required_action": "Review vendor guidance and plan remediation if affected.",
+                "notes": "Fictional demo vulnerability. Not a real CVE.",
+                "score": {
+                    "kev_known_exploited": False,
+                    "epss_percentile": 0.62,
+                    "epss_score": 0.28,
+                },
+                "asset": assets["Public Website"],
+            },
+            {
+                "cve_id": "CVE-2024-0003",
+                "title": "Fictional Internal Repository Dependency Vulnerability",
+                "description": (
+                    "Fictional demo vulnerability for an internal repository dependency."
+                ),
+                "vendor": "ExampleDependency",
+                "product": "Research Repository",
+                "due_date": None,
+                "required_action": "Confirm dependency usage and update if applicable.",
+                "notes": "Fictional demo vulnerability. Not a real CVE.",
+                "score": {
+                    "kev_known_exploited": False,
+                    "epss_percentile": 0.35,
+                    "epss_score": 0.12,
+                },
+                "asset": assets["Research Repository"],
+            },
+        ]
+
+        for spec in vulnerability_specs:
+            vulnerability, _ = Vulnerability.objects.update_or_create(
+                cve_id=spec["cve_id"],
+                defaults={
+                    "title": spec["title"],
+                    "description": spec["description"],
+                    "vendor": spec["vendor"],
+                    "product": spec["product"],
+                    "due_date": spec["due_date"],
+                    "required_action": spec["required_action"],
+                    "notes": spec["notes"],
+                    "source": Vulnerability.Source.MANUAL,
+                },
+            )
+            VulnerabilityScore.objects.update_or_create(
+                vulnerability=vulnerability,
+                defaults={
+                    **spec["score"],
+                    "cvss_severity": VulnerabilityScore.CvssSeverity.UNKNOWN,
+                    "last_scored_at": timezone.now(),
+                },
+            )
+
+            asset = spec["asset"]
+            score = calculate_threatboard_risk_score(asset, vulnerability, 0.95)
+            match, _ = AssetVulnerabilityMatch.objects.update_or_create(
+                organisation=organisation,
+                asset=asset,
+                vulnerability=vulnerability,
+                defaults={
+                    "match_method": AssetVulnerabilityMatch.MatchMethod.EXACT_VENDOR_PRODUCT,
+                    "match_confidence": 0.95,
+                    "exposure_score": calculate_exposure_score(asset),
+                    "calculated_risk_score": score.score,
+                    "risk_band": score.risk_band,
+                    "status": AssetVulnerabilityMatch.Status.ACTIVE,
+                    "remediation_status": AssetVulnerabilityMatch.RemediationStatus.UNREVIEWED,
+                    "explanation": score.explanation,
+                    "notes": "Fictional ThreatBoard demo match.",
+                    "last_seen_at": timezone.now(),
+                },
+            )
+            if match.risk_band in {
+                AssetVulnerabilityMatch.RiskBand.HIGH,
+                AssetVulnerabilityMatch.RiskBand.CRITICAL,
+            }:
+                create_or_update_risk_event_for_match(match)

@@ -91,6 +91,55 @@ DELETE /api/processing-jobs/{id}/
 
 Organisation creation and deletion are restricted to superusers. Organisation admins can update their own organisation.
 
+## ThreatBoard Endpoints
+
+ThreatBoard endpoints require authentication. Vulnerability metadata is global public metadata, while asset matches and overview counts are organisation-scoped.
+
+```text
+GET  /api/threatboard/overview/
+
+GET  /api/threatboard/vulnerabilities/
+GET  /api/threatboard/vulnerabilities/{id}/
+GET  /api/threatboard/scores/
+GET  /api/threatboard/scores/{id}/
+
+GET    /api/threatboard/asset-matches/
+POST   /api/threatboard/asset-matches/
+GET    /api/threatboard/asset-matches/{id}/
+PATCH  /api/threatboard/asset-matches/{id}/
+DELETE /api/threatboard/asset-matches/{id}/
+
+GET  /api/threatboard/ingestion-runs/
+GET  /api/threatboard/ingestion-runs/{id}/
+
+POST /api/threatboard/ingest-kev/
+POST /api/threatboard/enrich-epss/
+POST /api/threatboard/match-assets/
+```
+
+Simple filters:
+
+- `/api/threatboard/vulnerabilities/?cve_id=CVE-2024&vendor=Example&product=Portal&kev_only=true`
+- `/api/threatboard/scores/?cve_id=CVE-2024`
+- `/api/threatboard/asset-matches/?risk_band=critical&remediation_status=unreviewed&internet_exposed=true`
+
+Trigger endpoints are POST-only. Viewer users cannot trigger ingestion or matching. Analyst and admin users can trigger defensive ingestion, EPSS enrichment, and asset matching.
+
+Example overview response:
+
+```json
+{
+  "vulnerability_count": 3,
+  "kev_vulnerability_count": 1,
+  "asset_match_count": 3,
+  "critical_match_count": 1,
+  "high_match_count": 0,
+  "overdue_match_count": 1,
+  "latest_matches": [],
+  "latest_ingestion_runs": []
+}
+```
+
 ## Access Rules
 
 - Superusers can see all records.

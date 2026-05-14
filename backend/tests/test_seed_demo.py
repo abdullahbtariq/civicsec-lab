@@ -19,8 +19,8 @@ def test_seed_demo_is_idempotent():
     assert Organisation.objects.filter(slug="open-civic-aid").count() == 1
     assert User.objects.filter(organisation=organisation).count() == 3
     assert Asset.objects.filter(organisation=organisation).count() == 5
-    assert RiskEvent.objects.filter(organisation=organisation).count() == 3
-    assert EvidenceItem.objects.filter(organisation=organisation).count() == 3
-    assert ActionRecommendation.objects.filter(organisation=organisation).count() == 3
+    assert RiskEvent.objects.filter(organisation=organisation).count() == 4
+    assert EvidenceItem.objects.filter(organisation=organisation).count() == 4
+    assert ActionRecommendation.objects.filter(organisation=organisation).count() == 8
     assert Incident.objects.filter(organisation=organisation).count() == 1
     assert IncidentTimelineEntry.objects.filter(organisation=organisation).count() == 2

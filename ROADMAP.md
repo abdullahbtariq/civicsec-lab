@@ -22,10 +22,12 @@
 
 ## Phase 2: ThreatBoard
 
-- Public vulnerability metadata ingestion.
-- Exposure and asset matching.
-- Explainable defensive risk scoring.
-- RiskEvent creation for relevant findings.
+- Public vulnerability metadata ingestion. Backend MVP completed.
+- EPSS enrichment. Backend MVP completed.
+- Exposure and asset matching. Backend MVP completed.
+- Explainable defensive risk scoring. Backend MVP completed.
+- RiskEvent creation for relevant findings. Backend MVP completed.
+- Full ThreatBoard frontend dashboard remains future work.
 
 ## Phase 3: LogLens
 
