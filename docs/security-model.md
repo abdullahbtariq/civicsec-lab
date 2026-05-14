@@ -1,29 +1,58 @@
 # Security Model
 
-CivicSec Lab should be secure by default and careful with data.
+CivicSec Lab is defensive, educational, and public-interest software. The backend foundation now includes organisation scoping and simple role-based access controls for shared platform objects.
 
-## Principles
+## Organisation Scoping
 
-- Environment-based secrets.
-- No committed credentials.
-- Organisation-level access control once multi-user features exist.
-- Minimal data retention for uploads.
-- Defensive-only workflows.
-- Audit logging for sensitive actions.
-- Clear distinction between signals and verified incidents.
+All operational records belong to an organisation:
 
-## Phase 0 Controls
+- assets
+- risk events
+- evidence items
+- recommendations
+- incidents
+- incident timeline entries
+- processing jobs
+- audit logs where applicable
 
-- `.env.example` documents local configuration without real secrets.
-- Docker Compose uses PostgreSQL and Redis services for local development.
-- SECURITY.md and RESPONSIBLE_USE.md define reporting and safety expectations.
-- No authentication, domain models, or file upload functionality exists yet.
+DRF list and detail endpoints filter by `request.user.organisation` unless the user is a superuser. Users without an organisation receive empty lists.
 
-## Future Controls
+## Roles
 
-- Custom user model and roles.
-- Object-level organisation checks.
-- Secure file upload validation.
-- CSRF and secure cookie production settings.
-- Data deletion and retention controls.
-- Audit log events for uploads, incident updates, report exports, and settings changes.
+User roles:
+
+- admin
+- analyst
+- viewer
+
+Current API assumptions:
+
+- Viewer users can read organisation-scoped records.
+- Analyst users can create and update operational records.
+- Admin users can create, update, and delete operational records.
+- Organisation admins can update their own organisation record but cannot create additional organisations.
+- Organisation creation and deletion are reserved for superusers.
+- Superusers bypass organisation scoping for administrative use.
+
+## Custom User Model
+
+The backend uses `accounts.User` as `AUTH_USER_MODEL`. Email is unique and central to authentication identity.
+
+Because this changed the auth model early in the project, existing local databases that already ran default Django auth migrations may need to be reset.
+
+## Audit Logging
+
+The `AuditLog` model and `record_audit_event()` helper exist. Automatic audit middleware is not implemented yet.
+
+## Current Limitations
+
+- No login/logout API is implemented yet.
+- No user-management API is implemented yet.
+- No object-level permission matrix beyond organisation scoping and role checks is implemented yet.
+- No file upload handling is implemented yet.
+- No Celery tasks are implemented yet.
+- The demo seed users use a development password and must not be used in production.
+
+## Data Safety
+
+Do not upload real secrets, credentials, private logs, real personal data, or sensitive organisational records to public demo instances. Repository sample data is fictional.

@@ -6,6 +6,7 @@ from apps.risk.models import RiskEvent
 
 
 class EvidenceItemSerializer(OrganisationScopedSerializer):
+    risk_event = serializers.PrimaryKeyRelatedField(read_only=True)
     risk_event_id = serializers.PrimaryKeyRelatedField(
         source="risk_event",
         queryset=RiskEvent.objects.all(),
@@ -19,6 +20,7 @@ class EvidenceItemSerializer(OrganisationScopedSerializer):
             "id",
             "organisation",
             "organisation_id",
+            "risk_event",
             "risk_event_id",
             "risk_event_title",
             "evidence_type",

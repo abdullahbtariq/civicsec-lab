@@ -1,24 +1,97 @@
 # Data Model
 
-This document tracks the planned CivicSec Lab data model. Domain models are not implemented in Phase 0.
+CivicSec Lab now has the core backend foundation models that future modules will build on. All operational objects are organisation-scoped unless explicitly noted.
 
-## Planned Shared Entities
+## Organisation
 
-- Organisation
-- User
-- Asset
-- RiskEvent
-- EvidenceItem
-- ActionRecommendation
-- Incident
-- IncidentTask
-- AuditLog
-- ProcessingJob
+Represents a workspace.
 
-## Design Direction
+Fields include name, slug, description, sector, country, risk profile, created timestamp, and updated timestamp.
 
-The platform will use a shared RiskEvent model so future modules can contribute comparable risk signals. Each event should include source module, severity, confidence, evidence summary, recommended action summary, status, and framework mappings.
+Risk profiles:
 
-## Phase 0 Status
+- low
+- medium
+- high
+- elevated
 
-Only Django project wiring exists. No domain tables have been created yet beyond Django's built-in framework tables.
+## User
+
+Custom Django user model in `accounts.User`.
+
+Email is the login identity and is unique. Users may belong to one organisation and have one of three roles:
+
+- admin: organisation-level management and operational write access.
+- analyst: operational write access for assets, risk events, evidence, recommendations, and incidents.
+- viewer: read-only access.
+
+Helper properties:
+
+- `is_org_admin`
+- `is_analyst`
+- `is_viewer`
+
+## Asset
+
+Represents an organisational system, service, repository, dataset, or tool.
+
+Fields include organisation, name, asset type, description, owner name, criticality, internet exposure, data sensitivity, vendor, product, version, tags, creator, and timestamps.
+
+## RiskEvent
+
+The shared risk signal object used by future modules.
+
+Fields include organisation, source module, event type, title, summary, severity, confidence, status, affected asset, affected user, risk score, evidence summary, recommended action summary, framework mappings, tags, first seen, last seen, and timestamps.
+
+Validation:
+
+- confidence must be between 0 and 1.
+- risk score must be between 0 and 100.
+
+Computed helpers:
+
+- `severity_rank`
+- `confidence_band`
+- `is_open`
+
+## EvidenceItem
+
+Stores evidence linked to a RiskEvent.
+
+Fields include organisation, risk event, evidence type, title, description, source, raw reference, observed timestamp, confidence, metadata, and created timestamp.
+
+## ActionRecommendation
+
+Stores response recommendations linked to a RiskEvent.
+
+Fields include organisation, risk event, title, description, priority, status, owner, due date, framework mapping, and timestamps.
+
+## Incident
+
+Represents a response workflow record.
+
+Fields include organisation, title, description, severity, status, incident type, opened timestamp, closed timestamp, owner, linked risk events, timeline summary, lessons learned, and timestamps.
+
+## IncidentTimelineEntry
+
+Stores incident timeline events.
+
+Fields include organisation, incident, timestamp, entry type, title, description, actor, metadata, and created timestamp.
+
+## AuditLog
+
+Stores explicit audit events. Middleware is not implemented yet.
+
+Fields include organisation, actor, action, object type, object ID, IP address, user agent, metadata, and created timestamp.
+
+Use `record_audit_event()` from `apps.auditlog.utils` for explicit audit writes.
+
+## ProcessingJob
+
+Tracks background or long-running jobs.
+
+Fields include organisation, job type, status, started timestamp, finished timestamp, error message, progress, metadata, and timestamps.
+
+Validation:
+
+- progress must be between 0 and 100.

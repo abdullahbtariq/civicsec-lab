@@ -89,6 +89,7 @@ class RiskEventSerializer(OrganisationScopedSerializer):
 
 
 class ActionRecommendationSerializer(OrganisationScopedSerializer):
+    risk_event = serializers.PrimaryKeyRelatedField(read_only=True)
     risk_event_id = serializers.PrimaryKeyRelatedField(
         source="risk_event",
         queryset=RiskEvent.objects.all(),
@@ -110,6 +111,7 @@ class ActionRecommendationSerializer(OrganisationScopedSerializer):
             "id",
             "organisation",
             "organisation_id",
+            "risk_event",
             "risk_event_id",
             "risk_event_title",
             "title",

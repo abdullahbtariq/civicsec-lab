@@ -16,11 +16,28 @@ Summarise CivicSec Lab as a modular public-interest security intelligence platfo
 
 ## 4. System Architecture
 
-Show the backend, frontend, database, Redis, Celery, and module boundaries.
+Current foundation:
+
+- Django REST Framework backend with organisation-scoped core APIs.
+- React/Vite/Tailwind frontend with protected routing and a platform layout.
+- PostgreSQL target for local Docker development, with SQLite usable for quick local smoke testing.
+- Redis and Celery wired for future background processing.
+- Module pages present as placeholders only.
 
 ## 5. Data Model
 
-Explain Organisation, Asset, RiskEvent, EvidenceItem, Incident, and AuditLog once implemented.
+Implemented core models:
+
+- Organisation
+- User
+- Asset
+- RiskEvent
+- EvidenceItem
+- ActionRecommendation
+- Incident
+- IncidentTimelineEntry
+- AuditLog
+- ProcessingJob
 
 ## 6. Module Breakdown
 
@@ -40,11 +57,17 @@ Capture why Django, React, PostgreSQL, Redis, Celery, Docker Compose, and open-s
 
 ## 10. Screenshots
 
-Add final screenshots after the UI exists.
+Add screenshots of the authenticated dashboard, asset list, risk event detail, incident detail, and module placeholders after the UI is reviewed.
 
 ## 11. Demo Walkthrough
 
-Describe the Open Civic Aid story and module flow.
+Current walkthrough:
+
+1. Seed Open Civic Aid demo data.
+2. Sign in through Django admin with the demo admin account.
+3. Open the React frontend.
+4. Review dashboard counts, assets, risk events, incidents, and processing jobs.
+5. Open planned module placeholders to show future scope without premature module logic.
 
 ## 12. Future Work
 

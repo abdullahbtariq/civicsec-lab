@@ -72,6 +72,7 @@ class IncidentSerializer(OrganisationScopedSerializer):
 
 
 class IncidentTimelineEntrySerializer(OrganisationScopedSerializer):
+    incident = serializers.PrimaryKeyRelatedField(read_only=True)
     incident_id = serializers.PrimaryKeyRelatedField(
         source="incident",
         queryset=Incident.objects.all(),
@@ -93,6 +94,7 @@ class IncidentTimelineEntrySerializer(OrganisationScopedSerializer):
             "id",
             "organisation",
             "organisation_id",
+            "incident",
             "incident_id",
             "incident_title",
             "timestamp",

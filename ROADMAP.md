@@ -11,12 +11,14 @@
 
 ## Phase 1: Core Platform Shell
 
-- Custom user model.
-- Organisation model.
-- Role foundations.
-- Global navigation and dashboard layout.
-- Shared asset, risk event, evidence, recommendation, and audit models.
-- Seeded Open Civic Aid demo workspace.
+- Custom user model. Completed for backend foundation.
+- Organisation model. Completed for backend foundation.
+- Role foundations. Completed for backend foundation.
+- Shared asset, risk event, evidence, recommendation, incident, audit, and processing job models. Completed for backend foundation.
+- Seeded Open Civic Aid demo workspace. Completed for backend foundation.
+- Authenticated frontend platform shell. Completed for foundation.
+- Global navigation, dashboard, assets, risk events, incidents, processing jobs, and module placeholder pages. Completed for foundation.
+- API login endpoint and richer editing workflows remain future work.
 
 ## Phase 2: ThreatBoard
 

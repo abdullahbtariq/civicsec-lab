@@ -18,7 +18,7 @@ Django REST Framework backend
 
 ## Backend
 
-The backend owns authentication, organisations, assets, risk events, evidence, incidents, reports, audit logs, and module APIs. Domain models are intentionally not implemented in Phase 0.
+The backend owns authentication, organisations, assets, risk events, evidence, incidents, reports, audit logs, and module APIs.
 
 Current backend foundation:
 
@@ -26,12 +26,28 @@ Current backend foundation:
 - PostgreSQL configuration through environment variables.
 - Redis and Celery configuration.
 - Django REST Framework installed.
-- Placeholder app packages for planned modules.
+- Custom user model with organisation and role fields.
+- Organisation-scoped models and DRF viewsets for assets, risk events, evidence, recommendations, incidents, timeline entries, and processing jobs.
+- CORS configuration for the local Vite frontend.
 - Health endpoint at `/api/health/`.
+- Current-user endpoint at `/api/auth/me/`.
 
 ## Frontend
 
-The frontend is a Vite React TypeScript app with Tailwind CSS. Phase 0 provides a polished dashboard shell and placeholder module cards without routing or module logic.
+The frontend is a Vite React TypeScript app with Tailwind CSS and React Router.
+
+Current frontend foundation:
+
+- Public login page that uses `/api/auth/me/` as the source of truth and points demo users to Django admin until API login is implemented.
+- Auth provider and protected route wrapper.
+- Authenticated app layout with sidebar, mobile navigation, topbar, role badge, and responsible-use note.
+- Dashboard derived from existing backend list endpoints.
+- Assets list/create/detail pages.
+- Risk events list/detail pages.
+- Incidents list/detail pages.
+- Processing jobs page.
+- Intentional placeholder pages for planned modules.
+- Reusable UI components for cards, badges, inputs, tables, loading, empty, and error states.
 
 ## Background Jobs
 

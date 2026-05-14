@@ -40,7 +40,7 @@ All sample data in this repository is fictional.
 
 ## Current Status
 
-Early development. This repository currently contains the Phase 0 project foundation: monorepo structure, documentation skeletons, Docker Compose, a minimal Django backend, a Vite React frontend shell, CI placeholders, and fictional sample data.
+Early development. The repository currently contains the project foundation, core backend platform models and APIs, and an authenticated React platform shell connected to the backend.
 
 ## Local Setup With Docker Compose
 
@@ -74,17 +74,30 @@ python -m venv .venv
 python -m pip install --upgrade pip
 pip install -r requirements.txt
 $env:DJANGO_SETTINGS_MODULE = "civicsec.settings.dev"
+$env:DATABASE_URL = "sqlite:///db.sqlite3"
 python manage.py migrate
+python manage.py seed_demo
 python manage.py runserver
 ```
+
+For PostgreSQL, set `DATABASE_URL` to a running PostgreSQL database instead of the SQLite example above.
 
 ## Frontend Setup Without Docker
 
 ```powershell
 Set-Location frontend
 npm install
+npm run build
 npm run dev
 ```
+
+The frontend reads `VITE_API_BASE_URL` from `frontend/.env` or the shell environment. For local development:
+
+```powershell
+$env:VITE_API_BASE_URL = "http://localhost:8000"
+```
+
+Run the backend at http://localhost:8000 and the frontend at http://localhost:5173.
 
 ## Development Checks
 
