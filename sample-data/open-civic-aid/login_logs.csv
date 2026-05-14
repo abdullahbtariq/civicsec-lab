@@ -1,0 +1,9 @@
+event_id,timestamp_utc,account_id,actor_label,source_ip,country,city,device,action,status,notes
+LOG-0001,2026-04-20T08:12:04Z,acct-analyst-01,Demo Analyst,192.0.2.11,GB,Riverbridge,managed-laptop,login_success,success,Normal weekday login pattern
+LOG-0002,2026-04-20T08:16:31Z,acct-ops-02,Demo Operations User,192.0.2.14,GB,Riverbridge,managed-laptop,login_success,success,Normal weekday login pattern
+LOG-0003,2026-04-20T19:44:10Z,acct-analyst-01,Demo Analyst,198.51.100.22,GB,Eastmere,unknown-browser,login_failed,failed,Synthetic failed login outside normal hours
+LOG-0004,2026-04-20T19:44:45Z,acct-analyst-01,Demo Analyst,198.51.100.22,GB,Eastmere,unknown-browser,login_failed,failed,Synthetic repeated failure
+LOG-0005,2026-04-20T19:45:07Z,acct-analyst-01,Demo Analyst,198.51.100.22,GB,Eastmere,unknown-browser,login_failed,failed,Synthetic repeated failure
+LOG-0006,2026-04-20T19:47:53Z,acct-analyst-01,Demo Analyst,198.51.100.22,GB,Eastmere,unknown-browser,login_success,success,Synthetic success after repeated failures
+LOG-0007,2026-04-20T19:51:18Z,acct-analyst-01,Demo Analyst,198.51.100.22,GB,Eastmere,unknown-browser,dataset_download,success,Fictional sensitive dataset download event
+LOG-0008,2026-04-21T09:02:27Z,acct-comms-03,Demo Communications User,203.0.113.7,GB,Larkfield,managed-laptop,login_success,success,Normal weekday login pattern

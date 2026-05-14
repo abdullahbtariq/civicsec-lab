@@ -1,0 +1,6 @@
+volunteer_id,display_name,email,phone_token,city,age_band,occupation_group,community_affiliation,notes
+VOL-001,Ari Vale,ari.vale@example.org,fictional-phone-token-001,Riverbridge,25-34,Education,Riverbridge Digital Skills Circle,Fictional record; prefers weekend volunteer shifts
+VOL-002,Mina Sol,mina.sol@example.org,fictional-phone-token-002,Eastmere,35-44,Healthcare,Northstar Mutual Aid Desk,Fictional record; trained for intake support
+VOL-003,Jonah Reed,jonah.reed@example.org,fictional-phone-token-003,Larkfield,18-24,Student,Civic Data Study Group,Fictional record; available during term breaks
+VOL-004,Lena Park,lena.park@example.org,fictional-phone-token-004,Harbourton,45-54,Legal Support,Open Records Workshop,Fictional record; prefers email contact
+VOL-005,Samir Holt,samir.holt@example.org,fictional-phone-token-005,Riverbridge,35-44,Community Outreach,Neighbourhood Resilience Forum,Fictional record; can support translation review in demo materials

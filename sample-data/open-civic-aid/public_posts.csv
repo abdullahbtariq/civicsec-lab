@@ -1,0 +1,7 @@
+post_id,timestamp_utc,author_id,platform_label,topic,text,engagement_count,sentiment_label
+POST-001,2026-04-18T10:00:00Z,anon-demo-001,public-forum,community grant portal,The new community grant portal should publish clearer eligibility dates.,12,neutral
+POST-002,2026-04-18T13:30:00Z,anon-demo-002,public-forum,open records workshop,Open Civic Aid's records workshop helped our group understand request timelines.,21,positive
+POST-003,2026-04-19T09:20:00Z,anon-demo-003,public-forum,community grant portal,Several people are repeating the same false deadline for the grant portal.,34,concerned
+POST-004,2026-04-19T09:42:00Z,anon-demo-004,public-forum,community grant portal,Reminder: verify the grant portal date from the official civic notice page.,18,neutral
+POST-005,2026-04-19T11:05:00Z,anon-demo-005,public-forum,digital safety clinic,The digital safety clinic schedule changed and the updated poster is clearer.,9,positive
+POST-006,2026-04-20T15:10:00Z,anon-demo-006,public-forum,community grant portal,The repeated deadline rumour is spreading faster than the correction today.,43,concerned

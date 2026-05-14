@@ -1,0 +1,68 @@
+name: Backend Tests
+
+on:
+  pull_request:
+    paths:
+      - "backend/**"
+      - ".github/workflows/backend-tests.yml"
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: civicsec_lab
+          POSTGRES_USER: civicsec
+          POSTGRES_PASSWORD: civicsec_dev_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U civicsec -d civicsec_lab"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DJANGO_SETTINGS_MODULE: civicsec.settings.test
+      SECRET_KEY: ci-only-secret
+      DATABASE_URL: postgres://civicsec:civicsec_dev_password@localhost:5432/civicsec_lab
+      REDIS_URL: redis://localhost:6379/0
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+      - name: Install dependencies
+        working-directory: backend
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Django checks
+        working-directory: backend
+        run: python manage.py check
+      - name: Lint
+        working-directory: backend
+        run: ruff check .
+      - name: Format check
+        working-directory: backend
+        run: black --check .
+      - name: Test
+        working-directory: backend
+        run: pytest

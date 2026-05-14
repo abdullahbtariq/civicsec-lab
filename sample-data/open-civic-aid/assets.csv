@@ -1,0 +1,6 @@
+asset_id,name,asset_type,owner_team,criticality,internet_exposed,data_sensitivity,vendor,product,version,notes
+OCA-ASSET-001,Staff Portal,web_app,Operations,high,true,sensitive,Fictional Civic Systems,HarborDesk,3.4.1,Fictional staff access portal for demo workflows
+OCA-ASSET-002,Volunteer Database,database,Programmes,critical,false,highly_sensitive,Open Civic Aid,VolunteerLedger,1.8.0,Fictional internal volunteer record system
+OCA-ASSET-003,Research Repository,repository,Research,medium,false,internal,Fictional Forge,RepoShelf,2026.1,Fictional repository for public-interest research notes
+OCA-ASSET-004,Public Website,web_app,Communications,medium,true,public,Northwind Web Collective,ClearPages,5.2.0,Fictional public website
+OCA-ASSET-005,Election Monitoring Dataset,dataset,Research,high,false,sensitive,Open Civic Aid,CivicDataset,2026.0,Fictional dataset used for privacy-risk demonstrations
