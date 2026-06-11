@@ -2,7 +2,13 @@ from rest_framework import serializers
 
 from apps.accounts.models import User
 from apps.common.serializers import OrganisationScopedSerializer
-from apps.incidents.models import Incident, IncidentTimelineEntry
+from apps.incidents.models import (
+    Incident,
+    IncidentTask,
+    IncidentTimelineEntry,
+    PlaybookStep,
+    PlaybookTemplate,
+)
 from apps.risk.models import RiskEvent
 
 
@@ -128,3 +134,50 @@ class IncidentTimelineEntrySerializer(OrganisationScopedSerializer):
                 )
 
         return attrs
+
+
+class PlaybookStepSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PlaybookStep
+        fields = ["id", "order", "title", "description", "estimated_minutes"]
+        read_only_fields = fields
+
+
+class PlaybookTemplateSerializer(serializers.ModelSerializer):
+    steps = PlaybookStepSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = PlaybookTemplate
+        fields = ["id", "name", "description", "incident_type", "is_builtin", "steps", "created_at"]
+        read_only_fields = fields
+
+
+class IncidentTaskSerializer(serializers.ModelSerializer):
+    status_display = serializers.CharField(source="get_status_display", read_only=True)
+    assignee_email = serializers.EmailField(source="assignee.email", read_only=True)
+    assignee_id = serializers.PrimaryKeyRelatedField(
+        source="assignee",
+        queryset=User.objects.all(),
+        write_only=True,
+        required=False,
+        allow_null=True,
+    )
+
+    class Meta:
+        model = IncidentTask
+        fields = [
+            "id",
+            "title",
+            "description",
+            "status",
+            "status_display",
+            "assignee_id",
+            "assignee_email",
+            "due_date",
+            "order",
+            "notes",
+            "completed_at",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = ["id", "created_at", "updated_at", "status_display", "assignee_email"]

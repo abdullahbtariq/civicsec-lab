@@ -1,0 +1,32 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Test / lint caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+coverage.xml
+
+# Local dev artifacts
+*.log
+*.sqlite3
+db.sqlite3
+
+# IDE
+.idea/
+.vscode/
+*.sw?
+
+# OS
+.DS_Store
+Thumbs.db

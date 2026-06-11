@@ -34,5 +34,7 @@ urlpatterns = [
     path("api/auth/me/", CurrentUserView.as_view(), name="auth-me"),
     path("api/threatboard/", include("apps.threatboard.urls")),
     path("api/loglens/", include("apps.loglens.urls")),
+    path("api/privacy-doctor/", include("apps.privacy_doctor.urls")),
+    path("api/incidentflow/", include("apps.incidents.urls")),
     path("api/", include(router.urls)),
 ]
