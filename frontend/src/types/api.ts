@@ -130,6 +130,39 @@ export type IncidentTimelineEntry = {
   created_at: string;
 };
 
+export type PlaybookStep = {
+  id: number;
+  order: number;
+  title: string;
+  description: string;
+  estimated_minutes: number;
+};
+
+export type PlaybookTemplate = {
+  id: number;
+  name: string;
+  description: string;
+  incident_type: string;
+  is_builtin: boolean;
+  steps: PlaybookStep[];
+  created_at: string;
+};
+
+export type IncidentTask = {
+  id: number;
+  title: string;
+  description: string;
+  status: "pending" | "in_progress" | "done" | "skipped";
+  status_display: string;
+  assignee_email?: string | null;
+  due_date?: string | null;
+  order: number;
+  notes: string;
+  completed_at?: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
 export type ProcessingJob = {
   id: number;
   organisation: Pick<Organisation, "id" | "name" | "slug"> | null;

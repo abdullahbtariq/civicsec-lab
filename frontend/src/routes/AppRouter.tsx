@@ -6,13 +6,19 @@ import { AssetCreatePage } from "../features/assets/AssetCreatePage";
 import { AssetDetailPage } from "../features/assets/AssetDetailPage";
 import { AssetsPage } from "../features/assets/AssetsPage";
 import { DashboardPage } from "../features/dashboard/DashboardPage";
+import { CreateIncidentPage } from "../features/incidents/CreateIncidentPage";
 import { IncidentDetailPage } from "../features/incidents/IncidentDetailPage";
+import { IncidentFlowOverviewPage } from "../features/incidents/IncidentFlowOverviewPage";
 import { IncidentsPage } from "../features/incidents/IncidentsPage";
 import { AnomaliesPage } from "../features/loglens/AnomaliesPage";
 import { AnomalyDetailPage } from "../features/loglens/AnomalyDetailPage";
 import { LogLensOverviewPage } from "../features/loglens/LogLensOverviewPage";
 import { UploadLogsPage } from "../features/loglens/UploadLogsPage";
 import { ModulePlaceholderPage } from "../features/modules/ModulePlaceholderPage";
+import { DatasetDetailPage } from "../features/privacy-doctor/DatasetDetailPage";
+import { DatasetListPage } from "../features/privacy-doctor/DatasetListPage";
+import { PrivacyDoctorOverviewPage } from "../features/privacy-doctor/PrivacyDoctorOverviewPage";
+import { UploadDatasetPage } from "../features/privacy-doctor/UploadDatasetPage";
 import { ProcessingJobsPage } from "../features/processing-jobs/ProcessingJobsPage";
 import { RiskEventDetailPage } from "../features/risk-events/RiskEventDetailPage";
 import { RiskEventsPage } from "../features/risk-events/RiskEventsPage";
@@ -38,6 +44,7 @@ export function AppRouter() {
           <Route element={<RiskEventsPage />} path="/risk-events" />
           <Route element={<RiskEventDetailPage />} path="/risk-events/:id" />
           <Route element={<IncidentsPage />} path="/incidents" />
+          <Route element={<CreateIncidentPage />} path="/incidents/new" />
           <Route element={<IncidentDetailPage />} path="/incidents/:id" />
           <Route element={<ProcessingJobsPage />} path="/processing-jobs" />
           <Route element={<ThreatBoardOverviewPage />} path="/modules/threatboard" />
@@ -53,10 +60,10 @@ export function AppRouter() {
           <Route element={<AnomaliesPage />} path="/modules/loglens/anomalies" />
           <Route element={<AnomalyDetailPage />} path="/modules/loglens/anomalies/:id" />
           <Route element={<UploadLogsPage />} path="/modules/loglens/upload" />
-          <Route
-            element={<ModulePlaceholderPage moduleKey="privacy-doctor" />}
-            path="/modules/privacy-doctor"
-          />
+          <Route element={<PrivacyDoctorOverviewPage />} path="/modules/privacy-doctor" />
+          <Route element={<DatasetListPage />} path="/modules/privacy-doctor/datasets" />
+          <Route element={<DatasetDetailPage />} path="/modules/privacy-doctor/datasets/:id" />
+          <Route element={<UploadDatasetPage />} path="/modules/privacy-doctor/upload" />
           <Route
             element={<ModulePlaceholderPage moduleKey="misinformation-observatory" />}
             path="/modules/misinformation-observatory"
@@ -65,10 +72,7 @@ export function AppRouter() {
             element={<ModulePlaceholderPage moduleKey="risk-graph" />}
             path="/modules/risk-graph"
           />
-          <Route
-            element={<ModulePlaceholderPage moduleKey="incidentflow" />}
-            path="/modules/incidentflow"
-          />
+          <Route element={<IncidentFlowOverviewPage />} path="/modules/incidentflow" />
         </Route>
       </Route>
       <Route element={<Navigate replace to="/dashboard" />} path="*" />
