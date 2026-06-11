@@ -52,11 +52,10 @@ LOCAL_APPS = [
     "apps.risk.apps.RiskConfig",
     "apps.evidence.apps.EvidenceConfig",
     "apps.incidents.apps.IncidentsConfig",
-    "apps.reports",
     "apps.threatboard.apps.ThreatboardConfig",
-    "apps.loglens",
-    "apps.privacy_doctor",
-    "apps.misinformation",
+    "apps.loglens.apps.LogLensConfig",
+    "apps.privacy_doctor",  # placeholder — implemented in Phase 4
+    "apps.misinformation",  # placeholder — implemented in Phase 5
     "apps.auditlog.apps.AuditLogConfig",
     "apps.common.apps.CommonConfig",
 ]

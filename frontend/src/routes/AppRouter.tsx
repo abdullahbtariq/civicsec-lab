@@ -8,6 +8,10 @@ import { AssetsPage } from "../features/assets/AssetsPage";
 import { DashboardPage } from "../features/dashboard/DashboardPage";
 import { IncidentDetailPage } from "../features/incidents/IncidentDetailPage";
 import { IncidentsPage } from "../features/incidents/IncidentsPage";
+import { AnomaliesPage } from "../features/loglens/AnomaliesPage";
+import { AnomalyDetailPage } from "../features/loglens/AnomalyDetailPage";
+import { LogLensOverviewPage } from "../features/loglens/LogLensOverviewPage";
+import { UploadLogsPage } from "../features/loglens/UploadLogsPage";
 import { ModulePlaceholderPage } from "../features/modules/ModulePlaceholderPage";
 import { ProcessingJobsPage } from "../features/processing-jobs/ProcessingJobsPage";
 import { RiskEventDetailPage } from "../features/risk-events/RiskEventDetailPage";
@@ -45,7 +49,10 @@ export function AppRouter() {
           <Route element={<AssetMatchesPage />} path="/modules/threatboard/matches" />
           <Route element={<AssetMatchDetailPage />} path="/modules/threatboard/matches/:id" />
           <Route element={<IngestionRunsPage />} path="/modules/threatboard/ingestion-runs" />
-          <Route element={<ModulePlaceholderPage moduleKey="loglens" />} path="/modules/loglens" />
+          <Route element={<LogLensOverviewPage />} path="/modules/loglens" />
+          <Route element={<AnomaliesPage />} path="/modules/loglens/anomalies" />
+          <Route element={<AnomalyDetailPage />} path="/modules/loglens/anomalies/:id" />
+          <Route element={<UploadLogsPage />} path="/modules/loglens/upload" />
           <Route
             element={<ModulePlaceholderPage moduleKey="privacy-doctor" />}
             path="/modules/privacy-doctor"

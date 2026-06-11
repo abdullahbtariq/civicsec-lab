@@ -12,6 +12,8 @@ ignore = []
 
 [tool.ruff.lint.per-file-ignores]
 "apps/*/migrations/*.py" = ["E501"]
+"apps/loglens/services/*.py" = ["E501"]
+"apps/loglens/views.py" = ["E501"]
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "civicsec.settings.test"
