@@ -20,7 +20,7 @@ Current foundation:
 
 - Django REST Framework backend with organisation-scoped core APIs.
 - ThreatBoard backend MVP with KEV/EPSS-style ingestion, matching, scoring, and generated risk events.
-- React/Vite/Tailwind frontend with protected routing and a platform layout.
+- React/Vite/Tailwind frontend with protected routing, platform layout, and ThreatBoard module UI.
 - PostgreSQL target for local Docker development, with SQLite usable for quick local smoke testing.
 - Redis and Celery wired for future background processing.
 - Module pages present as placeholders only.
@@ -46,7 +46,7 @@ Implemented core models:
 
 ## 6. Module Breakdown
 
-ThreatBoard backend MVP now includes public vulnerability metadata ingestion, EPSS enrichment, conservative asset matching, explainable risk scoring, and RiskEvent generation for high-priority findings.
+ThreatBoard now includes a backend MVP and frontend MVP. The UI provides explainable vulnerability triage, vulnerability detail views, asset match review, ingestion run history, and role-aware ingestion/matching controls with defensive-use framing.
 
 Document LogLens, DataPrivacy Doctor, Misinformation Observatory, Civic Risk Graph, and IncidentFlow as they are implemented.
 
@@ -74,7 +74,8 @@ Current walkthrough:
 2. Sign in through Django admin with the demo admin account.
 3. Open the React frontend.
 4. Review dashboard counts, assets, risk events, incidents, and processing jobs.
-5. Open planned module placeholders to show future scope without premature module logic.
+5. Open ThreatBoard to review fictional vulnerabilities, asset matches, scoring explanations, and ingestion controls.
+6. Open remaining planned module placeholders to show future scope without premature module logic.
 
 ## 12. Future Work
 

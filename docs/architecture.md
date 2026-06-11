@@ -46,8 +46,15 @@ Current frontend foundation:
 - Risk events list/detail pages.
 - Incidents list/detail pages.
 - Processing jobs page.
-- Intentional placeholder pages for planned modules.
+- ThreatBoard frontend MVP with overview, vulnerabilities, asset matches, match detail, ingestion runs, and role-aware action controls.
+- Intentional placeholder pages for the remaining planned modules.
 - Reusable UI components for cards, badges, inputs, tables, loading, empty, and error states.
+
+ThreatBoard frontend integration:
+
+- Uses the shared API client with credentialed requests and CSRF support.
+- Reads `/api/threatboard/*` endpoints only; it does not call external vulnerability feeds directly.
+- Treats role checks as UI affordances while the backend remains the permission source of truth.
 
 ## Background Jobs
 

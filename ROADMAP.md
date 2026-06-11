@@ -27,7 +27,8 @@
 - Exposure and asset matching. Backend MVP completed.
 - Explainable defensive risk scoring. Backend MVP completed.
 - RiskEvent creation for relevant findings. Backend MVP completed.
-- Full ThreatBoard frontend dashboard remains future work.
+- ThreatBoard frontend MVP with overview, vulnerability list/detail, match list/detail, ingestion run history, and role-aware actions. Completed.
+- Remediation editing, richer visualisations, scheduler UX, and dependency/SBOM workflows remain future work.
 
 ## Phase 3: LogLens
 

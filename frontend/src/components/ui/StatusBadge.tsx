@@ -10,6 +10,7 @@ const statusVariant: Record<string, "neutral" | "teal" | "amber" | "rose" | "blu
   contained: "amber",
   resolved: "teal",
   completed: "teal",
+  completed_with_errors: "amber",
   closed: "teal",
   done: "teal",
   dismissed: "neutral",

@@ -109,6 +109,30 @@ POST /api/threatboard/match-assets/
 
 Viewer users can read. Analyst and admin users can trigger ingestion, enrichment, and matching. Asset matches are organisation-scoped. Vulnerability metadata is global public metadata.
 
+## Frontend MVP
+
+The React frontend now includes a working ThreatBoard module at `/modules/threatboard`.
+
+Pages:
+
+- Overview: metrics, latest matches, latest ingestion runs, scoring explanation, and action panel.
+- Vulnerabilities: searchable/filterable vulnerability list.
+- Vulnerability detail: metadata, score signals, defensive interpretation, and related asset matches.
+- Asset matches: searchable/filterable organisation-scoped match table.
+- Asset match detail: asset context, vulnerability context, risk assessment, explanation, and defensive next steps.
+- Ingestion runs: run history for KEV ingestion, EPSS enrichment, matching, and scoring.
+
+Role-aware actions:
+
+- Viewer users can inspect findings but cannot trigger ingestion or matching.
+- Analyst and admin users can trigger KEV ingestion, EPSS enrichment, and asset matching through backend POST endpoints.
+- The frontend role checks are only user experience hints; backend permissions remain authoritative.
+
+UI safety language:
+
+- Pages use defensive wording such as verify affected status, review vendor guidance, apply patch or mitigation, and review logs for suspicious activity.
+- The frontend does not call CISA or FIRST directly. Public data ingestion is performed only by the backend.
+
 ## Safety Boundaries
 
 ThreatBoard is limited to defensive prioritisation:
@@ -125,4 +149,4 @@ ThreatBoard is limited to defensive prioritisation:
 - Matching is conservative and based on vendor/product metadata.
 - EPSS enrichment is synchronous in the management command/API endpoint.
 - OSV, SBOM, dependency manifests, and scheduler automation are future work.
-- The frontend ThreatBoard dashboard is intentionally deferred to Prompt 5.
+- Remediation status editing and richer workflows are future work.

@@ -12,6 +12,12 @@ import { ModulePlaceholderPage } from "../features/modules/ModulePlaceholderPage
 import { ProcessingJobsPage } from "../features/processing-jobs/ProcessingJobsPage";
 import { RiskEventDetailPage } from "../features/risk-events/RiskEventDetailPage";
 import { RiskEventsPage } from "../features/risk-events/RiskEventsPage";
+import { AssetMatchDetailPage } from "../features/threatboard/AssetMatchDetailPage";
+import { AssetMatchesPage } from "../features/threatboard/AssetMatchesPage";
+import { IngestionRunsPage } from "../features/threatboard/IngestionRunsPage";
+import { ThreatBoardOverviewPage } from "../features/threatboard/ThreatBoardOverviewPage";
+import { VulnerabilitiesPage } from "../features/threatboard/VulnerabilitiesPage";
+import { VulnerabilityDetailPage } from "../features/threatboard/VulnerabilityDetailPage";
 import { ProtectedRoute } from "./ProtectedRoute";
 
 export function AppRouter() {
@@ -30,10 +36,15 @@ export function AppRouter() {
           <Route element={<IncidentsPage />} path="/incidents" />
           <Route element={<IncidentDetailPage />} path="/incidents/:id" />
           <Route element={<ProcessingJobsPage />} path="/processing-jobs" />
+          <Route element={<ThreatBoardOverviewPage />} path="/modules/threatboard" />
+          <Route element={<VulnerabilitiesPage />} path="/modules/threatboard/vulnerabilities" />
           <Route
-            element={<ModulePlaceholderPage moduleKey="threatboard" />}
-            path="/modules/threatboard"
+            element={<VulnerabilityDetailPage />}
+            path="/modules/threatboard/vulnerabilities/:id"
           />
+          <Route element={<AssetMatchesPage />} path="/modules/threatboard/matches" />
+          <Route element={<AssetMatchDetailPage />} path="/modules/threatboard/matches/:id" />
+          <Route element={<IngestionRunsPage />} path="/modules/threatboard/ingestion-runs" />
           <Route element={<ModulePlaceholderPage moduleKey="loglens" />} path="/modules/loglens" />
           <Route
             element={<ModulePlaceholderPage moduleKey="privacy-doctor" />}

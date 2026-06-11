@@ -32,6 +32,21 @@ function getTitle(pathname: string) {
   if (pathname.startsWith("/incidents/")) {
     return "Incident Detail";
   }
+  if (pathname.startsWith("/modules/threatboard/vulnerabilities/")) {
+    return "Vulnerability Detail";
+  }
+  if (pathname.startsWith("/modules/threatboard/vulnerabilities")) {
+    return "ThreatBoard Vulnerabilities";
+  }
+  if (pathname.startsWith("/modules/threatboard/matches/")) {
+    return "ThreatBoard Match Detail";
+  }
+  if (pathname.startsWith("/modules/threatboard/matches")) {
+    return "ThreatBoard Matches";
+  }
+  if (pathname.startsWith("/modules/threatboard/ingestion-runs")) {
+    return "ThreatBoard Ingestion Runs";
+  }
   return "Overview";
 }
 

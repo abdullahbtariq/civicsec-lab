@@ -40,7 +40,7 @@ All sample data in this repository is fictional.
 
 ## Current Status
 
-Early development. The repository currently contains the project foundation, core backend platform models and APIs, and an authenticated React platform shell connected to the backend.
+Early development. The repository currently contains the project foundation, core backend platform models and APIs, an authenticated React platform shell, and a ThreatBoard backend/frontend MVP connected to seeded demo data.
 
 ## Local Setup With Docker Compose
 
@@ -98,6 +98,14 @@ $env:VITE_API_BASE_URL = "http://localhost:8000"
 ```
 
 Run the backend at http://localhost:8000 and the frontend at http://localhost:5173.
+
+After `python manage.py seed_demo`, sign in through Django admin with the demo account and open:
+
+```text
+http://localhost:5173/modules/threatboard
+```
+
+ThreatBoard will show fictional Open Civic Aid vulnerabilities, asset matches, risk scoring explanations, and ingestion controls. Live KEV/EPSS ingestion actions require external network access through the backend.
 
 ## Development Checks
 
