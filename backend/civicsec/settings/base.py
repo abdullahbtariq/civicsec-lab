@@ -54,7 +54,7 @@ LOCAL_APPS = [
     "apps.incidents.apps.IncidentsConfig",
     "apps.threatboard.apps.ThreatboardConfig",
     "apps.loglens.apps.LogLensConfig",
-    "apps.privacy_doctor",  # placeholder — implemented in Phase 4
+    "apps.privacy_doctor.apps.PrivacyDoctorConfig",
     "apps.misinformation",  # placeholder — implemented in Phase 5
     "apps.auditlog.apps.AuditLogConfig",
     "apps.common.apps.CommonConfig",
