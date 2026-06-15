@@ -55,7 +55,7 @@ LOCAL_APPS = [
     "apps.threatboard.apps.ThreatboardConfig",
     "apps.loglens.apps.LogLensConfig",
     "apps.privacy_doctor.apps.PrivacyDoctorConfig",
-    "apps.misinformation",  # placeholder — implemented in Phase 5
+    "apps.misinformation.apps.MisinformationConfig",
     "apps.auditlog.apps.AuditLogConfig",
     "apps.common.apps.CommonConfig",
 ]
@@ -141,6 +141,7 @@ MEDIA_ROOT = ROOT_DIR / "media"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 REST_FRAMEWORK = {
+    # BrowsableAPIRenderer is dev-only; prod.py overrides this to JSONRenderer only.
     "DEFAULT_RENDERER_CLASSES": [
         "rest_framework.renderers.JSONRenderer",
         "rest_framework.renderers.BrowsableAPIRenderer",
@@ -150,6 +151,19 @@ REST_FRAMEWORK = {
         "rest_framework.parsers.FormParser",
         "rest_framework.parsers.MultiPartParser",
     ],
+    # All views must be authenticated unless they explicitly override.
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
+    # Throttle anonymous and authenticated requests globally.
+    "DEFAULT_THROTTLE_CLASSES": [
+        "rest_framework.throttling.AnonRateThrottle",
+        "rest_framework.throttling.UserRateThrottle",
+    ],
+    "DEFAULT_THROTTLE_RATES": {
+        "anon": "30/minute",
+        "user": "300/minute",
+    },
 }
 
 REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
