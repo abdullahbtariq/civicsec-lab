@@ -14,7 +14,6 @@ import { SeverityBadge } from "../../components/ui/SeverityBadge";
 import { StatusBadge } from "../../components/ui/StatusBadge";
 import { formatDateTime, formatLabel } from "../../lib/utils";
 import { getAssetMatch } from "./api";
-import { ThreatBoardHeader } from "./components/ThreatBoardHeader";
 import { ThreatBoardTabs } from "./components/ThreatBoardTabs";
 import type { AssetVulnerabilityMatch } from "./types";
 import { formatPercent } from "./utils";
@@ -60,10 +59,26 @@ export function AssetMatchDetailPage() {
 
   return (
     <div className="space-y-6">
-      <ThreatBoardHeader
-        subtitle={`${match.vulnerability.cve_id} matched to ${match.asset.name}`}
-        title="Asset Vulnerability Match"
-      />
+      <div>
+        <nav className="mb-1 text-xs text-civic-muted">
+          <Link to="/modules/threatboard" className="transition-colors hover:text-white">
+            ThreatBoard
+          </Link>
+          {" / "}
+          <Link to="/modules/threatboard/matches" className="transition-colors hover:text-white">
+            Asset Matches
+          </Link>
+          {" / "}{match.vulnerability.cve_id}
+        </nav>
+        <h1 className="font-display text-xl font-semibold text-white">
+          {match.vulnerability.cve_id} × {match.asset.name}
+        </h1>
+        <div className="mt-1.5 flex flex-wrap items-center gap-2">
+          <SeverityBadge severity={match.risk_band} />
+          <StatusBadge status={match.status} />
+          <RiskScoreBadge score={match.calculated_risk_score} />
+        </div>
+      </div>
       <ThreatBoardTabs />
 
       <section className="grid gap-5 xl:grid-cols-2">
@@ -146,9 +161,6 @@ export function AssetMatchDetailPage() {
                 </li>
               ))}
             </ol>
-            <p className="mt-4 text-sm text-civic-muted">
-              Remediation workflow will be added in a later prompt.
-            </p>
           </CardContent>
         </Card>
       </section>

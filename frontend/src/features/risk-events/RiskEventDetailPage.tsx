@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 import { Badge } from "../../components/ui/Badge";
-import { Button } from "../../components/ui/Button";
+import { ButtonLink } from "../../components/ui/Button";
 import { Card, CardContent, CardHeader } from "../../components/ui/Card";
 import { ConfidenceBadge } from "../../components/ui/ConfidenceBadge";
 import { EmptyState } from "../../components/ui/EmptyState";
@@ -35,24 +35,49 @@ export function RiskEventDetailPage() {
 
   return (
     <div className="space-y-5">
+      {/* Header */}
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <nav className="mb-1 text-xs text-civic-muted">
+            <Link to="/risk-events" className="transition-colors hover:text-white">
+              Risk Events
+            </Link>{" "}
+            / {riskEvent.title}
+          </nav>
+          <h1 className="font-display text-xl font-semibold text-white">{riskEvent.title}</h1>
+          <div className="mt-1.5 flex flex-wrap items-center gap-2">
+            <SeverityBadge severity={riskEvent.severity} />
+            <StatusBadge status={riskEvent.status} />
+            <ConfidenceBadge confidence={riskEvent.confidence} />
+            <RiskScoreBadge score={riskEvent.risk_score} />
+          </div>
+        </div>
+        <div className="flex shrink-0 gap-2">
+          <ButtonLink to="/incidents/new" variant="primary">
+            Create Incident
+          </ButtonLink>
+        </div>
+      </div>
+
+      {/* Overview metadata */}
       <Card>
-        <CardHeader description={riskEvent.summary || "No summary provided."} title={riskEvent.title} />
+        <CardHeader
+          description={riskEvent.summary || "No summary provided."}
+          title="Overview"
+        />
         <CardContent className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          <Detail label="Severity" value={<SeverityBadge severity={riskEvent.severity} />} />
-          <Detail label="Confidence" value={<ConfidenceBadge confidence={riskEvent.confidence} />} />
-          <Detail label="Status" value={<StatusBadge status={riskEvent.status} />} />
-          <Detail label="Risk score" value={<RiskScoreBadge score={riskEvent.risk_score} />} />
-          <Detail label="Source module" value={formatLabel(riskEvent.source_module)} />
-          <Detail label="Event type" value={formatLabel(riskEvent.event_type)} />
-          <Detail label="Affected asset" value={riskEvent.affected_asset_name || "Not set"} />
-          <Detail label="Affected user" value={riskEvent.affected_user_email || "Not set"} />
-          <Detail label="First seen" value={formatDateTime(riskEvent.first_seen_at)} />
-          <Detail label="Last seen" value={formatDateTime(riskEvent.last_seen_at)} />
-          <Detail label="Created" value={formatDateTime(riskEvent.created_at)} />
-          <Detail label="Updated" value={formatDateTime(riskEvent.updated_at)} />
+          <Detail label="Source module"    value={formatLabel(riskEvent.source_module)} />
+          <Detail label="Event type"       value={formatLabel(riskEvent.event_type)} />
+          <Detail label="Affected asset"   value={riskEvent.affected_asset_name || "Not set"} />
+          <Detail label="Affected user"    value={riskEvent.affected_user_email || "Not set"} />
+          <Detail label="First seen"       value={formatDateTime(riskEvent.first_seen_at)} />
+          <Detail label="Last seen"        value={formatDateTime(riskEvent.last_seen_at)} />
+          <Detail label="Created"          value={formatDateTime(riskEvent.created_at)} />
+          <Detail label="Updated"          value={formatDateTime(riskEvent.updated_at)} />
         </CardContent>
       </Card>
 
+      {/* Summaries */}
       <section className="grid gap-5 xl:grid-cols-2">
         <Card>
           <CardHeader title="Evidence Summary" />
@@ -63,7 +88,7 @@ export function RiskEventDetailPage() {
           </CardContent>
         </Card>
         <Card>
-          <CardHeader title="Recommended Action Summary" />
+          <CardHeader title="Recommended Action" />
           <CardContent>
             <p className="text-sm leading-6 text-civic-muted">
               {riskEvent.recommended_action_summary || "No action summary provided."}
@@ -72,6 +97,7 @@ export function RiskEventDetailPage() {
         </Card>
       </section>
 
+      {/* Evidence items */}
       <Card>
         <CardHeader title="Evidence Items" />
         <CardContent className="space-y-3">
@@ -98,8 +124,9 @@ export function RiskEventDetailPage() {
         </CardContent>
       </Card>
 
+      {/* Recommendations */}
       <Card>
-        <CardHeader title="Recommendations" />
+        <CardHeader title="Action Recommendations" />
         <CardContent className="space-y-3">
           {recommendations.isLoading ? <LoadingState label="Loading recommendations" /> : null}
           {recommendations.error ? <ErrorState message={recommendations.error} /> : null}
@@ -118,23 +145,25 @@ export function RiskEventDetailPage() {
               ))
             : !recommendations.isLoading && (
                 <EmptyState
-                  description="Recommended actions will appear here as risk events mature."
+                  description="Recommended actions will appear here as the risk event matures."
                   title="No recommendations"
                 />
               )}
         </CardContent>
       </Card>
 
+      {/* Frameworks & Tags */}
       <Card>
-        <CardHeader title="Frameworks And Tags" />
+        <CardHeader title="Frameworks & Tags" />
         <CardContent className="space-y-4">
+          {riskEvent.tags.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {riskEvent.tags.map((tag) => <Badge key={tag}>{tag}</Badge>)}
+            </div>
+          )}
           <pre className="overflow-auto rounded-lg border border-civic-line bg-[#111418] p-4 text-xs text-civic-muted">
             {JSON.stringify(riskEvent.mapped_frameworks, null, 2)}
           </pre>
-          <div className="flex flex-wrap gap-2">
-            {riskEvent.tags.length ? riskEvent.tags.map((tag) => <Badge key={tag}>{tag}</Badge>) : <Badge>No tags</Badge>}
-          </div>
-          <Button disabled>Incident creation workflow will be wired in a later prompt.</Button>
         </CardContent>
       </Card>
     </div>

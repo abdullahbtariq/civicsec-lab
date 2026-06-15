@@ -31,7 +31,7 @@ export function LoginPage() {
             <p className="text-sm font-semibold uppercase text-civic-teal">
               Public-interest security intelligence
             </p>
-            <h1 className="mt-3 text-4xl font-semibold text-white">CivicSec Lab</h1>
+            <h1 className="mt-3 font-display text-4xl font-semibold text-white">CivicSec Lab</h1>
             <p className="mt-4 max-w-xl text-lg leading-8 text-civic-muted">
               Cyber, data, and platform-risk intelligence for civic organisations.
             </p>

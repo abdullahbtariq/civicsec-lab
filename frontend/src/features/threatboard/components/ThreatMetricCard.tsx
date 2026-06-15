@@ -8,7 +8,7 @@ export function ThreatMetricCard({
   value,
   tone = "neutral",
   helper,
-  badgeLabel = "live data",
+  badgeLabel,
 }: {
   label: string;
   value: number;
@@ -19,11 +19,11 @@ export function ThreatMetricCard({
   return (
     <Card>
       <CardContent>
-        <div className="flex items-start justify-between gap-3">
+        <div className="flex flex-wrap items-start justify-between gap-2">
           <p className="text-sm text-civic-muted">{label}</p>
-          <Badge variant={tone}>{badgeLabel}</Badge>
+          {badgeLabel ? <Badge variant={tone}>{badgeLabel}</Badge> : null}
         </div>
-        <p className="mt-3 text-3xl font-semibold text-white">{value}</p>
+        <p className="mt-3 font-display text-3xl font-semibold text-white">{value}</p>
         {helper ? <div className="mt-3 text-xs leading-5 text-civic-muted">{helper}</div> : null}
       </CardContent>
     </Card>

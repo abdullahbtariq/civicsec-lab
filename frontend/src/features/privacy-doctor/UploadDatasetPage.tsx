@@ -1,6 +1,8 @@
 import { useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
+import { Button, ButtonLink } from "../../components/ui/Button";
+import { Card, CardContent, CardHeader } from "../../components/ui/Card";
 import { uploadDataset } from "./api";
 
 const MAX_FILE_BYTES = 10 * 1024 * 1024; // 10 MB
@@ -76,30 +78,30 @@ export function UploadDatasetPage() {
 
   const dropZoneClass = `relative flex flex-col items-center justify-center rounded-lg border-2 border-dashed p-10 text-center transition-colors cursor-pointer ${
     isDragging
-      ? "border-blue-500 bg-blue-950/20"
-      : "border-neutral-700 bg-neutral-900/40 hover:border-neutral-500"
+      ? "border-civic-teal bg-civic-teal/5"
+      : "border-civic-line bg-[#111418] hover:border-civic-teal/40"
   }`;
 
   return (
-    <div className="space-y-6 max-w-2xl">
+    <div className="max-w-2xl space-y-5">
       {/* Header */}
       <div>
-        <nav className="mb-1 text-xs text-neutral-500">
-          <Link to="/modules/privacy-doctor" className="hover:text-neutral-300">
+        <nav className="mb-1 text-xs text-civic-muted">
+          <Link to="/modules/privacy-doctor" className="transition-colors hover:text-white">
             DataPrivacy Doctor
           </Link>{" "}
           / Upload Dataset
         </nav>
-        <h1 className="text-xl font-semibold text-neutral-100">Upload Dataset</h1>
-        <p className="mt-0.5 text-sm text-neutral-400">
+        <h1 className="font-display text-xl font-semibold text-white">Upload Dataset</h1>
+        <p className="mt-0.5 text-sm text-civic-muted">
           Upload a CSV file for automated privacy analysis.
         </p>
       </div>
 
       {/* Privacy notice */}
-      <div className="rounded-lg border border-amber-800 bg-amber-950/20 px-4 py-3 text-xs text-amber-300 space-y-1">
+      <div className="rounded-lg border border-civic-amber/30 bg-civic-amber/5 px-4 py-3 text-xs text-civic-amber">
         <p className="font-semibold">Privacy notice</p>
-        <p>
+        <p className="mt-1">
           Only upload CSV files containing data your organisation is legally authorised to process.
           Do not upload files containing personal data unless you have a valid lawful basis. Choose{" "}
           <strong>Delete after processing</strong> unless you have a specific reason to retain the
@@ -108,36 +110,36 @@ export function UploadDatasetPage() {
       </div>
 
       {/* Format guide */}
-      <div className="rounded-lg border border-neutral-800 bg-neutral-900/50 p-4 space-y-2">
-        <h2 className="text-xs font-semibold uppercase tracking-wide text-neutral-400">
-          CSV Format Guide
-        </h2>
-        <div className="overflow-x-auto">
-          <table className="w-full text-xs text-neutral-400">
-            <thead className="border-b border-neutral-800 text-neutral-500">
-              <tr>
-                <th className="py-1.5 text-left pr-6">Requirement</th>
-                <th className="py-1.5 text-left">Details</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-neutral-800/60">
-              {[
-                ["Format", "Plain CSV (.csv), UTF-8 encoded"],
-                ["Header row", "Required — first row must be column names"],
-                ["Max file size", "10 MB"],
-                ["Max rows", "50,000 recommended"],
-                ["Delimiter", "Comma (,)"],
-                ["Quote character", 'Double-quote (") for values containing commas'],
-              ].map(([req, detail]) => (
-                <tr key={req}>
-                  <td className="py-1.5 pr-6 font-medium text-neutral-300">{req}</td>
-                  <td className="py-1.5">{detail}</td>
+      <Card>
+        <CardHeader title="CSV Format Guide" />
+        <CardContent>
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs text-civic-muted">
+              <thead className="border-b border-civic-line">
+                <tr>
+                  <th className="py-1.5 pr-6 text-left text-white">Requirement</th>
+                  <th className="py-1.5 text-left">Details</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+              </thead>
+              <tbody className="divide-y divide-civic-line/60">
+                {[
+                  ["Format", "Plain CSV (.csv), UTF-8 encoded"],
+                  ["Header row", "Required — first row must be column names"],
+                  ["Max file size", "10 MB"],
+                  ["Max rows", "50,000 recommended"],
+                  ["Delimiter", "Comma (,)"],
+                  ["Quote character", 'Double-quote (") for values containing commas'],
+                ].map(([req, detail]) => (
+                  <tr key={req}>
+                    <td className="py-1.5 pr-6 font-medium text-white">{req}</td>
+                    <td className="py-1.5">{detail}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Upload form */}
       <form onSubmit={(e) => void handleSubmit(e)} className="space-y-5">
@@ -161,9 +163,9 @@ export function UploadDatasetPage() {
             onChange={handleFileInput}
           />
           {file ? (
-            <div className="space-y-1">
-              <p className="text-sm font-medium text-neutral-100">{file.name}</p>
-              <p className="text-xs text-neutral-500">
+            <div className="space-y-1 text-center">
+              <p className="text-sm font-medium text-civic-teal">{file.name}</p>
+              <p className="text-xs text-civic-muted">
                 {file.size < 1024 * 1024
                   ? `${(file.size / 1024).toFixed(1)} KB`
                   : `${(file.size / (1024 * 1024)).toFixed(2)} MB`}
@@ -175,14 +177,14 @@ export function UploadDatasetPage() {
                   setFile(null);
                   if (fileInputRef.current) fileInputRef.current.value = "";
                 }}
-                className="text-xs text-rose-400 hover:text-rose-300"
+                className="text-xs text-civic-rose transition-colors hover:text-[#f5838e]"
               >
                 Remove
               </button>
             </div>
           ) : (
-            <div className="space-y-2">
-              <div className="mx-auto h-10 w-10 text-neutral-600">
+            <div className="space-y-2 text-center">
+              <div className="mx-auto h-10 w-10 text-civic-muted">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
                   <path
                     strokeLinecap="round"
@@ -191,17 +193,18 @@ export function UploadDatasetPage() {
                   />
                 </svg>
               </div>
-              <p className="text-sm text-neutral-300">
-                Drop CSV here or <span className="text-blue-400">browse</span>
+              <p className="text-sm text-white">
+                Drop CSV here or{" "}
+                <span className="text-civic-teal underline">browse</span>
               </p>
-              <p className="text-xs text-neutral-600">Max 10 MB · .csv only</p>
+              <p className="text-xs text-civic-muted">Max 10 MB · .csv only</p>
             </div>
           )}
         </div>
 
         {/* Retention policy */}
         <div className="space-y-2">
-          <label className="block text-xs font-semibold uppercase tracking-wide text-neutral-400">
+          <label className="block text-xs font-semibold uppercase tracking-wide text-civic-muted">
             Retention Policy
           </label>
           <div className="space-y-2">
@@ -210,8 +213,8 @@ export function UploadDatasetPage() {
                 key={opt.value}
                 className={`flex cursor-pointer items-start gap-3 rounded-lg border p-3 transition-colors ${
                   retentionPolicy === opt.value
-                    ? "border-blue-700 bg-blue-950/30"
-                    : "border-neutral-800 bg-neutral-900/40 hover:border-neutral-700"
+                    ? "border-civic-teal/50 bg-civic-teal/5"
+                    : "border-civic-line bg-[#111418] hover:border-civic-teal/20"
                 }`}
               >
                 <input
@@ -220,11 +223,11 @@ export function UploadDatasetPage() {
                   value={opt.value}
                   checked={retentionPolicy === opt.value}
                   onChange={() => setRetentionPolicy(opt.value)}
-                  className="mt-0.5 accent-blue-500"
+                  className="mt-0.5 accent-civic-teal"
                 />
                 <div>
-                  <p className="text-xs font-medium text-neutral-200">{opt.label}</p>
-                  <p className="mt-0.5 text-xs text-neutral-500">{opt.description}</p>
+                  <p className="text-xs font-medium text-white">{opt.label}</p>
+                  <p className="mt-0.5 text-xs text-civic-muted">{opt.description}</p>
                 </div>
               </label>
             ))}
@@ -232,25 +235,18 @@ export function UploadDatasetPage() {
         </div>
 
         {clientError && (
-          <div className="rounded-lg border border-rose-800 bg-rose-950/40 px-4 py-3 text-sm text-rose-300">
+          <div className="rounded-lg border border-civic-rose/30 bg-civic-rose/5 px-4 py-3 text-sm text-civic-rose">
             {clientError}
           </div>
         )}
 
         <div className="flex gap-3">
-          <button
-            type="submit"
-            disabled={isUploading || !file}
-            className="rounded-md bg-blue-700 px-4 py-2 text-sm font-medium text-white hover:bg-blue-600 disabled:opacity-50 transition-colors"
-          >
+          <Button type="submit" variant="primary" disabled={isUploading || !file}>
             {isUploading ? "Scanning…" : "Upload & Scan"}
-          </button>
-          <Link
-            to="/modules/privacy-doctor"
-            className="rounded-md border border-neutral-700 bg-neutral-800 px-4 py-2 text-sm font-medium text-neutral-200 hover:bg-neutral-700 transition-colors"
-          >
+          </Button>
+          <ButtonLink to="/modules/privacy-doctor" variant="secondary">
             Cancel
-          </Link>
+          </ButtonLink>
         </div>
       </form>
     </div>

@@ -25,7 +25,7 @@ export function CardHeader({
   return (
     <div className={cn("flex flex-col gap-3 border-b border-civic-line p-5 sm:flex-row sm:items-start sm:justify-between", className)}>
       <div>
-        <h2 className="text-lg font-semibold text-white">{title}</h2>
+        <h2 className="font-display text-lg font-semibold text-white">{title}</h2>
         {description ? <p className="mt-1 text-sm text-civic-muted">{description}</p> : null}
       </div>
       {action}

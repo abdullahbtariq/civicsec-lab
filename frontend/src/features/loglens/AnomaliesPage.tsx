@@ -1,6 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
+import { ErrorState } from "../../components/ui/ErrorState";
+import { Input } from "../../components/ui/Input";
+import { LoadingState } from "../../components/ui/LoadingState";
+import { Select } from "../../components/ui/Select";
 import { getAnomalies } from "./api";
 import { AnomalyTable } from "./components/AnomalyTable";
 import type { AnomalyParams, LoginAnomaly } from "./types";
@@ -58,51 +62,47 @@ export function AnomaliesPage() {
     setParams((prev) => ({ ...prev, [key]: value || undefined }));
   }
 
-  const selectClass =
-    "rounded-md border border-neutral-700 bg-neutral-900 px-3 py-1.5 text-xs text-neutral-200 focus:outline-none focus:ring-1 focus:ring-blue-600";
-
   return (
     <div className="space-y-5">
       <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <nav className="mb-1 text-xs text-neutral-500">
-            <Link to="/modules/loglens" className="hover:text-neutral-300">
+          <nav className="mb-1 text-xs text-civic-muted">
+            <Link to="/modules/loglens" className="transition-colors hover:text-white">
               LogLens
             </Link>{" "}
             / Anomalies
           </nav>
-          <h1 className="text-xl font-semibold text-neutral-100">Login Anomalies</h1>
-          <p className="mt-0.5 text-sm text-neutral-400">
+          <h1 className="font-display text-xl font-semibold text-white">Login Anomalies</h1>
+          <p className="mt-0.5 text-sm text-civic-muted">
             All detected anomaly patterns — review and triage.
           </p>
         </div>
       </div>
 
       {/* Filters */}
-      <div className="flex flex-wrap gap-3">
-        <select className={selectClass} onChange={(e) => setParam("anomaly_type", e.target.value)}>
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <Select onChange={(e) => setParam("anomaly_type", e.target.value)}>
           {ANOMALY_TYPES.map((t) => (
             <option key={t.value} value={t.value}>
               {t.label}
             </option>
           ))}
-        </select>
-        <select className={selectClass} onChange={(e) => setParam("severity", e.target.value)}>
+        </Select>
+        <Select onChange={(e) => setParam("severity", e.target.value)}>
           {SEVERITIES.map((s) => (
             <option key={s.value} value={s.value}>
               {s.label}
             </option>
           ))}
-        </select>
-        <select className={selectClass} onChange={(e) => setParam("status", e.target.value)}>
+        </Select>
+        <Select onChange={(e) => setParam("status", e.target.value)}>
           {STATUSES.map((s) => (
             <option key={s.value} value={s.value}>
               {s.label}
             </option>
           ))}
-        </select>
-        <input
-          className={selectClass}
+        </Select>
+        <Input
           placeholder="Filter by user…"
           type="text"
           onChange={(e) => setParam("user_identifier", e.target.value)}
@@ -110,19 +110,12 @@ export function AnomaliesPage() {
       </div>
 
       {/* Responsible-use note */}
-      <p className="text-xs text-neutral-600">
+      <p className="text-xs text-civic-muted">
         Outputs are decision-support signals. Human verification is required before escalation.
       </p>
 
-      {isLoading && (
-        <div className="py-8 text-center text-sm text-neutral-500">Loading anomalies…</div>
-      )}
-      {error && (
-        <div className="rounded-lg border border-rose-800 bg-rose-950/40 px-4 py-3 text-sm text-rose-300">
-          {error}
-        </div>
-      )}
-
+      {isLoading && <LoadingState label="Loading anomalies" />}
+      {error && <ErrorState message={error} />}
       {!isLoading && !error && <AnomalyTable anomalies={anomalies} />}
     </div>
   );

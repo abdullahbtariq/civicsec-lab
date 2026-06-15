@@ -1,6 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
+import { Button, ButtonLink } from "../../components/ui/Button";
+import { Card, CardContent, CardHeader } from "../../components/ui/Card";
+import { EmptyState } from "../../components/ui/EmptyState";
+import { ErrorState } from "../../components/ui/ErrorState";
+import { LoadingState } from "../../components/ui/LoadingState";
 import { useAuth } from "../../hooks/useAuth";
 import { deleteOriginalFile, downloadReport, getColumnProfiles, getDataset, getFindings } from "./api";
 import { DatasetStatusBadge } from "./components/DatasetStatusBadge";
@@ -13,9 +18,9 @@ type Tab = "summary" | "columns" | "findings";
 
 function InfoRow({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div className="flex items-start gap-2 py-2 text-sm border-b border-neutral-800 last:border-0">
-      <span className="w-48 shrink-0 text-xs text-neutral-500">{label}</span>
-      <span className="text-neutral-200">{children}</span>
+    <div className="flex items-start gap-2 border-b border-civic-line py-2 text-sm last:border-0">
+      <span className="w-48 shrink-0 text-xs text-civic-muted">{label}</span>
+      <span className="text-white">{children}</span>
     </div>
   );
 }
@@ -72,22 +77,12 @@ export function DatasetDetailPage() {
   const tabClass = (tab: Tab) =>
     `px-4 py-2 text-xs font-medium transition-colors ${
       activeTab === tab
-        ? "border-b-2 border-blue-500 text-blue-400"
-        : "text-neutral-500 hover:text-neutral-300"
+        ? "border-b-2 border-civic-teal text-civic-teal"
+        : "text-civic-muted hover:text-white"
     }`;
 
-  if (isLoading) {
-    return (
-      <div className="py-12 text-center text-sm text-neutral-500">Loading dataset…</div>
-    );
-  }
-  if (error || !dataset) {
-    return (
-      <div className="rounded-lg border border-rose-800 bg-rose-950/40 px-4 py-3 text-sm text-rose-300">
-        {error ?? "Dataset not found."}
-      </div>
-    );
-  }
+  if (isLoading) return <LoadingState label="Loading dataset" />;
+  if (error || !dataset) return <ErrorState message={error ?? "Dataset not found."} />;
 
   const isComplete = dataset.processing_status === "complete";
 
@@ -96,17 +91,20 @@ export function DatasetDetailPage() {
       {/* Breadcrumb + header */}
       <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <nav className="mb-1 text-xs text-neutral-500">
-            <Link to="/modules/privacy-doctor" className="hover:text-neutral-300">
+          <nav className="mb-1 text-xs text-civic-muted">
+            <Link to="/modules/privacy-doctor" className="transition-colors hover:text-white">
               DataPrivacy Doctor
             </Link>{" "}
             /{" "}
-            <Link to="/modules/privacy-doctor/datasets" className="hover:text-neutral-300">
+            <Link
+              to="/modules/privacy-doctor/datasets"
+              className="transition-colors hover:text-white"
+            >
               Datasets
             </Link>{" "}
             / {dataset.original_filename}
           </nav>
-          <h1 className="text-xl font-semibold text-neutral-100 break-all">
+          <h1 className="break-all font-display text-xl font-semibold text-white">
             {dataset.original_filename}
           </h1>
           <div className="mt-1.5 flex flex-wrap items-center gap-2">
@@ -123,36 +121,31 @@ export function DatasetDetailPage() {
         {/* Actions */}
         <div className="flex flex-wrap gap-2 self-start">
           {isComplete && (
-            <button
-              onClick={() =>
-                downloadReport(dataset.id, `privacy-report-${dataset.id}.md`)
-              }
-              className="rounded-md border border-neutral-700 bg-neutral-800 px-3 py-1.5 text-xs font-medium text-neutral-200 hover:bg-neutral-700 transition-colors"
+            <Button
+              variant="secondary"
+              onClick={() => downloadReport(dataset.id, `privacy-report-${dataset.id}.md`)}
             >
               Download Report
-            </button>
+            </Button>
           )}
           {canAct && !dataset.original_file_deleted && (
-            <button
-              onClick={() => void handleDeleteFile()}
-              className="rounded-md border border-rose-800 bg-rose-950/40 px-3 py-1.5 text-xs font-medium text-rose-300 hover:bg-rose-900/40 transition-colors"
-            >
+            <Button variant="danger" onClick={() => void handleDeleteFile()}>
               Delete Original File
-            </button>
+            </Button>
           )}
           {dataset.risk_event && (
-            <Link
+            <ButtonLink
               to={`/risk-events/${dataset.risk_event}`}
-              className="rounded-md border border-amber-800 bg-amber-950/40 px-3 py-1.5 text-xs font-medium text-amber-300 hover:bg-amber-900/40 transition-colors"
+              variant="secondary"
             >
               View Risk Event
-            </Link>
+            </ButtonLink>
           )}
         </div>
       </div>
 
       {deleteMsg && (
-        <div className="rounded-lg border border-neutral-700 bg-neutral-900/60 px-4 py-2 text-xs text-neutral-400">
+        <div className="rounded-lg border border-civic-line bg-[#14181d] px-4 py-2 text-xs text-civic-muted">
           {deleteMsg}
         </div>
       )}
@@ -165,40 +158,40 @@ export function DatasetDetailPage() {
           { label: "Findings", value: dataset.finding_count },
           { label: "Risk Score", value: `${dataset.privacy_risk_score}/100` },
         ].map(({ label, value }) => (
-          <div key={label} className="rounded-lg border border-neutral-700 bg-neutral-900 p-3">
-            <p className="text-xs uppercase tracking-wide text-neutral-500">{label}</p>
-            <p className="mt-1 text-xl font-bold tabular-nums text-neutral-100">{value}</p>
+          <div key={label} className="rounded-lg border border-civic-line bg-[#14181d] p-3">
+            <p className="text-xs uppercase tracking-wide text-civic-muted">{label}</p>
+            <p className="mt-1 text-xl font-bold tabular-nums text-white">{value}</p>
           </div>
         ))}
       </div>
 
       {/* Identifier counts */}
       <div className="grid gap-3 sm:grid-cols-3">
-        <div className="rounded-lg border border-rose-800 bg-rose-950/30 p-3">
-          <p className="text-xs uppercase tracking-wide text-rose-400">Direct Identifiers</p>
-          <p className="mt-1 text-xl font-bold tabular-nums text-rose-300">
+        <div className="rounded-lg border border-civic-rose/30 bg-civic-rose/5 p-3">
+          <p className="text-xs uppercase tracking-wide text-civic-rose">Direct Identifiers</p>
+          <p className="mt-1 text-xl font-bold tabular-nums text-civic-rose">
             {dataset.direct_identifier_count}
           </p>
-          <p className="mt-0.5 text-xs text-neutral-500">columns</p>
+          <p className="mt-0.5 text-xs text-civic-muted">columns</p>
         </div>
-        <div className="rounded-lg border border-amber-800 bg-amber-950/30 p-3">
-          <p className="text-xs uppercase tracking-wide text-amber-400">Quasi-Identifiers</p>
-          <p className="mt-1 text-xl font-bold tabular-nums text-amber-300">
+        <div className="rounded-lg border border-civic-amber/30 bg-civic-amber/5 p-3">
+          <p className="text-xs uppercase tracking-wide text-civic-amber">Quasi-Identifiers</p>
+          <p className="mt-1 text-xl font-bold tabular-nums text-civic-amber">
             {dataset.quasi_identifier_count}
           </p>
-          <p className="mt-0.5 text-xs text-neutral-500">columns</p>
+          <p className="mt-0.5 text-xs text-civic-muted">columns</p>
         </div>
-        <div className="rounded-lg border border-purple-800 bg-purple-950/30 p-3">
-          <p className="text-xs uppercase tracking-wide text-purple-400">Sensitive Attributes</p>
-          <p className="mt-1 text-xl font-bold tabular-nums text-purple-300">
+        <div className="rounded-lg border border-civic-blue/30 bg-civic-blue/5 p-3">
+          <p className="text-xs uppercase tracking-wide text-civic-blue">Sensitive Attributes</p>
+          <p className="mt-1 text-xl font-bold tabular-nums text-civic-blue">
             {dataset.sensitive_attribute_count}
           </p>
-          <p className="mt-0.5 text-xs text-neutral-500">columns</p>
+          <p className="mt-0.5 text-xs text-civic-muted">columns</p>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="border-b border-neutral-800">
+      <div className="border-b border-civic-line">
         <div className="flex gap-0">
           <button className={tabClass("summary")} onClick={() => setActiveTab("summary")}>
             Summary
@@ -214,51 +207,55 @@ export function DatasetDetailPage() {
 
       {/* Tab: Summary */}
       {activeTab === "summary" && (
-        <div className="rounded-lg border border-neutral-800 bg-neutral-900/50 divide-y divide-neutral-800">
-          <InfoRow label="File name">{dataset.original_filename}</InfoRow>
-          <InfoRow label="File size">
-            {dataset.file_size > 0
-              ? dataset.file_size < 1024 * 1024
-                ? `${(dataset.file_size / 1024).toFixed(1)} KB`
-                : `${(dataset.file_size / (1024 * 1024)).toFixed(2)} MB`
-              : "—"}
-          </InfoRow>
-          <InfoRow label="Retention policy">{dataset.retention_policy.replace(/_/g, " ")}</InfoRow>
-          <InfoRow label="Original file">
-            {dataset.original_file_deleted ? (
-              <span className="text-green-400">Deleted ✓</span>
-            ) : (
-              <span className="text-amber-400">Retained</span>
-            )}
-          </InfoRow>
-          <InfoRow label="Uploaded">
-            {new Date(dataset.uploaded_at).toLocaleString()}
-          </InfoRow>
-          <InfoRow label="Scanned">
-            {dataset.processed_at ? new Date(dataset.processed_at).toLocaleString() : "—"}
-          </InfoRow>
-          {dataset.risk_event && (
-            <InfoRow label="Risk event">
-              <Link
-                to={`/risk-events/${dataset.risk_event}`}
-                className="text-blue-400 hover:text-blue-300"
-              >
-                #{dataset.risk_event}
-              </Link>
+        <Card>
+          <CardContent className="divide-y divide-civic-line">
+            <InfoRow label="File name">{dataset.original_filename}</InfoRow>
+            <InfoRow label="File size">
+              {dataset.file_size > 0
+                ? dataset.file_size < 1024 * 1024
+                  ? `${(dataset.file_size / 1024).toFixed(1)} KB`
+                  : `${(dataset.file_size / (1024 * 1024)).toFixed(2)} MB`
+                : "—"}
             </InfoRow>
-          )}
-        </div>
+            <InfoRow label="Retention policy">
+              {dataset.retention_policy.replace(/_/g, " ")}
+            </InfoRow>
+            <InfoRow label="Original file">
+              {dataset.original_file_deleted ? (
+                <span className="text-civic-teal">Deleted ✓</span>
+              ) : (
+                <span className="text-civic-amber">Retained</span>
+              )}
+            </InfoRow>
+            <InfoRow label="Uploaded">
+              {new Date(dataset.uploaded_at).toLocaleString()}
+            </InfoRow>
+            <InfoRow label="Scanned">
+              {dataset.processed_at ? new Date(dataset.processed_at).toLocaleString() : "—"}
+            </InfoRow>
+            {dataset.risk_event && (
+              <InfoRow label="Risk event">
+                <Link
+                  to={`/risk-events/${dataset.risk_event}`}
+                  className="text-civic-teal hover:underline"
+                >
+                  #{dataset.risk_event}
+                </Link>
+              </InfoRow>
+            )}
+          </CardContent>
+        </Card>
       )}
 
       {/* Tab: Column profiles */}
       {activeTab === "columns" && (
         <>
           {profiles.length === 0 ? (
-            <p className="text-sm text-neutral-500">No column profiles yet.</p>
+            <EmptyState title="No column profiles yet" description="Run a scan to generate column-level privacy profiles." />
           ) : (
-            <div className="overflow-x-auto rounded-lg border border-neutral-800">
+            <div className="overflow-x-auto rounded-lg border border-civic-line">
               <table className="w-full text-sm">
-                <thead className="border-b border-neutral-800 bg-neutral-900/80 text-xs uppercase tracking-wide text-neutral-500">
+                <thead className="border-b border-civic-line bg-[#111418] text-xs uppercase tracking-wide text-civic-muted">
                   <tr>
                     <th className="px-4 py-2 text-left">Column</th>
                     <th className="px-4 py-2 text-left">Type</th>
@@ -268,13 +265,13 @@ export function DatasetDetailPage() {
                     <th className="px-4 py-2 text-left">Recommendation</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-neutral-800 bg-neutral-950">
+                <tbody className="divide-y divide-civic-line bg-civic-panel">
                   {profiles.map((p) => (
-                    <tr key={p.id} className="hover:bg-neutral-900/40">
-                      <td className="px-4 py-2.5 font-mono text-xs text-neutral-200">
+                    <tr key={p.id} className="transition-colors hover:bg-[#20252b]">
+                      <td className="px-4 py-2.5 font-mono text-xs text-white">
                         {p.column_name}
                       </td>
-                      <td className="px-4 py-2.5 text-xs text-neutral-400">
+                      <td className="px-4 py-2.5 text-xs text-civic-muted">
                         {p.inferred_type_display}
                       </td>
                       <td className="px-4 py-2.5">
@@ -283,23 +280,23 @@ export function DatasetDetailPage() {
                           label={p.privacy_category_display}
                         />
                       </td>
-                      <td className="px-4 py-2.5 text-right tabular-nums text-xs text-neutral-400">
+                      <td className="px-4 py-2.5 text-right tabular-nums text-xs text-civic-muted">
                         {(p.uniqueness_ratio * 100).toFixed(0)}%
                       </td>
-                      <td className="px-4 py-2.5 text-right tabular-nums font-semibold text-xs">
+                      <td className="px-4 py-2.5 text-right tabular-nums text-xs font-semibold">
                         <span
                           className={
                             p.risk_score >= 70
-                              ? "text-rose-300"
+                              ? "text-civic-rose"
                               : p.risk_score >= 40
-                                ? "text-amber-300"
-                                : "text-neutral-400"
+                                ? "text-civic-amber"
+                                : "text-civic-muted"
                           }
                         >
                           {p.risk_score}
                         </span>
                       </td>
-                      <td className="px-4 py-2.5 text-xs text-neutral-500">
+                      <td className="px-4 py-2.5 text-xs text-civic-muted">
                         {p.recommended_transformation || "—"}
                       </td>
                     </tr>
@@ -315,33 +312,31 @@ export function DatasetDetailPage() {
       {activeTab === "findings" && (
         <>
           {findings.length === 0 ? (
-            <div className="rounded-lg border border-dashed border-neutral-800 py-10 text-center">
-              <p className="text-sm text-neutral-500">No privacy findings detected.</p>
-            </div>
+            <EmptyState title="No privacy findings detected" description="No significant privacy risks were identified in this dataset." />
           ) : (
             <div className="space-y-3">
               {findings.map((f) => (
                 <div
                   key={f.id}
-                  className="rounded-lg border border-neutral-800 bg-neutral-900/50 p-4 space-y-2"
+                  className="space-y-2 rounded-lg border border-civic-line bg-[#14181d]/60 p-4"
                 >
                   <div className="flex flex-wrap items-center gap-2">
                     <FindingSeverityBadge severity={f.severity} label={f.severity_display} />
-                    <span className="text-sm font-semibold text-neutral-100">{f.title}</span>
-                    <span className="text-xs text-neutral-600">
+                    <span className="text-sm font-semibold text-white">{f.title}</span>
+                    <span className="text-xs text-civic-muted">
                       {(f.confidence * 100).toFixed(0)}% confidence
                     </span>
                   </div>
-                  <p className="text-xs text-neutral-400">{f.description}</p>
+                  <p className="text-xs text-civic-muted">{f.description}</p>
                   {f.affected_columns.length > 0 && (
-                    <p className="text-xs text-neutral-500">
-                      <span className="text-neutral-400 font-medium">Affected columns: </span>
+                    <p className="text-xs text-civic-muted">
+                      <span className="font-medium text-white">Affected columns: </span>
                       {f.affected_columns.join(", ")}
                     </p>
                   )}
-                  <div className="rounded border border-neutral-700 bg-neutral-950/60 px-3 py-2">
-                    <p className="text-xs text-neutral-500">
-                      <span className="font-medium text-neutral-400">Recommendation: </span>
+                  <div className="rounded border border-civic-line bg-[#111418] px-3 py-2">
+                    <p className="text-xs text-civic-muted">
+                      <span className="font-medium text-white">Recommendation: </span>
                       {f.recommendation}
                     </p>
                   </div>
@@ -353,7 +348,7 @@ export function DatasetDetailPage() {
       )}
 
       {/* Responsible-use footer */}
-      <div className="rounded-lg border border-neutral-800 bg-neutral-900/30 px-4 py-3 text-xs text-neutral-600">
+      <div className="rounded-lg border border-civic-line bg-[#14181d]/40 px-4 py-3 text-xs text-civic-muted">
         Automated analysis only. All findings require verification by a qualified data protection
         officer. This tool does not constitute legal advice.
       </div>

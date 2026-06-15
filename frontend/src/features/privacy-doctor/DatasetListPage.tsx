@@ -1,6 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
+import { ButtonLink } from "../../components/ui/Button";
+import { EmptyState } from "../../components/ui/EmptyState";
+import { ErrorState } from "../../components/ui/ErrorState";
+import { LoadingState } from "../../components/ui/LoadingState";
+import { Select } from "../../components/ui/Select";
 import { getDatasets } from "./api";
 import { DatasetStatusBadge } from "./components/DatasetStatusBadge";
 import { RiskBandBadge } from "./components/RiskBandBadge";
@@ -54,81 +59,71 @@ export function DatasetListPage() {
     setParams((prev) => ({ ...prev, [key]: value || undefined }));
   }
 
-  const selectClass =
-    "rounded-md border border-neutral-700 bg-neutral-900 px-3 py-1.5 text-xs text-neutral-200 focus:outline-none focus:ring-1 focus:ring-blue-600";
-
   return (
     <div className="space-y-5">
       <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <nav className="mb-1 text-xs text-neutral-500">
-            <Link to="/modules/privacy-doctor" className="hover:text-neutral-300">
+          <nav className="mb-1 text-xs text-civic-muted">
+            <Link to="/modules/privacy-doctor" className="transition-colors hover:text-white">
               DataPrivacy Doctor
             </Link>{" "}
             / Datasets
           </nav>
-          <h1 className="text-xl font-semibold text-neutral-100">Datasets</h1>
-          <p className="mt-0.5 text-sm text-neutral-400">All scanned CSV datasets for your organisation.</p>
+          <h1 className="font-display text-xl font-semibold text-white">Datasets</h1>
+          <p className="mt-0.5 text-sm text-civic-muted">
+            All scanned CSV datasets for your organisation.
+          </p>
         </div>
-        <Link
+        <ButtonLink
           to="/modules/privacy-doctor/upload"
-          className="rounded-md bg-blue-700 px-3 py-1.5 text-xs font-medium text-white hover:bg-blue-600 transition-colors self-start"
+          variant="primary"
+          className="self-start"
         >
           Upload Dataset
-        </Link>
+        </ButtonLink>
       </div>
 
       {/* Filters */}
       <div className="flex flex-wrap gap-3">
-        <select className={selectClass} onChange={(e) => setParam("risk_band", e.target.value)}>
+        <Select onChange={(e) => setParam("risk_band", e.target.value)}>
           {RISK_BANDS.map((b) => (
             <option key={b.value} value={b.value}>
               {b.label}
             </option>
           ))}
-        </select>
-        <select
-          className={selectClass}
-          onChange={(e) => setParam("processing_status", e.target.value)}
-        >
+        </Select>
+        <Select onChange={(e) => setParam("processing_status", e.target.value)}>
           {STATUSES.map((s) => (
             <option key={s.value} value={s.value}>
               {s.label}
             </option>
           ))}
-        </select>
+        </Select>
       </div>
 
-      <p className="text-xs text-neutral-600">
+      <p className="text-xs text-civic-muted">
         Outputs are automated heuristics. Human review is required before taking compliance action.
       </p>
 
-      {isLoading && (
-        <div className="py-8 text-center text-sm text-neutral-500">Loading datasets…</div>
-      )}
-      {error && (
-        <div className="rounded-lg border border-rose-800 bg-rose-950/40 px-4 py-3 text-sm text-rose-300">
-          {error}
-        </div>
-      )}
+      {isLoading && <LoadingState label="Loading datasets" />}
+      {error && <ErrorState message={error} />}
 
       {!isLoading && !error && datasets.length === 0 && (
-        <div className="rounded-lg border border-dashed border-neutral-800 py-16 text-center">
-          <p className="text-sm text-neutral-500">No datasets found.</p>
-          <p className="mt-2 text-xs text-neutral-600">
-            Try adjusting the filters or{" "}
-            <Link to="/modules/privacy-doctor/upload" className="text-blue-400 hover:text-blue-300">
-              upload a CSV
+        <EmptyState
+          title="No datasets found"
+          description="Try adjusting the filters or upload a CSV to get started."
+          action={
+            <Link to="/modules/privacy-doctor/upload" className="text-sm text-civic-teal hover:underline">
+              Upload a CSV →
             </Link>
-            .
-          </p>
-        </div>
+          }
+        />
       )}
 
       {!isLoading && !error && datasets.length > 0 && (
-        <div className="overflow-x-auto rounded-lg border border-neutral-800">
+        <div className="overflow-x-auto rounded-lg border border-civic-line">
           <table className="w-full text-sm">
-            <thead className="border-b border-neutral-800 bg-neutral-900/80 text-xs uppercase tracking-wide text-neutral-500">
+            <thead className="border-b border-civic-line bg-[#111418] text-xs uppercase tracking-wide text-civic-muted">
               <tr>
                 <th className="px-4 py-2 text-left">File</th>
                 <th className="px-4 py-2 text-right">Size</th>
@@ -140,31 +135,31 @@ export function DatasetListPage() {
                 <th className="px-4 py-2 text-right">Uploaded</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-neutral-800 bg-neutral-950">
+            <tbody className="divide-y divide-civic-line bg-civic-panel">
               {datasets.map((ds) => (
-                <tr key={ds.id} className="hover:bg-neutral-900/60 transition-colors">
+                <tr key={ds.id} className="transition-colors hover:bg-[#20252b]">
                   <td className="px-4 py-2.5">
                     <Link
                       to={`/modules/privacy-doctor/datasets/${ds.id}`}
-                      className="font-medium text-neutral-200 hover:text-blue-300 transition-colors"
+                      className="font-medium text-white transition-colors hover:text-civic-teal"
                     >
                       {ds.original_filename}
                     </Link>
                   </td>
-                  <td className="px-4 py-2.5 text-right tabular-nums text-neutral-500 text-xs">
+                  <td className="px-4 py-2.5 text-right tabular-nums text-xs text-civic-muted">
                     {formatBytes(ds.file_size)}
                   </td>
-                  <td className="px-4 py-2.5 text-right tabular-nums text-neutral-400">
+                  <td className="px-4 py-2.5 text-right tabular-nums text-civic-muted">
                     {ds.row_count.toLocaleString()}
                   </td>
-                  <td className="px-4 py-2.5 text-right tabular-nums text-neutral-400">
+                  <td className="px-4 py-2.5 text-right tabular-nums text-civic-muted">
                     {ds.column_count}
                   </td>
                   <td className="px-4 py-2.5 text-center">
                     {ds.risk_band ? (
                       <RiskBandBadge band={ds.risk_band} score={ds.privacy_risk_score} />
                     ) : (
-                      <span className="text-neutral-600">—</span>
+                      <span className="text-civic-muted">—</span>
                     )}
                   </td>
                   <td className="px-4 py-2.5 text-center">
@@ -173,10 +168,10 @@ export function DatasetListPage() {
                       label={ds.processing_status_display}
                     />
                   </td>
-                  <td className="px-4 py-2.5 text-right tabular-nums text-neutral-400">
+                  <td className="px-4 py-2.5 text-right tabular-nums text-civic-muted">
                     {ds.finding_count}
                   </td>
-                  <td className="px-4 py-2.5 text-right text-xs text-neutral-500">
+                  <td className="px-4 py-2.5 text-right text-xs text-civic-muted">
                     {new Date(ds.uploaded_at).toLocaleDateString()}
                   </td>
                 </tr>

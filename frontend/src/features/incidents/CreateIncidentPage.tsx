@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { Button, ButtonLink } from "../../components/ui/Button";
 import { Card, CardContent, CardHeader } from "../../components/ui/Card";
@@ -60,12 +60,12 @@ export function CreateIncidentPage() {
     <div className="max-w-2xl space-y-5">
       <div>
         <nav className="mb-1 text-xs text-civic-muted">
-          <ButtonLink to="/modules/incidentflow" variant="ghost" className="px-0 text-xs min-h-0 py-0 h-auto">
+          <Link to="/modules/incidentflow" className="transition-colors hover:text-white">
             IncidentFlow
-          </ButtonLink>{" "}
+          </Link>{" "}
           / New Incident
         </nav>
-        <h1 className="text-xl font-semibold text-white">Create Incident</h1>
+        <h1 className="font-display text-xl font-semibold text-white">Create Incident</h1>
         <p className="mt-0.5 text-sm text-civic-muted">
           Open a new structured response record.
         </p>

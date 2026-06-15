@@ -25,21 +25,21 @@ function StatCard({
   const toneMap = {
     neutral: "border-civic-line bg-[#14181d]",
     rose: "border-civic-rose/40 bg-civic-rose/10",
-    amber: "border-amber-700/40 bg-amber-950/30",
-    green: "border-green-800/40 bg-green-950/30",
-    blue: "border-blue-700/40 bg-blue-950/30",
+    amber: "border-civic-amber/30 bg-civic-amber/5",
+    green: "border-civic-teal/30 bg-civic-teal/5",
+    blue: "border-civic-blue/30 bg-civic-blue/5",
   };
   const valueMap = {
     neutral: "text-white",
     rose: "text-civic-rose",
-    amber: "text-amber-300",
-    green: "text-green-300",
-    blue: "text-blue-300",
+    amber: "text-civic-amber",
+    green: "text-civic-teal",
+    blue: "text-civic-blue",
   };
   return (
     <div className={`rounded-lg border p-4 ${toneMap[tone]}`}>
       <p className="text-xs font-medium uppercase tracking-wide text-civic-muted">{label}</p>
-      <p className={`mt-2 text-3xl font-bold tabular-nums ${valueMap[tone]}`}>{value}</p>
+      <p className={`mt-2 font-display text-3xl font-bold tabular-nums ${valueMap[tone]}`}>{value}</p>
     </div>
   );
 }
@@ -76,7 +76,7 @@ export function IncidentFlowOverviewPage() {
       {/* Header */}
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-xl font-semibold text-white">IncidentFlow</h1>
+          <h1 className="font-display text-xl font-semibold text-white">IncidentFlow</h1>
           <p className="mt-0.5 text-sm text-civic-muted">
             Structured incident response — playbooks, task checklists, and report-ready timelines.
           </p>
@@ -143,7 +143,7 @@ export function IncidentFlowOverviewPage() {
                 </thead>
                 <tbody className="divide-y divide-civic-line">
                   {recent.map((inc) => (
-                    <tr key={inc.id} className="hover:bg-[#1a1f26] transition-colors">
+                    <tr key={inc.id} className="transition-colors hover:bg-[#20252b]">
                       <td className="px-3 py-2.5">
                         <Link
                           to={`/incidents/${inc.id}`}
@@ -161,7 +161,7 @@ export function IncidentFlowOverviewPage() {
                       <td className="px-3 py-2.5">
                         <StatusBadge status={inc.status} />
                       </td>
-                      <td className="px-3 py-2.5 text-xs text-civic-muted">
+                      <td className="whitespace-nowrap px-3 py-2.5 text-xs text-civic-muted">
                         {formatDateTime(inc.updated_at)}
                       </td>
                     </tr>
