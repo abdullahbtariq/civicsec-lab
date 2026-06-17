@@ -36,6 +36,14 @@ export function getVulnerabilities(params?: VulnerabilityParams) {
   return getList<Vulnerability>(`/api/threatboard/vulnerabilities/${queryString(params)}`);
 }
 
+/** Catalogue fetch that preserves the paginated envelope (count/next/previous). */
+export function getVulnerabilitiesPage(params?: VulnerabilityParams, signal?: AbortSignal) {
+  return api.get<PaginatedResponse<Vulnerability>>(
+    `/api/threatboard/vulnerabilities/${queryString(params)}`,
+    signal ? { signal } : undefined,
+  );
+}
+
 export function getVulnerability(id: string | number) {
   return api.get<Vulnerability>(`/api/threatboard/vulnerabilities/${id}/`);
 }

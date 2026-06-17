@@ -43,9 +43,9 @@ const STATUSES = ["open", "investigating", "contained", "resolved", "closed", "d
 
 function Detail({ label, value }: { label: string; value: ReactNode }) {
   return (
-    <div className="rounded-lg border border-civic-line bg-[#14181d] p-4">
-      <p className="text-xs uppercase text-civic-muted">{label}</p>
-      <div className="mt-2 text-sm font-medium text-white">{value}</div>
+    <div className="rounded-lg border border-paper-line bg-paper-card p-4">
+      <p className="text-xs uppercase text-ink-soft">{label}</p>
+      <div className="mt-2 text-sm font-medium text-ink">{value}</div>
     </div>
   );
 }
@@ -66,8 +66,8 @@ function TaskRow({
     <div
       className={`flex items-start gap-3 rounded-lg border px-4 py-3 transition-colors ${
         isDone
-          ? "border-civic-line/40 bg-[#111418]/60 opacity-60"
-          : "border-civic-line bg-[#14181d]"
+          ? "border-paper-line/40 bg-paper/60 opacity-60"
+          : "border-paper-line bg-paper-card"
       }`}
     >
       {canAct ? (
@@ -75,8 +75,8 @@ function TaskRow({
           onClick={() => onToggle(task)}
           className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 transition-colors ${
             isDone
-              ? "border-civic-teal bg-civic-teal text-[#091311]"
-              : "border-civic-line hover:border-civic-teal"
+              ? "border-civic-teal bg-civic-teal text-white"
+              : "border-paper-line hover:border-civic-teal"
           }`}
           title={isDone ? "Mark as pending" : "Mark as done"}
         >
@@ -95,33 +95,33 @@ function TaskRow({
       ) : (
         <div
           className={`mt-0.5 h-5 w-5 shrink-0 rounded border-2 ${
-            isDone ? "border-civic-teal bg-civic-teal" : "border-civic-line"
+            isDone ? "border-civic-teal bg-civic-teal" : "border-paper-line"
           }`}
         />
       )}
 
       <div className="min-w-0 flex-1">
         <p
-          className={`text-sm font-medium ${isDone ? "line-through text-civic-muted" : "text-white"}`}
+          className={`text-sm font-medium ${isDone ? "line-through text-ink-soft" : "text-ink"}`}
         >
           {task.title}
         </p>
         {task.description && (
-          <p className="mt-0.5 text-xs text-civic-muted">{task.description}</p>
+          <p className="mt-0.5 text-xs text-ink-soft">{task.description}</p>
         )}
         {task.assignee_email && (
-          <p className="mt-1 text-xs text-civic-muted">{task.assignee_email}</p>
+          <p className="mt-1 text-xs text-ink-soft">{task.assignee_email}</p>
         )}
       </div>
 
       <div className="flex shrink-0 items-center gap-2">
-        <Badge variant={isDone ? "teal" : task.status === "in_progress" ? "blue" : "neutral"}>
+        <Badge variant={isDone ? "sage" : task.status === "in_progress" ? "blue" : "neutral"}>
           {task.status_display}
         </Badge>
         {canAct && (
           <button
             onClick={() => onDelete(task)}
-            className="text-xs text-civic-muted transition-colors hover:text-civic-rose"
+            className="text-xs text-ink-soft transition-colors hover:text-rose-ink"
             title="Delete task"
           >
             ✕
@@ -288,17 +288,17 @@ export function IncidentDetailPage() {
       {/* Header */}
       <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <nav className="mb-1 text-xs text-civic-muted">
-            <Link to="/modules/incidentflow" className="transition-colors hover:text-white">
+          <nav className="mb-1 text-xs text-ink-soft">
+            <Link to="/modules/incidentflow" className="transition-colors hover:text-ink">
               IncidentFlow
             </Link>{" "}
             /{" "}
-            <Link to="/incidents" className="transition-colors hover:text-white">
+            <Link to="/incidents" className="transition-colors hover:text-ink">
               Incidents
             </Link>{" "}
             / {incident.title}
           </nav>
-          <h1 className="font-display text-xl font-semibold text-white">{incident.title}</h1>
+          <h1 className="font-display text-xl font-semibold text-ink">{incident.title}</h1>
         </div>
         <Button
           variant="secondary"
@@ -312,12 +312,12 @@ export function IncidentDetailPage() {
 
       {/* Action feedback */}
       {actionMsg && (
-        <div className="rounded-lg border border-civic-teal/30 bg-civic-teal/5 px-4 py-2 text-xs text-civic-teal">
+        <div className="rounded-lg border border-civic-teal/30 bg-civic-teal/5 px-4 py-2 text-xs text-orange-ink">
           {actionMsg}
         </div>
       )}
       {actionError && (
-        <div className="rounded-lg border border-civic-rose/40 bg-civic-rose/10 px-4 py-2 text-xs text-civic-rose">
+        <div className="rounded-lg border border-civic-rose/40 bg-civic-rose/10 px-4 py-2 text-xs text-rose-ink">
           {actionError}
         </div>
       )}
@@ -448,7 +448,7 @@ export function IncidentDetailPage() {
           )}
 
           {canAct && (
-            <div className="flex gap-2 border-t border-civic-line pt-2">
+            <div className="flex gap-2 border-t border-paper-line pt-2">
               <Input
                 placeholder="Add a task…"
                 value={newTaskTitle}
@@ -480,22 +480,22 @@ export function IncidentDetailPage() {
             {timelineEntries.length > 0
               ? timelineEntries.map((entry) => (
                   <div
-                    className="rounded-lg border border-civic-line bg-[#14181d] p-4"
+                    className="rounded-lg border border-paper-line bg-paper-card p-4"
                     key={entry.id}
                   >
                     <div className="flex flex-wrap items-center gap-2">
                       <Badge variant="blue">{formatLabel(entry.entry_type)}</Badge>
-                      <span className="text-xs text-civic-muted">
+                      <span className="text-xs text-ink-soft">
                         {formatDateTime(entry.timestamp)}
                       </span>
                     </div>
-                    <p className="mt-2 text-sm font-medium text-white">{entry.title}</p>
+                    <p className="mt-2 text-sm font-medium text-ink">{entry.title}</p>
                     {entry.description && (
-                      <p className="mt-1 text-sm leading-6 text-civic-muted">
+                      <p className="mt-1 text-sm leading-6 text-ink-soft">
                         {entry.description}
                       </p>
                     )}
-                    <p className="mt-1 text-xs text-civic-muted">
+                    <p className="mt-1 text-xs text-ink-soft">
                       {entry.actor_email ?? "System"}
                     </p>
                   </div>
@@ -508,8 +508,8 @@ export function IncidentDetailPage() {
                 )}
 
             {canAct && (
-              <div className="space-y-2 border-t border-civic-line pt-2">
-                <p className="text-xs font-medium uppercase tracking-wide text-civic-muted">
+              <div className="space-y-2 border-t border-paper-line pt-2">
+                <p className="text-xs font-medium uppercase tracking-wide text-ink-soft">
                   Add Note
                 </p>
                 <Input
@@ -543,7 +543,7 @@ export function IncidentDetailPage() {
             {linkedRiskEvents.length > 0
               ? linkedRiskEvents.map((re) => (
                   <Link
-                    className="block rounded-lg border border-civic-line bg-[#14181d] p-4 transition-colors hover:border-civic-teal/60"
+                    className="block rounded-lg border border-paper-line bg-paper-card p-4 transition-colors hover:border-civic-teal/60"
                     key={re.id}
                     to={`/risk-events/${re.id}`}
                   >
@@ -551,7 +551,7 @@ export function IncidentDetailPage() {
                       <SeverityBadge severity={re.severity} />
                       <StatusBadge status={re.status} />
                     </div>
-                    <p className="mt-2 text-sm font-medium text-white">{re.title}</p>
+                    <p className="mt-2 text-sm font-medium text-ink">{re.title}</p>
                   </Link>
                 ))
               : !riskEventsData.isLoading && (
@@ -569,7 +569,7 @@ export function IncidentDetailPage() {
         <Card>
           <CardHeader title="Timeline Summary" />
           <CardContent>
-            <p className="text-sm leading-6 text-civic-muted">
+            <p className="text-sm leading-6 text-ink-soft">
               {incident.timeline_summary || "No timeline summary provided."}
             </p>
           </CardContent>
@@ -577,7 +577,7 @@ export function IncidentDetailPage() {
         <Card>
           <CardHeader title="Lessons Learned" />
           <CardContent>
-            <p className="text-sm leading-6 text-civic-muted">
+            <p className="text-sm leading-6 text-ink-soft">
               {incident.lessons_learned || "Lessons learned not yet recorded."}
             </p>
           </CardContent>

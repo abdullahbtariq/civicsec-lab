@@ -66,14 +66,14 @@ export function AnomaliesPage() {
     <div className="space-y-5">
       <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <nav className="mb-1 text-xs text-civic-muted">
-            <Link to="/modules/loglens" className="transition-colors hover:text-white">
+          <nav className="mb-1 text-xs text-ink-soft">
+            <Link to="/modules/loglens" className="transition-colors hover:text-ink">
               LogLens
             </Link>{" "}
             / Anomalies
           </nav>
-          <h1 className="font-display text-xl font-semibold text-white">Login Anomalies</h1>
-          <p className="mt-0.5 text-sm text-civic-muted">
+          <h1 className="font-display text-xl font-semibold text-ink">Login Anomalies</h1>
+          <p className="mt-0.5 text-sm text-ink-soft">
             All detected anomaly patterns — review and triage.
           </p>
         </div>
@@ -110,7 +110,7 @@ export function AnomaliesPage() {
       </div>
 
       {/* Responsible-use note */}
-      <p className="text-xs text-civic-muted">
+      <p className="text-xs text-ink-soft">
         Outputs are decision-support signals. Human verification is required before escalation.
       </p>
 

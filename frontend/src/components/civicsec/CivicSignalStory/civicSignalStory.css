@@ -1,0 +1,257 @@
+.civic-story {
+  --civic-navy: #0f2230;
+  --civic-cream: #f2e9d8;
+  --civic-paper: #efe3cf;
+  --civic-orange: #d65a29;
+  --civic-coral: #e96565;
+  --civic-sage: #7b8f79;
+  --civic-muted: #6b6457;
+  --civic-line: rgba(15, 34, 48, 0.16);
+  --civic-serif: "Source Serif 4", Georgia, ui-serif, serif;
+
+  position: relative;
+  background: var(--civic-cream);
+  color: var(--civic-navy);
+}
+
+/* archival paper grain + faint baseline grid */
+.civic-story::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(rgba(15, 34, 48, 0.05) 1px, transparent 1px);
+  background-size: 22px 22px;
+  opacity: 0.5;
+}
+
+.civic-story__sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 4.5rem clamp(1.5rem, 5vw, 5rem) 3rem;
+  overflow: hidden;
+}
+
+.civic-story__kicker {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--civic-orange);
+}
+
+.civic-story__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+  align-items: center;
+  gap: clamp(1.5rem, 4vw, 4rem);
+  flex: 1;
+  min-height: 0;
+}
+
+/* ── Left column ──────────────────────────────────────────────── */
+.civic-story__left {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 30rem;
+}
+
+.civic-rail {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.civic-rail__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.7rem;
+  color: var(--civic-muted);
+  opacity: 0.6;
+  transition: opacity 0.3s, color 0.3s;
+}
+.civic-rail__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: currentColor;
+  transition: transform 0.3s, background 0.3s;
+}
+.civic-rail__item.is-done { opacity: 0.85; }
+.civic-rail__item.is-active {
+  opacity: 1;
+  color: var(--civic-orange);
+  font-weight: 600;
+}
+.civic-rail__item.is-active .civic-rail__dot { transform: scale(1.6); }
+
+.civic-panel__eyebrow {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--civic-orange);
+  margin: 0 0 0.5rem;
+}
+.civic-panel__module {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--civic-muted);
+  margin: 0 0 0.6rem;
+}
+.civic-panel__headline {
+  font-family: var(--civic-serif);
+  font-size: clamp(1.5rem, 2.4vw, 2.1rem);
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+  font-weight: 600;
+  color: var(--civic-navy);
+  margin: 0 0 0.85rem;
+  text-wrap: balance;
+}
+.civic-panel__desc {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #3f4750;
+  max-width: 44ch;
+  margin: 0 0 1.4rem;
+}
+
+.civic-panel__flow {
+  display: grid;
+  gap: 0.7rem;
+  margin: 0 0 1.4rem;
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--civic-line);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.4);
+}
+.civic-panel__flow > div {
+  display: grid;
+  grid-template-columns: 7rem 1fr;
+  gap: 0.75rem;
+  align-items: baseline;
+}
+.civic-panel__flow dt {
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--civic-orange);
+}
+.civic-panel__flow dd {
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: var(--civic-navy);
+}
+
+.civic-panel__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0 0 1.5rem;
+}
+.civic-chip {
+  font-size: 0.7rem;
+  padding: 0.25rem 0.6rem;
+  border: 1px solid var(--civic-line);
+  border-radius: 999px;
+  color: #3f4750;
+  background: rgba(255, 255, 255, 0.45);
+}
+
+.civic-panel__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  align-self: flex-start;
+  padding: 0.7rem 1.2rem;
+  border-radius: 10px;
+  background: var(--civic-orange);
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: 0 10px 26px -12px rgba(214, 90, 41, 0.7);
+  transition: background 0.2s, transform 0.2s;
+}
+.civic-panel__cta:hover { background: #c24a1c; transform: translateY(-1px); }
+
+/* ── Canvas column ────────────────────────────────────────────── */
+.civic-story__canvas {
+  position: relative;
+  height: min(70vh, 600px);
+  width: 100%;
+}
+.civic-story__canvas canvas { display: block; }
+
+.civic-legend {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  display: grid;
+  gap: 0.3rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.68rem;
+  color: var(--civic-muted);
+}
+.civic-legend li { display: flex; align-items: center; gap: 0.5rem; }
+.civic-legend__line { width: 18px; height: 0; border-top: 1.5px solid var(--civic-navy); opacity: 0.6; }
+.civic-legend__line--dotted { border-top-style: dotted; }
+.civic-legend__dot { width: 8px; height: 8px; border-radius: 999px; }
+
+/* ── Static / reduced-motion ──────────────────────────────────── */
+.civic-story--static .civic-story__intro {
+  padding: 4rem clamp(1.5rem, 5vw, 5rem) 1rem;
+}
+.civic-story__title {
+  font-family: var(--civic-serif);
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 0.5rem 0 0;
+}
+.civic-static-list {
+  display: grid;
+  gap: 1px;
+  background: var(--civic-line);
+  border-top: 1px solid var(--civic-line);
+}
+.civic-static-row {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 2rem;
+  align-items: center;
+  padding: 2.5rem clamp(1.5rem, 5vw, 5rem);
+  background: var(--civic-cream);
+}
+.civic-static-core { width: 180px; height: 180px; }
+
+/* ── Responsive ───────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .civic-story__grid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+  .civic-story__canvas { order: -1; height: 38vh; }
+  .civic-story__left { max-width: none; }
+  .civic-panel__desc { display: none; }
+  .civic-legend { position: static; margin-top: 0.5rem; }
+  .civic-static-row { grid-template-columns: 1fr; gap: 1rem; }
+  .civic-static-core { width: 130px; height: 130px; }
+}

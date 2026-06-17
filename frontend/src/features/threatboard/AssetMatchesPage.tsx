@@ -69,7 +69,7 @@ export function AssetMatchesPage() {
         <CardContent className="space-y-4">
           <div className="grid gap-3 lg:grid-cols-[1fr_11rem_13rem_13rem_11rem]">
             <label className="relative block">
-              <Search className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-civic-muted" />
+              <Search className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-ink-soft" />
               <Input
                 className="pl-9"
                 onChange={(event) => setSearch(event.target.value)}

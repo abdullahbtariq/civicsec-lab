@@ -2,6 +2,7 @@ from django.db.models import Q
 from django.http import Http404
 from django.utils import timezone
 from rest_framework import status, viewsets
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -31,29 +32,54 @@ from apps.threatboard.services.kev import (
 from apps.threatboard.services.matching import match_vulnerabilities_to_assets
 
 
+class VulnerabilityPagination(PageNumberPagination):
+    """Paginate the global vulnerability catalogue (it can hold thousands of CVEs)."""
+
+    page_size = 25
+    page_size_query_param = "page_size"
+    max_page_size = 100
+
+
 class VulnerabilityViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = VulnerabilitySerializer
     permission_classes = [IsAuthenticated]
     queryset = Vulnerability.objects.select_related("score").all()
+    pagination_class = VulnerabilityPagination
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        cve_id = self.request.query_params.get("cve_id")
-        vendor = self.request.query_params.get("vendor")
-        product = self.request.query_params.get("product")
-        kev_only = self.request.query_params.get("kev_only")
+        params = self.request.query_params
+        search = params.get("search")
+        cve_id = params.get("cve_id")
+        vendor = params.get("vendor")
+        product = params.get("product")
+        source = params.get("source")
+        cvss_severity = params.get("cvss_severity")
+        kev_only = params.get("kev_only")
 
+        if search:
+            term = search.strip()
+            queryset = queryset.filter(
+                Q(cve_id__icontains=term)
+                | Q(vendor__icontains=term)
+                | Q(product__icontains=term)
+                | Q(title__icontains=term)
+            )
         if cve_id:
             queryset = queryset.filter(cve_id__icontains=cve_id.strip())
         if vendor:
             queryset = queryset.filter(vendor__icontains=vendor.strip())
         if product:
             queryset = queryset.filter(product__icontains=product.strip())
+        if source:
+            queryset = queryset.filter(source=source.strip())
+        if cvss_severity:
+            queryset = queryset.filter(score__cvss_severity=cvss_severity.strip())
         if _truthy(kev_only):
             queryset = queryset.filter(
                 Q(source=Vulnerability.Source.CISA_KEV) | Q(score__kev_known_exploited=True)
             )
-        return queryset
+        return queryset.order_by("cve_id")
 
 
 class VulnerabilityScoreViewSet(viewsets.ReadOnlyModelViewSet):

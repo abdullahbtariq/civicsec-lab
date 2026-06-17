@@ -163,6 +163,116 @@ export type IncidentTask = {
   updated_at: string;
 };
 
+// ------------------------------------------------------------------
+// Misinformation Observatory
+// ------------------------------------------------------------------
+
+export type PublicPost = {
+  id: number;
+  post_id: string;
+  timestamp?: string | null;
+  author_identifier: string;
+  platform: string;
+  text: string;
+  url: string;
+  shared_url: string;
+  reply_to: string;
+  language: string;
+  engagement_count: number;
+  created_at: string;
+};
+
+export type PostsPage = {
+  count: number;
+  limit: number;
+  offset: number;
+  results: PublicPost[];
+};
+
+/** Snippet stored in NarrativeCluster.representative_posts — may be a plain string (legacy) or a rich object. */
+export type PostSnippet = {
+  text: string;
+  url: string;
+  platform: string;
+  author: string;
+  post_id: string;
+  timestamp: string;
+  engagement_count: number;
+};
+
+export type DiscourseDataset = {
+  id: number;
+  original_filename: string;
+  row_count: number;
+  processing_status: "pending" | "processing" | "complete" | "failed";
+  processing_status_display: string;
+  description: string;
+  error_message: string;
+  retention_policy: string;
+  uploaded_at: string;
+  processed_at?: string | null;
+  detected_language: string;
+  cluster_count: number;
+  burst_count: number;
+  needs_review_count: number;
+};
+
+export type NarrativeCluster = {
+  id: number;
+  dataset: number;
+  title: string;
+  summary: string;
+  representative_terms: string[];
+  representative_posts: Array<PostSnippet | string>;
+  cluster_size: number;
+  start_time?: string | null;
+  end_time?: string | null;
+  sentiment_score: number;
+  toxicity_signal: number;
+  growth_rate: number;
+  confidence: number;
+  status: "unreviewed" | "needs_review" | "reviewed_benign" | "reviewed_concerning" | "escalated";
+  status_display: string;
+  review_notes: string;
+  reviewed_at?: string | null;
+  linked_risk_event_id?: number | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type KeywordBurst = {
+  id: number;
+  keyword: string;
+  baseline_count: number;
+  burst_count: number;
+  burst_score: number;
+  start_time?: string | null;
+  end_time?: string | null;
+  related_cluster?: number | null;
+  created_at: string;
+};
+
+export type EntityMention = {
+  id: number;
+  entity_text: string;
+  entity_type: "person" | "organisation" | "location" | "hashtag" | "domain" | "other";
+  entity_type_display: string;
+  count: number;
+  sentiment_average: number;
+  created_at: string;
+};
+
+export type ObservatoryOverview = {
+  total_datasets: number;
+  total_posts: number;
+  total_clusters: number;
+  needs_review: number;
+  escalated: number;
+  total_keyword_bursts: number;
+  recent_datasets: DiscourseDataset[];
+  recent_clusters_needing_review: NarrativeCluster[];
+};
+
 export type ProcessingJob = {
   id: number;
   organisation: Pick<Organisation, "id" | "name" | "slug"> | null;

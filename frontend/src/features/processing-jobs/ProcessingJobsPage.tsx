@@ -18,7 +18,7 @@ export function ProcessingJobsPage() {
     <Card>
       <CardHeader
         description="Background job records for future ingestion, scanning, processing, and report pipelines."
-        title="Processing Jobs"
+        title="Data Jobs"
       />
       <CardContent>
         {data.length ? (
@@ -31,18 +31,18 @@ export function ProcessingJobsPage() {
                 header: "Progress",
                 cell: (job) => (
                   <div className="min-w-32">
-                    <div className="h-2 rounded-full bg-[#111418]">
+                    <div className="h-2 rounded-full bg-paper">
                       <div
                         className="h-2 rounded-full bg-civic-teal"
                         style={{ width: `${Math.max(0, Math.min(job.progress, 100))}%` }}
                       />
                     </div>
-                    <p className="mt-1 text-xs text-civic-muted">{job.progress}%</p>
+                    <p className="mt-1 text-xs text-ink-soft">{job.progress}%</p>
                   </div>
                 ),
               },
-              { key: "started", header: "Started", cell: (job) => formatDateTime(job.started_at) },
-              { key: "finished", header: "Finished", cell: (job) => formatDateTime(job.finished_at) },
+              { key: "started", header: "Started", cell: (job) => formatDateTime(job.started_at), className: "whitespace-nowrap" },
+              { key: "finished", header: "Finished", cell: (job) => formatDateTime(job.finished_at), className: "whitespace-nowrap" },
               { key: "error", header: "Error", cell: (job) => job.error_message || "None" },
             ]}
             data={data}

@@ -79,27 +79,27 @@ export function UploadDatasetPage() {
   const dropZoneClass = `relative flex flex-col items-center justify-center rounded-lg border-2 border-dashed p-10 text-center transition-colors cursor-pointer ${
     isDragging
       ? "border-civic-teal bg-civic-teal/5"
-      : "border-civic-line bg-[#111418] hover:border-civic-teal/40"
+      : "border-paper-line bg-paper hover:border-civic-teal/40"
   }`;
 
   return (
     <div className="max-w-2xl space-y-5">
       {/* Header */}
       <div>
-        <nav className="mb-1 text-xs text-civic-muted">
-          <Link to="/modules/privacy-doctor" className="transition-colors hover:text-white">
+        <nav className="mb-1 text-xs text-ink-soft">
+          <Link to="/modules/privacy-doctor" className="transition-colors hover:text-ink">
             DataPrivacy Doctor
           </Link>{" "}
           / Upload Dataset
         </nav>
-        <h1 className="font-display text-xl font-semibold text-white">Upload Dataset</h1>
-        <p className="mt-0.5 text-sm text-civic-muted">
+        <h1 className="font-display text-xl font-semibold text-ink">Upload Dataset</h1>
+        <p className="mt-0.5 text-sm text-ink-soft">
           Upload a CSV file for automated privacy analysis.
         </p>
       </div>
 
       {/* Privacy notice */}
-      <div className="rounded-lg border border-civic-amber/30 bg-civic-amber/5 px-4 py-3 text-xs text-civic-amber">
+      <div className="rounded-lg border border-civic-amber/30 bg-civic-amber/5 px-4 py-3 text-xs text-gold-ink">
         <p className="font-semibold">Privacy notice</p>
         <p className="mt-1">
           Only upload CSV files containing data your organisation is legally authorised to process.
@@ -114,14 +114,14 @@ export function UploadDatasetPage() {
         <CardHeader title="CSV Format Guide" />
         <CardContent>
           <div className="overflow-x-auto">
-            <table className="w-full text-xs text-civic-muted">
-              <thead className="border-b border-civic-line">
+            <table className="w-full text-xs text-ink-soft">
+              <thead className="border-b border-paper-line">
                 <tr>
-                  <th className="py-1.5 pr-6 text-left text-white">Requirement</th>
+                  <th className="py-1.5 pr-6 text-left text-ink">Requirement</th>
                   <th className="py-1.5 text-left">Details</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-civic-line/60">
+              <tbody className="divide-y divide-paper-line/60">
                 {[
                   ["Format", "Plain CSV (.csv), UTF-8 encoded"],
                   ["Header row", "Required — first row must be column names"],
@@ -131,7 +131,7 @@ export function UploadDatasetPage() {
                   ["Quote character", 'Double-quote (") for values containing commas'],
                 ].map(([req, detail]) => (
                   <tr key={req}>
-                    <td className="py-1.5 pr-6 font-medium text-white">{req}</td>
+                    <td className="py-1.5 pr-6 font-medium text-ink">{req}</td>
                     <td className="py-1.5">{detail}</td>
                   </tr>
                 ))}
@@ -164,8 +164,8 @@ export function UploadDatasetPage() {
           />
           {file ? (
             <div className="space-y-1 text-center">
-              <p className="text-sm font-medium text-civic-teal">{file.name}</p>
-              <p className="text-xs text-civic-muted">
+              <p className="text-sm font-medium text-orange-ink">{file.name}</p>
+              <p className="text-xs text-ink-soft">
                 {file.size < 1024 * 1024
                   ? `${(file.size / 1024).toFixed(1)} KB`
                   : `${(file.size / (1024 * 1024)).toFixed(2)} MB`}
@@ -177,14 +177,14 @@ export function UploadDatasetPage() {
                   setFile(null);
                   if (fileInputRef.current) fileInputRef.current.value = "";
                 }}
-                className="text-xs text-civic-rose transition-colors hover:text-[#f5838e]"
+                className="text-xs text-rose-ink transition-colors hover:text-rose-ink"
               >
                 Remove
               </button>
             </div>
           ) : (
             <div className="space-y-2 text-center">
-              <div className="mx-auto h-10 w-10 text-civic-muted">
+              <div className="mx-auto h-10 w-10 text-ink-soft">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
                   <path
                     strokeLinecap="round"
@@ -193,18 +193,18 @@ export function UploadDatasetPage() {
                   />
                 </svg>
               </div>
-              <p className="text-sm text-white">
+              <p className="text-sm text-ink">
                 Drop CSV here or{" "}
-                <span className="text-civic-teal underline">browse</span>
+                <span className="text-orange-ink underline">browse</span>
               </p>
-              <p className="text-xs text-civic-muted">Max 10 MB · .csv only</p>
+              <p className="text-xs text-ink-soft">Max 10 MB · .csv only</p>
             </div>
           )}
         </div>
 
         {/* Retention policy */}
         <div className="space-y-2">
-          <label className="block text-xs font-semibold uppercase tracking-wide text-civic-muted">
+          <label className="block text-xs font-semibold uppercase tracking-wide text-ink-soft">
             Retention Policy
           </label>
           <div className="space-y-2">
@@ -214,7 +214,7 @@ export function UploadDatasetPage() {
                 className={`flex cursor-pointer items-start gap-3 rounded-lg border p-3 transition-colors ${
                   retentionPolicy === opt.value
                     ? "border-civic-teal/50 bg-civic-teal/5"
-                    : "border-civic-line bg-[#111418] hover:border-civic-teal/20"
+                    : "border-paper-line bg-paper hover:border-civic-teal/20"
                 }`}
               >
                 <input
@@ -226,8 +226,8 @@ export function UploadDatasetPage() {
                   className="mt-0.5 accent-civic-teal"
                 />
                 <div>
-                  <p className="text-xs font-medium text-white">{opt.label}</p>
-                  <p className="mt-0.5 text-xs text-civic-muted">{opt.description}</p>
+                  <p className="text-xs font-medium text-ink">{opt.label}</p>
+                  <p className="mt-0.5 text-xs text-ink-soft">{opt.description}</p>
                 </div>
               </label>
             ))}
@@ -235,7 +235,7 @@ export function UploadDatasetPage() {
         </div>
 
         {clientError && (
-          <div className="rounded-lg border border-civic-rose/30 bg-civic-rose/5 px-4 py-3 text-sm text-civic-rose">
+          <div className="rounded-lg border border-civic-rose/30 bg-civic-rose/5 px-4 py-3 text-sm text-rose-ink">
             {clientError}
           </div>
         )}

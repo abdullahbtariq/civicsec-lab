@@ -57,20 +57,20 @@ export function UploadLogsPage() {
     <div className="mx-auto max-w-2xl space-y-5">
       {/* Breadcrumb + header */}
       <div>
-        <nav className="mb-1 text-xs text-civic-muted">
-          <Link to="/modules/loglens" className="transition-colors hover:text-white">
+        <nav className="mb-1 text-xs text-ink-soft">
+          <Link to="/modules/loglens" className="transition-colors hover:text-ink">
             LogLens
           </Link>{" "}
           / Upload Logs
         </nav>
-        <h1 className="font-display text-xl font-semibold text-white">Upload Login Logs</h1>
-        <p className="mt-0.5 text-sm text-civic-muted">
+        <h1 className="font-display text-xl font-semibold text-ink">Upload Login Logs</h1>
+        <p className="mt-0.5 text-sm text-ink-soft">
           Import login event data from a CSV file for analysis.
         </p>
       </div>
 
       {/* Responsible-use note */}
-      <div className="rounded-lg border border-civic-amber/30 bg-civic-amber/5 px-4 py-3 text-xs text-civic-amber">
+      <div className="rounded-lg border border-civic-amber/30 bg-civic-amber/5 px-4 py-3 text-xs text-gold-ink">
         <span className="font-medium">Privacy & Data Handling. </span>
         Only upload data your organisation is authorised to process. Uploaded files are deleted
         immediately after parsing — only the extracted event records are retained. Do not upload
@@ -87,14 +87,14 @@ export function UploadLogsPage() {
         <CardContent>
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
-              <thead className="border-b border-civic-line text-civic-muted uppercase tracking-wide">
+              <thead className="border-b border-paper-line text-ink-soft uppercase tracking-wide">
                 <tr>
                   <th className="pb-2 pr-4 text-left">Column</th>
                   <th className="pb-2 pr-4 text-left">Required</th>
                   <th className="pb-2 text-left">Notes</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-civic-line/60">
+              <tbody className="divide-y divide-paper-line/60">
                 {[
                   ["user_email", "Yes", "e.g. user@example.org"],
                   ["timestamp", "Yes", "ISO 8601, e.g. 2025-01-15T09:32:00Z"],
@@ -107,15 +107,15 @@ export function UploadLogsPage() {
                   ["resource_accessed", "No", "Path or resource name"],
                 ].map(([col, req, note]) => (
                   <tr key={col}>
-                    <td className="py-1.5 pr-4 font-mono text-white">{col}</td>
-                    <td className="py-1.5 pr-4 text-civic-muted">{req}</td>
-                    <td className="py-1.5 text-civic-muted">{note}</td>
+                    <td className="py-1.5 pr-4 font-mono text-ink">{col}</td>
+                    <td className="py-1.5 pr-4 text-ink-soft">{req}</td>
+                    <td className="py-1.5 text-ink-soft">{note}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-          <p className="mt-3 text-xs text-civic-muted">
+          <p className="mt-3 text-xs text-ink-soft">
             Maximum file size: {MAX_MB} MB · Maximum rows: 50,000
           </p>
         </CardContent>
@@ -129,7 +129,7 @@ export function UploadLogsPage() {
             className={`flex cursor-pointer flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed p-8 text-center transition-colors ${
               file
                 ? "border-civic-teal/50 bg-civic-teal/5"
-                : "border-civic-line bg-[#111418] hover:border-civic-teal/40"
+                : "border-paper-line bg-paper hover:border-civic-teal/40"
             }`}
             onClick={() => fileRef.current?.click()}
             onKeyDown={(e) => e.key === "Enter" && fileRef.current?.click()}
@@ -141,21 +141,21 @@ export function UploadLogsPage() {
             role="button"
             tabIndex={0}
           >
-            <div className="text-3xl text-civic-muted">📂</div>
+            <div className="text-3xl text-ink-soft">📂</div>
             {file ? (
               <div className="text-center">
-                <p className="text-sm font-medium text-civic-teal">{file.name}</p>
-                <p className="text-xs text-civic-muted">
+                <p className="text-sm font-medium text-orange-ink">{file.name}</p>
+                <p className="text-xs text-ink-soft">
                   {(file.size / 1024).toFixed(0)} KB · Click to change
                 </p>
               </div>
             ) : (
               <div className="text-center">
-                <p className="text-sm text-civic-muted">
+                <p className="text-sm text-ink-soft">
                   Click to select a .csv file, or{" "}
-                  <span className="text-civic-teal underline">browse</span>
+                  <span className="text-orange-ink underline">browse</span>
                 </p>
-                <p className="text-xs text-civic-muted">or drag and drop</p>
+                <p className="text-xs text-ink-soft">or drag and drop</p>
               </div>
             )}
             <input
@@ -168,7 +168,7 @@ export function UploadLogsPage() {
           </div>
 
           {fileError && (
-            <p className="rounded-lg border border-civic-rose/30 bg-civic-rose/5 px-3 py-2 text-xs text-civic-rose">
+            <p className="rounded-lg border border-civic-rose/30 bg-civic-rose/5 px-3 py-2 text-xs text-rose-ink">
               {fileError}
             </p>
           )}
@@ -187,14 +187,14 @@ export function UploadLogsPage() {
       {/* Success */}
       {result && (
         <div className="rounded-lg border border-civic-teal/30 bg-civic-teal/5 px-4 py-3">
-          <p className="text-sm font-semibold text-civic-teal">Upload successful</p>
-          <p className="mt-1 text-xs text-civic-teal/80">
+          <p className="text-sm font-semibold text-orange-ink">Upload successful</p>
+          <p className="mt-1 text-xs text-orange-ink/80">
             {result.events_created} events imported · Batch ID:{" "}
             <span className="font-mono">{result.batch_id}</span>
           </p>
-          <p className="mt-1 text-xs text-civic-muted">
+          <p className="mt-1 text-xs text-ink-soft">
             Go to the{" "}
-            <Link to="/modules/loglens" className="text-civic-teal underline hover:no-underline">
+            <Link to="/modules/loglens" className="text-orange-ink underline hover:no-underline">
               LogLens overview
             </Link>{" "}
             and run detection to analyse the new events.
@@ -204,7 +204,7 @@ export function UploadLogsPage() {
 
       {/* Upload error */}
       {uploadError && (
-        <div className="rounded-lg border border-civic-rose/30 bg-civic-rose/5 px-4 py-3 text-sm text-civic-rose">
+        <div className="rounded-lg border border-civic-rose/30 bg-civic-rose/5 px-4 py-3 text-sm text-rose-ink">
           {uploadError}
         </div>
       )}

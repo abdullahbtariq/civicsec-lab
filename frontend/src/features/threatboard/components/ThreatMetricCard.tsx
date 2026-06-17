@@ -20,11 +20,11 @@ export function ThreatMetricCard({
     <Card>
       <CardContent>
         <div className="flex flex-wrap items-start justify-between gap-2">
-          <p className="text-sm text-civic-muted">{label}</p>
+          <p className="text-sm text-ink-soft">{label}</p>
           {badgeLabel ? <Badge variant={tone}>{badgeLabel}</Badge> : null}
         </div>
-        <p className="mt-3 font-display text-3xl font-semibold text-white">{value}</p>
-        {helper ? <div className="mt-3 text-xs leading-5 text-civic-muted">{helper}</div> : null}
+        <p className="mt-3 font-display text-3xl font-semibold text-ink">{value}</p>
+        {helper ? <div className="mt-3 text-xs leading-5 text-ink-soft">{helper}</div> : null}
       </CardContent>
     </Card>
   );

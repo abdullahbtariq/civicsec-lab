@@ -13,7 +13,7 @@ function bandForConfidence(value?: number | null) {
   if (value < 0.9) {
     return { label: "high", variant: "blue" as const };
   }
-  return { label: "very high", variant: "teal" as const };
+  return { label: "very high", variant: "sage" as const };
 }
 
 export function ConfidenceBadge({ confidence }: { confidence?: number | null }) {

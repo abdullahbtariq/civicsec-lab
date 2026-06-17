@@ -1,81 +1,117 @@
 # Security Model
 
-CivicSec Lab is defensive, educational, and public-interest software. The backend foundation now includes organisation scoping and simple role-based access controls for shared platform objects.
+CivicSec Lab is defensive, educational, and public-interest software. The security model is designed to be transparent, explainable, and conservative.
 
 ## Organisation Scoping
 
-All operational records belong to an organisation:
+Every operational model has an `organisation` FK. All records are isolated at the organisation boundary.
 
-- assets
-- risk events
-- evidence items
-- recommendations
-- incidents
-- incident timeline entries
-- processing jobs
-- audit logs where applicable
+Organisation-scoped models:
+- `Asset`
+- `RiskEvent`, `EvidenceItem`, `ActionRecommendation`
+- `Incident`, `IncidentTimelineEntry`
+- `ProcessingJob`, `AuditLog`
+- `AssetVulnerabilityMatch`, `ThreatIngestionRun`
+- `LoginEvent`, `LoginAnomaly`
+- `UploadedDataset` (both Privacy Doctor and Observatory), `DatasetColumnProfile`, `NarrativeCluster`, `KeywordBurst`, `EntityMention`
 
-DRF list and detail endpoints filter by `request.user.organisation` unless the user is a superuser. Users without an organisation receive empty lists.
+**Defence-in-depth**: organisation isolation is enforced at the permission class (`IsOrganisationScopedRole`) before the view even runs, and again as a queryset filter inside the view. Both layers must agree.
 
 ## Roles
 
-User roles:
+| Role | Capabilities |
+|---|---|
+| `admin` | Full read/write/delete within org; can trigger module actions |
+| `analyst` | Read/write within org; can trigger module actions; cannot delete |
+| `viewer` | Read-only; cannot trigger actions |
+| Superuser | Bypasses org scoping; for platform administration only |
 
-- admin
-- analyst
-- viewer
+Role checks are enforced server-side. Frontend role affordances (hiding buttons, greying out controls) are user-experience hints only and cannot be relied upon for security.
 
-Current API assumptions:
+## Authentication
 
-- Viewer users can read organisation-scoped records.
-- Analyst users can create and update operational records.
-- Admin users can create, update, and delete operational records.
-- Organisation admins can update their own organisation record but cannot create additional organisations.
-- Organisation creation and deletion are reserved for superusers.
-- Superusers bypass organisation scoping for administrative use.
+- Session-based authentication via Django's session framework.
+- Email is unique and is the login identity.
+- `X-CSRFToken` header is required on all mutating requests.
+- CSRF cookie is set with `SameSite=Lax`.
+- Session cookie is `HttpOnly` and `SameSite=Lax`.
+- Demo accounts use strong-format passwords (`CivicAdmin2025!` etc.); these are for development only and must not be used in production.
 
-## Custom User Model
+**Known limitation**: there is no API login endpoint in v1.0. Authentication is established via Django admin (`/admin/`). An API-based login/logout endpoint is planned for post-v1.0.
 
-The backend uses `accounts.User` as `AUTH_USER_MODEL`. Email is unique and central to authentication identity.
+## File Upload Security
 
-Because this changed the auth model early in the project, existing local databases that already ran default Django auth migrations may need to be reset.
+All CSV upload endpoints (LogLens, DataPrivacy Doctor, Observatory) enforce:
+- MIME type validation (must be `text/csv` or `application/vnd.ms-excel`)
+- File extension validation (`.csv` only)
+- Maximum file size (10 MB)
+- Column schema validation (required columns checked before processing)
 
-## Audit Logging
+After processing:
+- Original uploaded files are deleted from disk.
+- No raw personal data is stored in database fields — column samples are masked before storage.
+- Parsed records (LoginEvent, DatasetColumnProfile, etc.) contain only derived or anonymised fields.
 
-The `AuditLog` model and `record_audit_event()` helper exist. Automatic audit middleware is not implemented yet.
+## Output Safety
 
-## ThreatBoard Security Model
+All module outputs are designed to be decision-support signals, not automated verdicts:
 
-ThreatBoard vulnerability metadata is global public metadata. It does not contain exploit code or private organisation data.
-
-Organisation-scoped ThreatBoard records:
-
-- asset vulnerability matches
-- generated risk events
-- evidence items
-- action recommendations
-- organisation-specific ingestion runs
-
-Access rules:
-
-- Viewer users can read ThreatBoard data available to their organisation.
-- Viewer users cannot trigger ingestion, enrichment, or matching.
-- Analyst and admin users can trigger KEV ingestion, EPSS enrichment, and asset matching.
-- Asset match list and detail endpoints filter by the requesting user's organisation.
-- Superusers can see all organisations' asset matches and ingestion runs.
-
-Live ingestion endpoints call public data sources and should be treated as operational actions. They are POST-only and require authentication.
-
-## Current Limitations
-
-- No login/logout API is implemented yet.
-- No user-management API is implemented yet.
-- No object-level permission matrix beyond organisation scoping and role checks is implemented yet.
-- No file upload handling is implemented yet.
-- No Celery tasks are implemented yet.
-- ThreatBoard ingestion is synchronous in the MVP and is not yet protected by rate limiting.
-- The demo seed users use a development password and must not be used in production.
+| Module | Safety framing |
+|---|---|
+| ThreatBoard | Risk scores are labelled as decision-support signals; "verify affected status" is always the first recommendation |
+| LogLens | Anomaly types include "signal — requires review" in all MITRE labels; no automated account actions |
+| DataPrivacy Doctor | Scores are not legal compliance certifications; no data is shared externally |
+| Observatory | Never uses "misinformation", "bot", or "troll"; clusters are "narrative clusters" and "coordinated-looking signals" |
+| Civic Risk Graph | Read-only view; no write actions on graph endpoint |
+| IncidentFlow | Supports documentation only; no offensive response features |
 
 ## Data Safety
 
-Do not upload real secrets, credentials, private logs, real personal data, or sensitive organisational records to public demo instances. Repository sample data is fictional.
+- No external API calls except ThreatBoard's optional KEV/EPSS ingestion (triggered manually by analyst/admin).
+- No telemetry, analytics, or data exfiltration built into the platform.
+- All processing is local to the deployment.
+- Sample data in the repository is entirely fictional.
+- Production deployments must use `SECRET_KEY` from environment, not the development default.
+- `DEBUG = False` must be set in production.
+- `ALLOWED_HOSTS` must be explicitly configured in production.
+
+## Audit Logging
+
+The `AuditLog` model and `record_audit_event()` helper are available for explicit audit writes. Automatic audit middleware is not yet implemented; modules call `record_audit_event()` at key action points.
+
+## ThreatBoard-Specific Security Notes
+
+- Vulnerability metadata (CVE, KEV, EPSS) is global public data, not org-scoped.
+- Asset matches, ingestion runs, and generated risk events are org-scoped.
+- Ingestion endpoints call public CISA and FIRST APIs; these require outbound network access and should be treated as operational actions.
+- No exploit code, weaponised payloads, or offensive instructions are stored or displayed.
+
+## LogLens-Specific Security Notes
+
+- LogLens only processes files explicitly uploaded by an authenticated user; it does not monitor systems directly.
+- No credentials are collected or stored.
+- No automated blocking, lockout, or access revocation.
+
+## DataPrivacy Doctor-Specific Security Notes
+
+- Uploaded files are deleted immediately after processing.
+- Column samples use a masking heuristic: characters beyond the first two are replaced with `*`.
+- The tool does not guarantee anonymisation; it surfaces risk indicators for human review.
+
+## Observatory-Specific Security Notes
+
+- No live platform scraping; all data is user-supplied.
+- No private messages or non-public content should be uploaded.
+- The module must not be used to generate harassment lists or target individuals.
+
+## Current Limitations
+
+- No API-based login/logout endpoint.
+- No user management API.
+- No object-level permission beyond org scoping and role checks.
+- No rate limiting on trigger endpoints.
+- No audit middleware (explicit `record_audit_event()` calls only).
+- No IP allowlisting or multi-factor authentication support.
+- NLP pipeline runs synchronously (no job queue isolation).
+
+All of the above are known and documented trade-offs for a portfolio-scale v1.0 release. Production deployments should address rate limiting, MFA, and audit middleware before handling real sensitive data.

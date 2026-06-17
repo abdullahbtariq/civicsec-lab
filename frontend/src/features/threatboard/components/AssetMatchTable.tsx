@@ -18,7 +18,7 @@ export function AssetMatchTable({ matches }: { matches: AssetVulnerabilityMatch[
           header: "Asset",
           cell: (match) => (
             <Link
-              className="font-semibold text-white hover:text-civic-teal"
+              className="font-semibold text-ink hover:text-orange-ink"
               to={`/modules/threatboard/matches/${match.id}`}
             >
               {match.asset.name}
@@ -30,7 +30,7 @@ export function AssetMatchTable({ matches }: { matches: AssetVulnerabilityMatch[
           header: "Vulnerability",
           cell: (match) => (
             <Link
-              className="font-medium text-white hover:text-civic-teal"
+              className="font-medium text-ink hover:text-orange-ink"
               to={`/modules/threatboard/vulnerabilities/${match.vulnerability.id}`}
             >
               {match.vulnerability.cve_id}
@@ -55,7 +55,7 @@ export function AssetMatchTable({ matches }: { matches: AssetVulnerabilityMatch[
           cell: (match) => <Badge variant="amber">{formatLabel(match.remediation_status)}</Badge>,
         },
         { key: "status", header: "Status", cell: (match) => <StatusBadge status={match.status} /> },
-        { key: "last", header: "Last seen", cell: (match) => formatDateTime(match.last_seen_at) },
+        { key: "last", header: "Last seen", cell: (match) => formatDateTime(match.last_seen_at), className: "whitespace-nowrap" },
       ]}
       data={matches}
       getRowKey={(match) => match.id}

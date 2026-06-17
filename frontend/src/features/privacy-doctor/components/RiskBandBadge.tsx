@@ -1,29 +1,17 @@
-interface Props {
-  band: string;
-  score?: number;
-}
+import { Badge } from "../../../components/ui/Badge";
 
-const bandConfig: Record<string, { label: string; classes: string }> = {
-  low: { label: "Low", classes: "border-green-800 bg-green-950/40 text-green-300" },
-  moderate: { label: "Moderate", classes: "border-amber-700 bg-amber-950/40 text-amber-300" },
-  high: { label: "High", classes: "border-orange-700 bg-orange-950/40 text-orange-300" },
-  severe: { label: "Severe", classes: "border-rose-800 bg-rose-950/40 text-rose-300" },
+const config: Record<string, { label: string; variant: "neutral" | "sage" | "amber" | "rose" }> = {
+  low: { label: "Low", variant: "sage" },
+  moderate: { label: "Moderate", variant: "amber" },
+  high: { label: "High", variant: "rose" },
+  severe: { label: "Severe", variant: "rose" },
 };
 
-export function RiskBandBadge({ band, score }: Props) {
-  const config = bandConfig[band] ?? {
-    label: band || "—",
-    classes: "border-neutral-700 bg-neutral-900 text-neutral-400",
-  };
-
+export function RiskBandBadge({ band, score }: { band: string; score?: number }) {
+  const c = config[band] ?? { label: band || "—", variant: "neutral" as const };
   return (
-    <span
-      className={`inline-flex items-center gap-1.5 rounded border px-2 py-0.5 text-xs font-semibold ${config.classes}`}
-    >
-      {config.label}
-      {score !== undefined && (
-        <span className="opacity-70 font-normal">({score}/100)</span>
-      )}
-    </span>
+    <Badge variant={c.variant}>
+      {c.label}{score !== undefined && ` (${score}/100)`}
+    </Badge>
   );
 }

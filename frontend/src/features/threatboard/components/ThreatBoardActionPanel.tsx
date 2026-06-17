@@ -48,8 +48,8 @@ export function ThreatBoardActionPanel({ onActionComplete }: { onActionComplete:
       />
       <CardContent className="space-y-4">
         {!canTrigger ? (
-          <div className="rounded-lg border border-civic-line bg-[#14181d] p-4">
-            <p className="text-sm leading-6 text-civic-muted">
+          <div className="rounded-lg border border-paper-line bg-paper-card p-4">
+            <p className="text-sm leading-6 text-ink-soft">
               Viewer accounts can inspect ThreatBoard findings but cannot trigger ingestion or
               matching.
             </p>
@@ -58,13 +58,13 @@ export function ThreatBoardActionPanel({ onActionComplete }: { onActionComplete:
 
         {state.error ? <ErrorState message={state.error} /> : null}
         {state.success ? (
-          <div className="rounded-lg border border-civic-teal/40 bg-civic-teal/10 p-4 text-sm text-civic-teal">
+          <div className="rounded-lg border border-civic-teal/40 bg-civic-teal/10 p-4 text-sm text-orange-ink">
             {state.success}
           </div>
         ) : null}
 
         <div className="grid gap-3">
-          <label className="flex items-center gap-3 text-sm text-civic-muted">
+          <label className="flex items-center gap-3 text-sm text-ink-soft">
             <input
               checked={matchAfterKev}
               className="h-4 w-4 accent-civic-teal"
@@ -74,7 +74,7 @@ export function ThreatBoardActionPanel({ onActionComplete }: { onActionComplete:
             />
             Match assets after KEV ingestion
           </label>
-          <label className="flex items-center gap-3 text-sm text-civic-muted">
+          <label className="flex items-center gap-3 text-sm text-ink-soft">
             <input
               checked={enrichAfterKev}
               className="h-4 w-4 accent-civic-teal"
@@ -84,7 +84,7 @@ export function ThreatBoardActionPanel({ onActionComplete }: { onActionComplete:
             />
             Enrich EPSS after KEV ingestion
           </label>
-          <label className="flex items-center gap-3 text-sm text-civic-muted">
+          <label className="flex items-center gap-3 text-sm text-ink-soft">
             <input
               checked={createRiskEvents}
               className="h-4 w-4 accent-civic-teal"

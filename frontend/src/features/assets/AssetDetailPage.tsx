@@ -23,13 +23,13 @@ export function AssetDetailPage() {
     <div className="space-y-5">
       {/* Header */}
       <div>
-        <nav className="mb-1 text-xs text-civic-muted">
-          <Link to="/assets" className="transition-colors hover:text-white">
+        <nav className="mb-1 text-xs text-ink-soft">
+          <Link to="/assets" className="transition-colors hover:text-ink">
             Assets
           </Link>{" "}
           / {asset.name}
         </nav>
-        <h1 className="font-display text-xl font-semibold text-white">{asset.name}</h1>
+        <h1 className="font-display text-xl font-semibold text-ink">{asset.name}</h1>
         <div className="mt-1.5 flex flex-wrap items-center gap-2">
           <SeverityBadge severity={asset.criticality} />
           <Badge variant="neutral">{formatLabel(asset.asset_type)}</Badge>
@@ -82,9 +82,9 @@ export function AssetDetailPage() {
 
 function Detail({ label, value }: { label: string; value: ReactNode }) {
   return (
-    <div className="rounded-lg border border-civic-line bg-[#14181d] p-4">
-      <p className="text-xs uppercase text-civic-muted">{label}</p>
-      <div className="mt-2 text-sm font-medium text-white">{value}</div>
+    <div className="rounded-lg border border-paper-line bg-paper-card p-4">
+      <p className="text-xs uppercase text-ink-soft">{label}</p>
+      <div className="mt-2 text-sm font-medium text-ink">{value}</div>
     </div>
   );
 }

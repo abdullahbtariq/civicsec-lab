@@ -3,6 +3,7 @@ import { useState } from "react";
 import { NavLink } from "react-router-dom";
 
 import { cn } from "../../lib/utils";
+import { Logo } from "../brand/Logo";
 import { Button } from "../ui/Button";
 import { mainItems, moduleItems } from "./Sidebar";
 
@@ -11,9 +12,9 @@ export function MobileNav() {
   const items = [...mainItems, ...moduleItems];
 
   return (
-    <div className="border-b border-civic-line bg-[#111418] px-4 py-3 lg:hidden">
+    <div className="border-b border-civic-line bg-civic-surface px-4 py-3 lg:hidden">
       <div className="flex items-center justify-between">
-        <p className="text-base font-semibold text-white">CivicSec Lab</p>
+        <Logo markSize={30} />
         <Button aria-label="Toggle navigation" onClick={() => setIsOpen((value) => !value)} variant="ghost">
           {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </Button>
@@ -30,7 +31,7 @@ export function MobileNav() {
                     "flex min-h-10 items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium",
                     isActive
                       ? "bg-civic-teal/10 text-civic-teal"
-                      : "text-civic-muted hover:bg-[#20252b] hover:text-white",
+                      : "text-civic-muted hover:bg-civic-raise hover:text-civic-text",
                   )
                 }
                 key={item.to}

@@ -1,11 +1,11 @@
 import { Badge } from "./Badge";
 
 const severityVariant = {
-  info: "blue",
-  low: "teal",
-  medium: "amber",
-  high: "rose",
-  critical: "rose",
+  info:     "blue",
+  low:      "sage",    // green = low risk
+  medium:   "amber",   // gold
+  high:     "teal",    // orange (brand accent)
+  critical: "rose",    // red
 } as const;
 
 export function SeverityBadge({ severity }: { severity: string }) {

@@ -74,7 +74,7 @@ def test_authenticated_viewer_can_read_vulnerabilities(api_client, organisation_
     response = api_client.get(reverse("threatboard-vulnerability-list"))
 
     assert response.status_code == 200
-    assert response.data[0]["cve_id"] == vulnerability.cve_id
+    assert response.data["results"][0]["cve_id"] == vulnerability.cve_id
 
 
 @pytest.mark.django_db

@@ -73,8 +73,8 @@ export function LogLensOverviewPage() {
       {/* Header */}
       <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="font-display text-xl font-semibold text-white">LogLens</h1>
-          <p className="mt-0.5 text-sm text-civic-muted">
+          <h1 className="font-display text-xl font-semibold text-ink">LogLens</h1>
+          <p className="mt-0.5 text-sm text-ink-soft">
             Suspicious login and behavioural anomaly detection.
           </p>
         </div>
@@ -89,8 +89,8 @@ export function LogLensOverviewPage() {
       </div>
 
       {/* Responsible-use note */}
-      <div className="rounded-lg border border-civic-line bg-[#14181d]/60 px-4 py-3 text-xs text-civic-muted">
-        <span className="font-medium text-white">Human review required. </span>
+      <div className="rounded-lg border border-paper-line bg-paper-card/60 px-4 py-3 text-xs text-ink-soft">
+        <span className="font-medium text-ink">Human review required. </span>
         LogLens outputs are decision-support signals, not confirmed security incidents. All alerts
         require human verification before escalation.
       </div>
@@ -113,7 +113,7 @@ export function LogLensOverviewPage() {
             {isActing ? "Working…" : "Run Detection"}
           </Button>
           {actionMsg && (
-            <span className="text-xs text-civic-muted">{actionMsg}</span>
+            <span className="text-xs text-ink-soft">{actionMsg}</span>
           )}
         </div>
       )}
@@ -162,23 +162,23 @@ export function LogLensOverviewPage() {
               <CardContent>
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
-                    <thead className="border-b border-civic-line text-xs uppercase tracking-wide text-civic-muted">
+                    <thead className="border-b border-paper-line text-xs uppercase tracking-wide text-ink-soft">
                       <tr>
                         <th className="px-4 py-2 text-left">Account</th>
                         <th className="px-4 py-2 text-right">Anomalies</th>
                         <th className="px-4 py-2 text-right">Max Risk</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-civic-line">
+                    <tbody className="divide-y divide-paper-line">
                       {overview.top_affected_users.map((u) => (
-                        <tr key={u.user_identifier} className="transition-colors hover:bg-[#20252b]">
-                          <td className="px-4 py-2 font-mono text-xs text-white">
+                        <tr key={u.user_identifier} className="transition-colors hover:bg-paper-raise">
+                          <td className="px-4 py-2 font-mono text-xs text-ink">
                             {u.user_identifier}
                           </td>
-                          <td className="px-4 py-2 text-right tabular-nums font-bold text-civic-rose">
+                          <td className="px-4 py-2 text-right tabular-nums font-bold text-rose-ink">
                             {u.anomaly_count}
                           </td>
-                          <td className="px-4 py-2 text-right tabular-nums text-civic-muted">
+                          <td className="px-4 py-2 text-right tabular-nums text-ink-soft">
                             {u.max_risk?.toFixed(0) ?? "—"}
                           </td>
                         </tr>
@@ -197,7 +197,7 @@ export function LogLensOverviewPage() {
               action={
                 <Link
                   to="/modules/loglens/anomalies"
-                  className="text-xs font-medium text-civic-muted transition-colors hover:text-civic-teal"
+                  className="text-xs font-medium text-ink-soft transition-colors hover:text-orange-ink"
                 >
                   View all →
                 </Link>

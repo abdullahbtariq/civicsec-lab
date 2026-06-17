@@ -23,22 +23,22 @@ function StatCard({
   tone?: "neutral" | "rose" | "amber" | "green" | "blue";
 }) {
   const toneMap = {
-    neutral: "border-civic-line bg-[#14181d]",
+    neutral: "border-paper-line bg-paper-card",
     rose: "border-civic-rose/40 bg-civic-rose/10",
     amber: "border-civic-amber/30 bg-civic-amber/5",
     green: "border-civic-teal/30 bg-civic-teal/5",
     blue: "border-civic-blue/30 bg-civic-blue/5",
   };
   const valueMap = {
-    neutral: "text-white",
-    rose: "text-civic-rose",
-    amber: "text-civic-amber",
-    green: "text-civic-teal",
-    blue: "text-civic-blue",
+    neutral: "text-ink",
+    rose: "text-rose-ink",
+    amber: "text-gold-ink",
+    green: "text-orange-ink",
+    blue: "text-bluec-ink",
   };
   return (
     <div className={`rounded-lg border p-4 ${toneMap[tone]}`}>
-      <p className="text-xs font-medium uppercase tracking-wide text-civic-muted">{label}</p>
+      <p className="text-xs font-medium uppercase tracking-wide text-ink-soft">{label}</p>
       <p className={`mt-2 font-display text-3xl font-bold tabular-nums ${valueMap[tone]}`}>{value}</p>
     </div>
   );
@@ -76,8 +76,8 @@ export function IncidentFlowOverviewPage() {
       {/* Header */}
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="font-display text-xl font-semibold text-white">IncidentFlow</h1>
-          <p className="mt-0.5 text-sm text-civic-muted">
+          <h1 className="font-display text-xl font-semibold text-ink">IncidentFlow</h1>
+          <p className="mt-0.5 text-sm text-ink-soft">
             Structured incident response — playbooks, task checklists, and report-ready timelines.
           </p>
         </div>
@@ -94,8 +94,8 @@ export function IncidentFlowOverviewPage() {
       </div>
 
       {/* Responsible-use note */}
-      <div className="rounded-lg border border-civic-line bg-[#14181d]/60 px-4 py-3 text-xs text-civic-muted">
-        <span className="font-medium text-civic-text">Structured response tool. </span>
+      <div className="rounded-lg border border-paper-line bg-paper-card/60 px-4 py-3 text-xs text-ink-soft">
+        <span className="font-medium text-ink">Structured response tool. </span>
         IncidentFlow supports response workflows. All decisions and actions must be taken by
         qualified humans. Outputs do not constitute legal or security advice.
       </div>
@@ -132,7 +132,7 @@ export function IncidentFlowOverviewPage() {
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
-                <thead className="border-b border-civic-line text-xs uppercase tracking-wide text-civic-muted">
+                <thead className="border-b border-paper-line text-xs uppercase tracking-wide text-ink-soft">
                   <tr>
                     <th className="px-3 py-2 text-left">Title</th>
                     <th className="px-3 py-2 text-left">Type</th>
@@ -141,18 +141,18 @@ export function IncidentFlowOverviewPage() {
                     <th className="px-3 py-2 text-left">Updated</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-civic-line">
+                <tbody className="divide-y divide-paper-line">
                   {recent.map((inc) => (
-                    <tr key={inc.id} className="transition-colors hover:bg-[#20252b]">
+                    <tr key={inc.id} className="transition-colors hover:bg-paper-raise">
                       <td className="px-3 py-2.5">
                         <Link
                           to={`/incidents/${inc.id}`}
-                          className="font-medium text-white hover:text-civic-teal transition-colors"
+                          className="font-medium text-ink hover:text-orange-ink transition-colors"
                         >
                           {inc.title}
                         </Link>
                       </td>
-                      <td className="px-3 py-2.5 text-civic-muted text-xs">
+                      <td className="px-3 py-2.5 text-ink-soft text-xs">
                         {inc.incident_type.replace(/_/g, " ")}
                       </td>
                       <td className="px-3 py-2.5">
@@ -161,7 +161,7 @@ export function IncidentFlowOverviewPage() {
                       <td className="px-3 py-2.5">
                         <StatusBadge status={inc.status} />
                       </td>
-                      <td className="whitespace-nowrap px-3 py-2.5 text-xs text-civic-muted">
+                      <td className="whitespace-nowrap px-3 py-2.5 text-xs text-ink-soft">
                         {formatDateTime(inc.updated_at)}
                       </td>
                     </tr>

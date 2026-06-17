@@ -69,7 +69,7 @@ export function AssetCreatePage() {
           {error ? <ErrorState message={error} /> : null}
 
           <div className="grid gap-4 md:grid-cols-2">
-            <label className="grid gap-2 text-sm text-civic-muted">
+            <label className="grid gap-2 text-sm text-ink-soft">
               Name
               <Input
                 onChange={(event) => setForm((current) => ({ ...current, name: event.target.value }))}
@@ -77,7 +77,7 @@ export function AssetCreatePage() {
                 value={form.name}
               />
             </label>
-            <label className="grid gap-2 text-sm text-civic-muted">
+            <label className="grid gap-2 text-sm text-ink-soft">
               Type
               <Select
                 onChange={(event) => setForm((current) => ({ ...current, asset_type: event.target.value }))}
@@ -94,7 +94,7 @@ export function AssetCreatePage() {
                 <option value="other">Other</option>
               </Select>
             </label>
-            <label className="grid gap-2 text-sm text-civic-muted">
+            <label className="grid gap-2 text-sm text-ink-soft">
               Owner name
               <Input
                 onChange={(event) =>
@@ -103,7 +103,7 @@ export function AssetCreatePage() {
                 value={form.owner_name}
               />
             </label>
-            <label className="grid gap-2 text-sm text-civic-muted">
+            <label className="grid gap-2 text-sm text-ink-soft">
               Criticality
               <Select
                 onChange={(event) => setForm((current) => ({ ...current, criticality: event.target.value }))}
@@ -115,7 +115,7 @@ export function AssetCreatePage() {
                 <option value="critical">Critical</option>
               </Select>
             </label>
-            <label className="grid gap-2 text-sm text-civic-muted">
+            <label className="grid gap-2 text-sm text-ink-soft">
               Data sensitivity
               <Select
                 onChange={(event) =>
@@ -130,7 +130,7 @@ export function AssetCreatePage() {
                 <option value="highly_sensitive">Highly sensitive</option>
               </Select>
             </label>
-            <label className="flex items-center gap-3 rounded-lg border border-civic-line bg-[#111418] px-3 py-2 text-sm text-civic-muted">
+            <label className="flex items-center gap-3 rounded-lg border border-paper-line bg-paper px-3 py-2 text-sm text-ink-soft">
               <input
                 checked={form.internet_exposed}
                 className="h-4 w-4 accent-civic-teal"
@@ -141,28 +141,28 @@ export function AssetCreatePage() {
               />
               Internet exposed
             </label>
-            <label className="grid gap-2 text-sm text-civic-muted">
+            <label className="grid gap-2 text-sm text-ink-soft">
               Vendor
               <Input
                 onChange={(event) => setForm((current) => ({ ...current, vendor: event.target.value }))}
                 value={form.vendor}
               />
             </label>
-            <label className="grid gap-2 text-sm text-civic-muted">
+            <label className="grid gap-2 text-sm text-ink-soft">
               Product
               <Input
                 onChange={(event) => setForm((current) => ({ ...current, product: event.target.value }))}
                 value={form.product}
               />
             </label>
-            <label className="grid gap-2 text-sm text-civic-muted">
+            <label className="grid gap-2 text-sm text-ink-soft">
               Version
               <Input
                 onChange={(event) => setForm((current) => ({ ...current, version: event.target.value }))}
                 value={form.version}
               />
             </label>
-            <label className="grid gap-2 text-sm text-civic-muted">
+            <label className="grid gap-2 text-sm text-ink-soft">
               Tags
               <Input
                 onChange={(event) => setForm((current) => ({ ...current, tags: event.target.value }))}
@@ -172,7 +172,7 @@ export function AssetCreatePage() {
             </label>
           </div>
 
-          <label className="grid gap-2 text-sm text-civic-muted">
+          <label className="grid gap-2 text-sm text-ink-soft">
             Description
             <Textarea
               onChange={(event) => setForm((current) => ({ ...current, description: event.target.value }))}

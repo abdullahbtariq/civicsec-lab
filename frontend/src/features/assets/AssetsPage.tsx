@@ -57,7 +57,7 @@ export function AssetsPage() {
         <CardContent className="space-y-4">
           <div className="grid gap-3 md:grid-cols-[1fr_13rem_13rem]">
             <label className="relative block">
-              <Search className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-civic-muted" />
+              <Search className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-ink-soft" />
               <Input
                 className="pl-9"
                 onChange={(event) => setSearch(event.target.value)}
@@ -93,7 +93,7 @@ export function AssetsPage() {
                   key: "name",
                   header: "Name",
                   cell: (asset) => (
-                    <Link className="font-medium text-white hover:text-civic-teal" to={`/assets/${asset.id}`}>
+                    <Link className="font-medium text-ink hover:text-orange-ink" to={`/assets/${asset.id}`}>
                       {asset.name}
                     </Link>
                   ),
@@ -111,7 +111,7 @@ export function AssetsPage() {
                   header: "Vendor/Product",
                   cell: (asset) => [asset.vendor, asset.product].filter(Boolean).join(" / ") || "Not set",
                 },
-                { key: "updated", header: "Updated", cell: (asset) => formatDateTime(asset.updated_at) },
+                { key: "updated", header: "Updated", cell: (asset) => formatDateTime(asset.updated_at), className: "whitespace-nowrap" },
               ]}
               data={filteredAssets}
               getRowKey={(asset) => asset.id}
@@ -131,7 +131,7 @@ export function AssetsPage() {
           )}
 
           {!canCreateOperationalRecords(user) ? (
-            <p className="text-sm text-civic-muted">Viewer role is read-only for operational records.</p>
+            <p className="text-sm text-ink-soft">Viewer role is read-only for operational records.</p>
           ) : null}
         </CardContent>
       </Card>

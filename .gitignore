@@ -60,3 +60,18 @@ Desktop.ini
 reports/
 artifacts/
 sbom/
+
+# Celery runtime
+celerybeat-schedule
+celerybeat.pid
+
+# PWA dev build output
+frontend/dev-dist/
+
+# Local design mockups / scratch
+frontend/public/_mockup-*.html
+
+# Local agent tooling (not part of the product)
+.claude/
+.impeccable/
+.github/skills/

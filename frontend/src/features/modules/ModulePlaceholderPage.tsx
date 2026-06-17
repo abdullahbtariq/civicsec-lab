@@ -51,12 +51,12 @@ export function ModulePlaceholderPage({ moduleKey }: { moduleKey: keyof typeof m
           <Badge variant={module.status === "planned" ? "neutral" : "teal"}>{module.status}</Badge>
           <div className="grid gap-3 md:grid-cols-3">
             {module.methods.map((method) => (
-              <div className="rounded-lg border border-civic-line bg-[#14181d] p-4" key={method}>
-                <p className="text-sm font-medium text-white">{method}</p>
+              <div className="rounded-lg border border-paper-line bg-paper-card p-4" key={method}>
+                <p className="text-sm font-medium text-ink">{method}</p>
               </div>
             ))}
           </div>
-          <p className="max-w-3xl text-sm leading-6 text-civic-muted">
+          <p className="max-w-3xl text-sm leading-6 text-ink-soft">
             This page is intentionally a platform placeholder. Module-specific ingestion, analysis,
             scoring, visualisation, and workflows will be implemented in later prompts.
           </p>

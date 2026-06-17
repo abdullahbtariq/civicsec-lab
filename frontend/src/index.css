@@ -3,8 +3,8 @@
 @tailwind utilities;
 
 :root {
-  color-scheme: dark;
-  background: #111315;
+  color-scheme: light;
+  background: #f4ecdb;
   font-family:
     Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-synthesis: none;
@@ -22,6 +22,8 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  background: #f4ecdb;
+  color: #15242f;
 }
 
 button,
@@ -31,6 +33,36 @@ select {
   font: inherit;
 }
 
+/* Brand-orange selection tint (#D65A29) */
 ::selection {
-  background: rgba(67, 217, 173, 0.35);
+  background: rgba(214, 90, 41, 0.28);
+}
+
+@layer utilities {
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* Brand mark — optional radar sweep + signal pulse (only when <BrandMark animated />) */
+@media (prefers-reduced-motion: no-preference) {
+  .brand-mark--animated .brand-mark__sweep {
+    transform-origin: 32px 32px;
+    animation: brand-sweep 6s linear infinite;
+  }
+  .brand-mark--animated .brand-mark__nodes circle {
+    animation: brand-node-pulse 3.2s ease-in-out infinite;
+  }
+  .brand-mark--animated .brand-mark__nodes circle:nth-child(2) { animation-delay: 0.4s; }
+  .brand-mark--animated .brand-mark__nodes circle:nth-child(3) { animation-delay: 0.8s; }
+  .brand-mark--animated .brand-mark__nodes circle:nth-child(4) { animation-delay: 1.2s; }
+  .brand-mark--animated .brand-mark__nodes circle:nth-child(5) { animation-delay: 1.6s; }
+  .brand-mark--animated .brand-mark__nodes circle:nth-child(6) { animation-delay: 2s; }
+}
+@keyframes brand-sweep {
+  to { transform: rotate(360deg); }
+}
+@keyframes brand-node-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
 }

@@ -104,10 +104,15 @@ export type ThreatBoardOverview = {
 export type ThreatBoardListResponse<T> = T[] | PaginatedResponse<T>;
 
 export type VulnerabilityParams = {
+  search?: string;
   cve_id?: string;
   vendor?: string;
   product?: string;
+  source?: string;
+  cvss_severity?: string;
   kev_only?: boolean;
+  page?: number;
+  page_size?: number;
 };
 
 export type AssetMatchParams = {

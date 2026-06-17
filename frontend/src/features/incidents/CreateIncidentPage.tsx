@@ -59,14 +59,14 @@ export function CreateIncidentPage() {
   return (
     <div className="max-w-2xl space-y-5">
       <div>
-        <nav className="mb-1 text-xs text-civic-muted">
-          <Link to="/modules/incidentflow" className="transition-colors hover:text-white">
+        <nav className="mb-1 text-xs text-ink-soft">
+          <Link to="/modules/incidentflow" className="transition-colors hover:text-ink">
             IncidentFlow
           </Link>{" "}
           / New Incident
         </nav>
-        <h1 className="font-display text-xl font-semibold text-white">Create Incident</h1>
-        <p className="mt-0.5 text-sm text-civic-muted">
+        <h1 className="font-display text-xl font-semibold text-ink">Create Incident</h1>
+        <p className="mt-0.5 text-sm text-ink-soft">
           Open a new structured response record.
         </p>
       </div>
@@ -76,8 +76,8 @@ export function CreateIncidentPage() {
         <CardContent>
           <form onSubmit={(e) => void handleSubmit(e)} className="space-y-4">
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-civic-muted uppercase tracking-wide">
-                Title <span className="text-civic-rose">*</span>
+              <label className="text-xs font-medium text-ink-soft uppercase tracking-wide">
+                Title <span className="text-rose-ink">*</span>
               </label>
               <Input
                 placeholder="Brief, specific description of the incident"
@@ -89,7 +89,7 @@ export function CreateIncidentPage() {
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-civic-muted uppercase tracking-wide">
+                <label className="text-xs font-medium text-ink-soft uppercase tracking-wide">
                   Severity
                 </label>
                 <Select value={severity} onChange={(e) => setSeverity(e.target.value)}>
@@ -101,7 +101,7 @@ export function CreateIncidentPage() {
                 </Select>
               </div>
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-civic-muted uppercase tracking-wide">
+                <label className="text-xs font-medium text-ink-soft uppercase tracking-wide">
                   Incident Type
                 </label>
                 <Select value={incidentType} onChange={(e) => setIncidentType(e.target.value)}>
@@ -115,7 +115,7 @@ export function CreateIncidentPage() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-civic-muted uppercase tracking-wide">
+              <label className="text-xs font-medium text-ink-soft uppercase tracking-wide">
                 Description
               </label>
               <Textarea
@@ -127,7 +127,7 @@ export function CreateIncidentPage() {
             </div>
 
             {error && (
-              <div className="rounded-lg border border-civic-rose/40 bg-civic-rose/10 px-4 py-3 text-sm text-civic-rose">
+              <div className="rounded-lg border border-civic-rose/40 bg-civic-rose/10 px-4 py-3 text-sm text-rose-ink">
                 {error}
               </div>
             )}

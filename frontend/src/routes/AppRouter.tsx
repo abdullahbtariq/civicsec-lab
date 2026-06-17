@@ -2,6 +2,8 @@ import { Navigate, Route, Routes } from "react-router-dom";
 
 import { AppLayout } from "../components/layout/AppLayout";
 import { LoginPage } from "../features/auth/LoginPage";
+import { AboutPage } from "../features/landing/AboutPage";
+import { LandingPage } from "../features/landing/LandingPage";
 import { AssetCreatePage } from "../features/assets/AssetCreatePage";
 import { AssetDetailPage } from "../features/assets/AssetDetailPage";
 import { AssetsPage } from "../features/assets/AssetsPage";
@@ -14,7 +16,13 @@ import { AnomaliesPage } from "../features/loglens/AnomaliesPage";
 import { AnomalyDetailPage } from "../features/loglens/AnomalyDetailPage";
 import { LogLensOverviewPage } from "../features/loglens/LogLensOverviewPage";
 import { UploadLogsPage } from "../features/loglens/UploadLogsPage";
-import { ModulePlaceholderPage } from "../features/modules/ModulePlaceholderPage";
+import { ClusterDetailPage } from "../features/misinformation/ClusterDetailPage";
+import { ClusterListPage } from "../features/misinformation/ClusterListPage";
+import { DatasetDetailPage as MisDatasetDetailPage } from "../features/misinformation/DatasetDetailPage";
+import { DatasetListPage as MisDatasetListPage } from "../features/misinformation/DatasetListPage";
+import { ObservatoryOverviewPage } from "../features/misinformation/ObservatoryOverviewPage";
+import { UploadDatasetPage as MisUploadDatasetPage } from "../features/misinformation/UploadDatasetPage";
+import { RiskGraphPage } from "../features/risk-graph/RiskGraphPage";
 import { DatasetDetailPage } from "../features/privacy-doctor/DatasetDetailPage";
 import { DatasetListPage } from "../features/privacy-doctor/DatasetListPage";
 import { PrivacyDoctorOverviewPage } from "../features/privacy-doctor/PrivacyDoctorOverviewPage";
@@ -33,10 +41,13 @@ import { ProtectedRoute } from "./ProtectedRoute";
 export function AppRouter() {
   return (
     <Routes>
+      {/* Public landing routes — no auth required, no app shell */}
+      <Route element={<LandingPage />} path="/" />
+      <Route element={<AboutPage />} path="/about" />
       <Route element={<LoginPage />} path="/login" />
       <Route element={<ProtectedRoute />}>
         <Route element={<AppLayout />}>
-          <Route element={<Navigate replace to="/dashboard" />} path="/" />
+          <Route element={<Navigate replace to="/dashboard" />} path="/home" />
           <Route element={<DashboardPage />} path="/dashboard" />
           <Route element={<AssetsPage />} path="/assets" />
           <Route element={<AssetCreatePage />} path="/assets/new" />
@@ -64,18 +75,17 @@ export function AppRouter() {
           <Route element={<DatasetListPage />} path="/modules/privacy-doctor/datasets" />
           <Route element={<DatasetDetailPage />} path="/modules/privacy-doctor/datasets/:id" />
           <Route element={<UploadDatasetPage />} path="/modules/privacy-doctor/upload" />
-          <Route
-            element={<ModulePlaceholderPage moduleKey="misinformation-observatory" />}
-            path="/modules/misinformation-observatory"
-          />
-          <Route
-            element={<ModulePlaceholderPage moduleKey="risk-graph" />}
-            path="/modules/risk-graph"
-          />
+          <Route element={<ObservatoryOverviewPage />} path="/modules/misinformation-observatory" />
+          <Route element={<MisDatasetListPage />} path="/modules/misinformation-observatory/datasets" />
+          <Route element={<MisDatasetDetailPage />} path="/modules/misinformation-observatory/datasets/:id" />
+          <Route element={<MisUploadDatasetPage />} path="/modules/misinformation-observatory/upload" />
+          <Route element={<ClusterListPage />} path="/modules/misinformation-observatory/clusters" />
+          <Route element={<ClusterDetailPage />} path="/modules/misinformation-observatory/clusters/:id" />
+          <Route element={<RiskGraphPage />} path="/modules/risk-graph" />
           <Route element={<IncidentFlowOverviewPage />} path="/modules/incidentflow" />
         </Route>
       </Route>
-      <Route element={<Navigate replace to="/dashboard" />} path="*" />
+      <Route element={<Navigate replace to="/" />} path="*" />
     </Routes>
   );
 }

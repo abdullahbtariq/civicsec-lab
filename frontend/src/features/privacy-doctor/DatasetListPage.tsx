@@ -63,14 +63,14 @@ export function DatasetListPage() {
     <div className="space-y-5">
       <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <nav className="mb-1 text-xs text-civic-muted">
-            <Link to="/modules/privacy-doctor" className="transition-colors hover:text-white">
+          <nav className="mb-1 text-xs text-ink-soft">
+            <Link to="/modules/privacy-doctor" className="transition-colors hover:text-ink">
               DataPrivacy Doctor
             </Link>{" "}
             / Datasets
           </nav>
-          <h1 className="font-display text-xl font-semibold text-white">Datasets</h1>
-          <p className="mt-0.5 text-sm text-civic-muted">
+          <h1 className="font-display text-xl font-semibold text-ink">Datasets</h1>
+          <p className="mt-0.5 text-sm text-ink-soft">
             All scanned CSV datasets for your organisation.
           </p>
         </div>
@@ -101,7 +101,7 @@ export function DatasetListPage() {
         </Select>
       </div>
 
-      <p className="text-xs text-civic-muted">
+      <p className="text-xs text-ink-soft">
         Outputs are automated heuristics. Human review is required before taking compliance action.
       </p>
 
@@ -113,7 +113,7 @@ export function DatasetListPage() {
           title="No datasets found"
           description="Try adjusting the filters or upload a CSV to get started."
           action={
-            <Link to="/modules/privacy-doctor/upload" className="text-sm text-civic-teal hover:underline">
+            <Link to="/modules/privacy-doctor/upload" className="text-sm text-orange-ink hover:underline">
               Upload a CSV →
             </Link>
           }
@@ -121,9 +121,9 @@ export function DatasetListPage() {
       )}
 
       {!isLoading && !error && datasets.length > 0 && (
-        <div className="overflow-x-auto rounded-lg border border-civic-line">
+        <div className="overflow-x-auto rounded-lg border border-paper-line">
           <table className="w-full text-sm">
-            <thead className="border-b border-civic-line bg-[#111418] text-xs uppercase tracking-wide text-civic-muted">
+            <thead className="border-b border-paper-line bg-paper text-xs uppercase tracking-wide text-ink-soft">
               <tr>
                 <th className="px-4 py-2 text-left">File</th>
                 <th className="px-4 py-2 text-right">Size</th>
@@ -135,31 +135,31 @@ export function DatasetListPage() {
                 <th className="px-4 py-2 text-right">Uploaded</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-civic-line bg-civic-panel">
+            <tbody className="divide-y divide-paper-line bg-paper-card">
               {datasets.map((ds) => (
-                <tr key={ds.id} className="transition-colors hover:bg-[#20252b]">
+                <tr key={ds.id} className="transition-colors hover:bg-paper-raise">
                   <td className="px-4 py-2.5">
                     <Link
                       to={`/modules/privacy-doctor/datasets/${ds.id}`}
-                      className="font-medium text-white transition-colors hover:text-civic-teal"
+                      className="font-medium text-ink transition-colors hover:text-orange-ink"
                     >
                       {ds.original_filename}
                     </Link>
                   </td>
-                  <td className="px-4 py-2.5 text-right tabular-nums text-xs text-civic-muted">
+                  <td className="px-4 py-2.5 text-right tabular-nums text-xs text-ink-soft">
                     {formatBytes(ds.file_size)}
                   </td>
-                  <td className="px-4 py-2.5 text-right tabular-nums text-civic-muted">
+                  <td className="px-4 py-2.5 text-right tabular-nums text-ink-soft">
                     {ds.row_count.toLocaleString()}
                   </td>
-                  <td className="px-4 py-2.5 text-right tabular-nums text-civic-muted">
+                  <td className="px-4 py-2.5 text-right tabular-nums text-ink-soft">
                     {ds.column_count}
                   </td>
                   <td className="px-4 py-2.5 text-center">
                     {ds.risk_band ? (
                       <RiskBandBadge band={ds.risk_band} score={ds.privacy_risk_score} />
                     ) : (
-                      <span className="text-civic-muted">—</span>
+                      <span className="text-ink-soft">—</span>
                     )}
                   </td>
                   <td className="px-4 py-2.5 text-center">
@@ -168,10 +168,10 @@ export function DatasetListPage() {
                       label={ds.processing_status_display}
                     />
                   </td>
-                  <td className="px-4 py-2.5 text-right tabular-nums text-civic-muted">
+                  <td className="px-4 py-2.5 text-right tabular-nums text-ink-soft">
                     {ds.finding_count}
                   </td>
-                  <td className="px-4 py-2.5 text-right text-xs text-civic-muted">
+                  <td className="px-4 py-2.5 text-right text-xs text-ink-soft">
                     {new Date(ds.uploaded_at).toLocaleDateString()}
                   </td>
                 </tr>

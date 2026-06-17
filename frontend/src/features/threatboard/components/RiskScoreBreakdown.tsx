@@ -20,9 +20,9 @@ export function RiskScoreBreakdown() {
       <CardContent>
         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
           {scoreRows.map(([label, description]) => (
-            <div className="rounded-lg border border-civic-line bg-[#14181d] p-4" key={label}>
-              <p className="text-sm font-semibold text-white">{label}</p>
-              <p className="mt-2 text-xs leading-5 text-civic-muted">{description}</p>
+            <div className="rounded-lg border border-paper-line bg-paper-card p-4" key={label}>
+              <p className="text-sm font-semibold text-ink">{label}</p>
+              <p className="mt-2 text-xs leading-5 text-ink-soft">{description}</p>
             </div>
           ))}
         </div>

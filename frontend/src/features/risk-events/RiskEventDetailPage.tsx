@@ -38,13 +38,13 @@ export function RiskEventDetailPage() {
       {/* Header */}
       <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <nav className="mb-1 text-xs text-civic-muted">
-            <Link to="/risk-events" className="transition-colors hover:text-white">
+          <nav className="mb-1 text-xs text-ink-soft">
+            <Link to="/risk-events" className="transition-colors hover:text-ink">
               Risk Events
             </Link>{" "}
             / {riskEvent.title}
           </nav>
-          <h1 className="font-display text-xl font-semibold text-white">{riskEvent.title}</h1>
+          <h1 className="font-display text-xl font-semibold text-ink">{riskEvent.title}</h1>
           <div className="mt-1.5 flex flex-wrap items-center gap-2">
             <SeverityBadge severity={riskEvent.severity} />
             <StatusBadge status={riskEvent.status} />
@@ -82,7 +82,7 @@ export function RiskEventDetailPage() {
         <Card>
           <CardHeader title="Evidence Summary" />
           <CardContent>
-            <p className="text-sm leading-6 text-civic-muted">
+            <p className="text-sm leading-6 text-ink-soft">
               {riskEvent.evidence_summary || "No evidence summary provided."}
             </p>
           </CardContent>
@@ -90,7 +90,7 @@ export function RiskEventDetailPage() {
         <Card>
           <CardHeader title="Recommended Action" />
           <CardContent>
-            <p className="text-sm leading-6 text-civic-muted">
+            <p className="text-sm leading-6 text-ink-soft">
               {riskEvent.recommended_action_summary || "No action summary provided."}
             </p>
           </CardContent>
@@ -105,14 +105,14 @@ export function RiskEventDetailPage() {
           {evidence.error ? <ErrorState message={evidence.error} /> : null}
           {relatedEvidence.length
             ? relatedEvidence.map((item) => (
-                <div className="rounded-lg border border-civic-line bg-[#14181d] p-4" key={item.id}>
+                <div className="rounded-lg border border-paper-line bg-paper-card p-4" key={item.id}>
                   <div className="flex flex-wrap items-center gap-2">
                     <Badge variant="blue">{formatLabel(item.evidence_type)}</Badge>
                     <ConfidenceBadge confidence={item.confidence} />
                   </div>
-                  <p className="mt-3 font-medium text-white">{item.title}</p>
-                  <p className="mt-2 text-sm leading-6 text-civic-muted">{item.description}</p>
-                  <p className="mt-2 text-xs text-civic-muted">{item.source || "No source reference"}</p>
+                  <p className="mt-3 font-medium text-ink">{item.title}</p>
+                  <p className="mt-2 text-sm leading-6 text-ink-soft">{item.description}</p>
+                  <p className="mt-2 text-xs text-ink-soft">{item.source || "No source reference"}</p>
                 </div>
               ))
             : !evidence.isLoading && (
@@ -132,15 +132,15 @@ export function RiskEventDetailPage() {
           {recommendations.error ? <ErrorState message={recommendations.error} /> : null}
           {relatedRecommendations.length
             ? relatedRecommendations.map((item) => (
-                <div className="rounded-lg border border-civic-line bg-[#14181d] p-4" key={item.id}>
+                <div className="rounded-lg border border-paper-line bg-paper-card p-4" key={item.id}>
                   <div className="flex flex-wrap items-center gap-2">
                     <Badge variant={item.priority === "urgent" ? "rose" : "amber"}>
                       {formatLabel(item.priority)}
                     </Badge>
                     <StatusBadge status={item.status} />
                   </div>
-                  <p className="mt-3 font-medium text-white">{item.title}</p>
-                  <p className="mt-2 text-sm leading-6 text-civic-muted">{item.description}</p>
+                  <p className="mt-3 font-medium text-ink">{item.title}</p>
+                  <p className="mt-2 text-sm leading-6 text-ink-soft">{item.description}</p>
                 </div>
               ))
             : !recommendations.isLoading && (
@@ -161,7 +161,7 @@ export function RiskEventDetailPage() {
               {riskEvent.tags.map((tag) => <Badge key={tag}>{tag}</Badge>)}
             </div>
           )}
-          <pre className="overflow-auto rounded-lg border border-civic-line bg-[#111418] p-4 text-xs text-civic-muted">
+          <pre className="overflow-auto rounded-lg border border-paper-line bg-paper p-4 text-xs text-ink-soft">
             {JSON.stringify(riskEvent.mapped_frameworks, null, 2)}
           </pre>
         </CardContent>
@@ -172,9 +172,9 @@ export function RiskEventDetailPage() {
 
 function Detail({ label, value }: { label: string; value: ReactNode }) {
   return (
-    <div className="rounded-lg border border-civic-line bg-[#14181d] p-4">
-      <p className="text-xs uppercase text-civic-muted">{label}</p>
-      <div className="mt-2 text-sm font-medium text-white">{value}</div>
+    <div className="rounded-lg border border-paper-line bg-paper-card p-4">
+      <p className="text-xs uppercase text-ink-soft">{label}</p>
+      <div className="mt-2 text-sm font-medium text-ink">{value}</div>
     </div>
   );
 }

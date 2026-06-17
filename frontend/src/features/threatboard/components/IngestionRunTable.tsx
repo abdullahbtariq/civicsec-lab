@@ -14,8 +14,8 @@ export function IngestionRunTable({ runs }: { runs: ThreatIngestionRun[] }) {
         { key: "created", header: "Created", cell: (run) => run.records_created },
         { key: "updated", header: "Updated", cell: (run) => run.records_updated },
         { key: "failed", header: "Failed", cell: (run) => run.records_failed },
-        { key: "started", header: "Started", cell: (run) => formatDateTime(run.started_at) },
-        { key: "finished", header: "Finished", cell: (run) => formatDateTime(run.finished_at) },
+        { key: "started", header: "Started", cell: (run) => formatDateTime(run.started_at), className: "whitespace-nowrap" },
+        { key: "finished", header: "Finished", cell: (run) => formatDateTime(run.finished_at), className: "whitespace-nowrap" },
         { key: "error", header: "Error", cell: (run) => run.error_message || "None" },
       ]}
       data={runs}

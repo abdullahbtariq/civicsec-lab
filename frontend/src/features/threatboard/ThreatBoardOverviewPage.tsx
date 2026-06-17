@@ -113,7 +113,7 @@ export function ThreatBoardOverviewPage() {
           <Card>
             <CardHeader
               action={
-                <Link className="text-sm font-semibold text-civic-teal" to="/modules/threatboard/ingestion-runs">
+                <Link className="text-sm font-semibold text-orange-ink" to="/modules/threatboard/ingestion-runs">
                   View runs
                 </Link>
               }

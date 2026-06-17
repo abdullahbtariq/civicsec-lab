@@ -49,7 +49,7 @@ export function RiskEventsPage() {
       <CardContent className="space-y-4">
         <div className="grid gap-3 lg:grid-cols-[1fr_12rem_12rem_14rem]">
           <label className="relative block">
-            <Search className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-civic-muted" />
+            <Search className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-ink-soft" />
             <Input
               className="pl-9"
               onChange={(event) => setSearch(event.target.value)}
@@ -92,7 +92,7 @@ export function RiskEventsPage() {
                 key: "title",
                 header: "Title",
                 cell: (event) => (
-                  <Link className="font-medium text-white hover:text-civic-teal" to={`/risk-events/${event.id}`}>
+                  <Link className="font-medium text-ink hover:text-orange-ink" to={`/risk-events/${event.id}`}>
                     {event.title}
                   </Link>
                 ),
@@ -103,8 +103,8 @@ export function RiskEventsPage() {
               { key: "confidence", header: "Confidence", cell: (event) => <ConfidenceBadge confidence={event.confidence} /> },
               { key: "score", header: "Risk score", cell: (event) => <RiskScoreBadge score={event.risk_score} /> },
               { key: "asset", header: "Affected asset", cell: (event) => event.affected_asset_name || "Not set" },
-              { key: "first", header: "First seen", cell: (event) => formatDateTime(event.first_seen_at) },
-              { key: "updated", header: "Updated", cell: (event) => formatDateTime(event.updated_at) },
+              { key: "first", header: "First seen", cell: (event) => formatDateTime(event.first_seen_at), className: "whitespace-nowrap" },
+              { key: "updated", header: "Updated", cell: (event) => formatDateTime(event.updated_at), className: "whitespace-nowrap" },
             ]}
             data={filteredEvents}
             getRowKey={(event) => event.id}

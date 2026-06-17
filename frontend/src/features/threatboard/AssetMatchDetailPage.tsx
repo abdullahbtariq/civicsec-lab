@@ -60,17 +60,17 @@ export function AssetMatchDetailPage() {
   return (
     <div className="space-y-6">
       <div>
-        <nav className="mb-1 text-xs text-civic-muted">
-          <Link to="/modules/threatboard" className="transition-colors hover:text-white">
+        <nav className="mb-1 text-xs text-ink-soft">
+          <Link to="/modules/threatboard" className="transition-colors hover:text-ink">
             ThreatBoard
           </Link>
           {" / "}
-          <Link to="/modules/threatboard/matches" className="transition-colors hover:text-white">
+          <Link to="/modules/threatboard/matches" className="transition-colors hover:text-ink">
             Asset Matches
           </Link>
           {" / "}{match.vulnerability.cve_id}
         </nav>
-        <h1 className="font-display text-xl font-semibold text-white">
+        <h1 className="font-display text-xl font-semibold text-ink">
           {match.vulnerability.cve_id} × {match.asset.name}
         </h1>
         <div className="mt-1.5 flex flex-wrap items-center gap-2">
@@ -106,7 +106,7 @@ export function AssetMatchDetailPage() {
           <CardHeader
             action={
               <Link
-                className="text-sm font-semibold text-civic-teal"
+                className="text-sm font-semibold text-orange-ink"
                 to={`/modules/threatboard/vulnerabilities/${match.vulnerability.id}`}
               >
                 Open vulnerability
@@ -145,7 +145,7 @@ export function AssetMatchDetailPage() {
         <Card>
           <CardHeader title="Explanation" />
           <CardContent>
-            <p className="text-sm leading-6 text-civic-muted">
+            <p className="text-sm leading-6 text-ink-soft">
               {match.explanation || "No explanation was recorded for this match."}
             </p>
           </CardContent>
@@ -156,7 +156,7 @@ export function AssetMatchDetailPage() {
           <CardContent>
             <ol className="grid gap-3">
               {nextSteps.map((step) => (
-                <li className="rounded-lg border border-civic-line bg-[#14181d] p-3 text-sm text-civic-muted" key={step}>
+                <li className="rounded-lg border border-paper-line bg-paper-card p-3 text-sm text-ink-soft" key={step}>
                   {step}
                 </li>
               ))}
@@ -170,9 +170,9 @@ export function AssetMatchDetailPage() {
 
 function Detail({ label, value }: { label: string; value: ReactNode }) {
   return (
-    <div className="rounded-lg border border-civic-line bg-[#14181d] p-4">
-      <p className="text-xs uppercase text-civic-muted">{label}</p>
-      <div className="mt-2 text-sm font-medium text-white">{value}</div>
+    <div className="rounded-lg border border-paper-line bg-paper-card p-4">
+      <p className="text-xs uppercase text-ink-soft">{label}</p>
+      <div className="mt-2 text-sm font-medium text-ink">{value}</div>
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import { Badge } from "./Badge";
 
 function variantForScore(score: number) {
-  if (score <= 20) return "teal";
+  if (score <= 20) return "sage";
   if (score <= 45) return "amber";
   if (score <= 70) return "rose";
   return "rose";

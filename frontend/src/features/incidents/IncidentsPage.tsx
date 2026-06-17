@@ -47,7 +47,7 @@ export function IncidentsPage() {
       <CardContent className="space-y-4">
         <div className="grid gap-3 lg:grid-cols-[1fr_12rem_13rem_15rem]">
           <label className="relative block">
-            <Search className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-civic-muted" />
+            <Search className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-ink-soft" />
             <Input
               className="pl-9"
               onChange={(event) => setSearch(event.target.value)}
@@ -89,7 +89,7 @@ export function IncidentsPage() {
                 key: "title",
                 header: "Title",
                 cell: (incident) => (
-                  <Link className="font-medium text-white hover:text-civic-teal" to={`/incidents/${incident.id}`}>
+                  <Link className="font-medium text-ink hover:text-orange-ink" to={`/incidents/${incident.id}`}>
                     {incident.title}
                   </Link>
                 ),
@@ -98,8 +98,8 @@ export function IncidentsPage() {
               { key: "severity", header: "Severity", cell: (incident) => <SeverityBadge severity={incident.severity} /> },
               { key: "status", header: "Status", cell: (incident) => <StatusBadge status={incident.status} /> },
               { key: "owner", header: "Owner", cell: (incident) => incident.owner_email || "Not set" },
-              { key: "opened", header: "Opened", cell: (incident) => formatDateTime(incident.opened_at) },
-              { key: "updated", header: "Updated", cell: (incident) => formatDateTime(incident.updated_at) },
+              { key: "opened", header: "Opened", cell: (incident) => formatDateTime(incident.opened_at), className: "whitespace-nowrap" },
+              { key: "updated", header: "Updated", cell: (incident) => formatDateTime(incident.updated_at), className: "whitespace-nowrap" },
             ]}
             data={filteredIncidents}
             getRowKey={(incident) => incident.id}

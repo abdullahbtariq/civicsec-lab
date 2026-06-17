@@ -72,16 +72,16 @@ export function AppLayout() {
   const location = useLocation();
 
   return (
-    <div className="min-h-screen bg-civic-surface text-civic-text">
+    <div className="min-h-screen bg-paper text-ink">
       <div className="flex min-h-screen">
         <Sidebar />
-        <div className="min-w-0 flex-1">
+        <div className="flex min-w-0 flex-1 flex-col bg-paper">
           <MobileNav />
           <Topbar
             title={getTitle(location.pathname)}
             moduleColor={getModuleColor(location.pathname)}
           />
-          <main className="mx-auto w-full max-w-7xl px-4 py-6 lg:px-8">
+          <main className="mx-auto w-full max-w-[1640px] flex-1 px-5 py-7 lg:px-10">
             <Outlet />
           </main>
         </div>

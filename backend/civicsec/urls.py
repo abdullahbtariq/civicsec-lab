@@ -7,7 +7,7 @@ from rest_framework.routers import DefaultRouter
 
 from apps.accounts.views import CurrentUserView
 from apps.assets.views import AssetViewSet
-from apps.common.views import ProcessingJobViewSet
+from apps.common.views import GraphDataView, ProcessingJobViewSet
 from apps.evidence.views import EvidenceItemViewSet
 from apps.incidents.views import IncidentTimelineEntryViewSet, IncidentViewSet
 from apps.organisations.views import OrganisationViewSet
@@ -36,5 +36,7 @@ urlpatterns = [
     path("api/loglens/", include("apps.loglens.urls")),
     path("api/privacy-doctor/", include("apps.privacy_doctor.urls")),
     path("api/incidentflow/", include("apps.incidents.urls")),
+    path("api/observatory/", include("apps.misinformation.urls")),
+    path("api/graph/", GraphDataView.as_view(), name="civic-risk-graph"),
     path("api/", include(router.urls)),
 ]

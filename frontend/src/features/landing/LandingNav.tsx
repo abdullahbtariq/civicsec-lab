@@ -1,7 +1,9 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { Menu, ShieldCheck, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+
+import { BrandMark } from "../../components/brand/BrandMark";
 
 const C = {
   white:    "#ffffff",
@@ -9,7 +11,7 @@ const C = {
   text:     "#111111",
   muted:    "#6b6b68",
   teal:     "#0a8e6e",
-  amber:    "#f4b860",
+  amber:    "#d99a3c",
   amberText:"#1a0e00",
 } as const;
 
@@ -50,12 +52,7 @@ export function LandingNav({ visible = true }: { visible?: boolean }) {
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
           {/* Logo */}
           <Link className="flex items-center gap-2.5" to="/">
-            <div
-              className="flex h-8 w-8 items-center justify-center rounded-lg"
-              style={{ backgroundColor: `${C.teal}14`, border: `1px solid ${C.teal}28` }}
-            >
-              <ShieldCheck className="h-4 w-4" style={{ color: C.teal }} />
-            </div>
+            <BrandMark size={30} boxed className="rounded-lg" />
             <span className="font-display font-semibold text-sm" style={{ color: C.text }}>
               CivicSec Lab
             </span>

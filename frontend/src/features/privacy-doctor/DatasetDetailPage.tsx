@@ -18,9 +18,9 @@ type Tab = "summary" | "columns" | "findings";
 
 function InfoRow({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div className="flex items-start gap-2 border-b border-civic-line py-2 text-sm last:border-0">
-      <span className="w-48 shrink-0 text-xs text-civic-muted">{label}</span>
-      <span className="text-white">{children}</span>
+    <div className="flex items-start gap-2 border-b border-paper-line py-2 text-sm last:border-0">
+      <span className="w-48 shrink-0 text-xs text-ink-soft">{label}</span>
+      <span className="text-ink">{children}</span>
     </div>
   );
 }
@@ -77,8 +77,8 @@ export function DatasetDetailPage() {
   const tabClass = (tab: Tab) =>
     `px-4 py-2 text-xs font-medium transition-colors ${
       activeTab === tab
-        ? "border-b-2 border-civic-teal text-civic-teal"
-        : "text-civic-muted hover:text-white"
+        ? "border-b-2 border-civic-teal text-orange-ink"
+        : "text-ink-soft hover:text-ink"
     }`;
 
   if (isLoading) return <LoadingState label="Loading dataset" />;
@@ -91,20 +91,20 @@ export function DatasetDetailPage() {
       {/* Breadcrumb + header */}
       <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <nav className="mb-1 text-xs text-civic-muted">
-            <Link to="/modules/privacy-doctor" className="transition-colors hover:text-white">
+          <nav className="mb-1 text-xs text-ink-soft">
+            <Link to="/modules/privacy-doctor" className="transition-colors hover:text-ink">
               DataPrivacy Doctor
             </Link>{" "}
             /{" "}
             <Link
               to="/modules/privacy-doctor/datasets"
-              className="transition-colors hover:text-white"
+              className="transition-colors hover:text-ink"
             >
               Datasets
             </Link>{" "}
             / {dataset.original_filename}
           </nav>
-          <h1 className="break-all font-display text-xl font-semibold text-white">
+          <h1 className="break-all font-display text-xl font-semibold text-ink">
             {dataset.original_filename}
           </h1>
           <div className="mt-1.5 flex flex-wrap items-center gap-2">
@@ -145,7 +145,7 @@ export function DatasetDetailPage() {
       </div>
 
       {deleteMsg && (
-        <div className="rounded-lg border border-civic-line bg-[#14181d] px-4 py-2 text-xs text-civic-muted">
+        <div className="rounded-lg border border-paper-line bg-paper-card px-4 py-2 text-xs text-ink-soft">
           {deleteMsg}
         </div>
       )}
@@ -158,9 +158,9 @@ export function DatasetDetailPage() {
           { label: "Findings", value: dataset.finding_count },
           { label: "Risk Score", value: `${dataset.privacy_risk_score}/100` },
         ].map(({ label, value }) => (
-          <div key={label} className="rounded-lg border border-civic-line bg-[#14181d] p-3">
-            <p className="text-xs uppercase tracking-wide text-civic-muted">{label}</p>
-            <p className="mt-1 text-xl font-bold tabular-nums text-white">{value}</p>
+          <div key={label} className="rounded-lg border border-paper-line bg-paper-card p-3">
+            <p className="text-xs uppercase tracking-wide text-ink-soft">{label}</p>
+            <p className="mt-1 text-xl font-bold tabular-nums text-ink">{value}</p>
           </div>
         ))}
       </div>
@@ -168,30 +168,30 @@ export function DatasetDetailPage() {
       {/* Identifier counts */}
       <div className="grid gap-3 sm:grid-cols-3">
         <div className="rounded-lg border border-civic-rose/30 bg-civic-rose/5 p-3">
-          <p className="text-xs uppercase tracking-wide text-civic-rose">Direct Identifiers</p>
-          <p className="mt-1 text-xl font-bold tabular-nums text-civic-rose">
+          <p className="text-xs uppercase tracking-wide text-rose-ink">Direct Identifiers</p>
+          <p className="mt-1 text-xl font-bold tabular-nums text-rose-ink">
             {dataset.direct_identifier_count}
           </p>
-          <p className="mt-0.5 text-xs text-civic-muted">columns</p>
+          <p className="mt-0.5 text-xs text-ink-soft">columns</p>
         </div>
         <div className="rounded-lg border border-civic-amber/30 bg-civic-amber/5 p-3">
-          <p className="text-xs uppercase tracking-wide text-civic-amber">Quasi-Identifiers</p>
-          <p className="mt-1 text-xl font-bold tabular-nums text-civic-amber">
+          <p className="text-xs uppercase tracking-wide text-gold-ink">Quasi-Identifiers</p>
+          <p className="mt-1 text-xl font-bold tabular-nums text-gold-ink">
             {dataset.quasi_identifier_count}
           </p>
-          <p className="mt-0.5 text-xs text-civic-muted">columns</p>
+          <p className="mt-0.5 text-xs text-ink-soft">columns</p>
         </div>
         <div className="rounded-lg border border-civic-blue/30 bg-civic-blue/5 p-3">
-          <p className="text-xs uppercase tracking-wide text-civic-blue">Sensitive Attributes</p>
-          <p className="mt-1 text-xl font-bold tabular-nums text-civic-blue">
+          <p className="text-xs uppercase tracking-wide text-bluec-ink">Sensitive Attributes</p>
+          <p className="mt-1 text-xl font-bold tabular-nums text-bluec-ink">
             {dataset.sensitive_attribute_count}
           </p>
-          <p className="mt-0.5 text-xs text-civic-muted">columns</p>
+          <p className="mt-0.5 text-xs text-ink-soft">columns</p>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="border-b border-civic-line">
+      <div className="border-b border-paper-line">
         <div className="flex gap-0">
           <button className={tabClass("summary")} onClick={() => setActiveTab("summary")}>
             Summary
@@ -208,7 +208,7 @@ export function DatasetDetailPage() {
       {/* Tab: Summary */}
       {activeTab === "summary" && (
         <Card>
-          <CardContent className="divide-y divide-civic-line">
+          <CardContent className="divide-y divide-paper-line">
             <InfoRow label="File name">{dataset.original_filename}</InfoRow>
             <InfoRow label="File size">
               {dataset.file_size > 0
@@ -222,9 +222,9 @@ export function DatasetDetailPage() {
             </InfoRow>
             <InfoRow label="Original file">
               {dataset.original_file_deleted ? (
-                <span className="text-civic-teal">Deleted ✓</span>
+                <span className="text-orange-ink">Deleted ✓</span>
               ) : (
-                <span className="text-civic-amber">Retained</span>
+                <span className="text-gold-ink">Retained</span>
               )}
             </InfoRow>
             <InfoRow label="Uploaded">
@@ -237,7 +237,7 @@ export function DatasetDetailPage() {
               <InfoRow label="Risk event">
                 <Link
                   to={`/risk-events/${dataset.risk_event}`}
-                  className="text-civic-teal hover:underline"
+                  className="text-orange-ink hover:underline"
                 >
                   #{dataset.risk_event}
                 </Link>
@@ -253,9 +253,9 @@ export function DatasetDetailPage() {
           {profiles.length === 0 ? (
             <EmptyState title="No column profiles yet" description="Run a scan to generate column-level privacy profiles." />
           ) : (
-            <div className="overflow-x-auto rounded-lg border border-civic-line">
+            <div className="overflow-x-auto rounded-lg border border-paper-line">
               <table className="w-full text-sm">
-                <thead className="border-b border-civic-line bg-[#111418] text-xs uppercase tracking-wide text-civic-muted">
+                <thead className="border-b border-paper-line bg-paper text-xs uppercase tracking-wide text-ink-soft">
                   <tr>
                     <th className="px-4 py-2 text-left">Column</th>
                     <th className="px-4 py-2 text-left">Type</th>
@@ -265,13 +265,13 @@ export function DatasetDetailPage() {
                     <th className="px-4 py-2 text-left">Recommendation</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-civic-line bg-civic-panel">
+                <tbody className="divide-y divide-paper-line bg-paper-card">
                   {profiles.map((p) => (
-                    <tr key={p.id} className="transition-colors hover:bg-[#20252b]">
-                      <td className="px-4 py-2.5 font-mono text-xs text-white">
+                    <tr key={p.id} className="transition-colors hover:bg-paper-raise">
+                      <td className="px-4 py-2.5 font-mono text-xs text-ink">
                         {p.column_name}
                       </td>
-                      <td className="px-4 py-2.5 text-xs text-civic-muted">
+                      <td className="px-4 py-2.5 text-xs text-ink-soft">
                         {p.inferred_type_display}
                       </td>
                       <td className="px-4 py-2.5">
@@ -280,23 +280,23 @@ export function DatasetDetailPage() {
                           label={p.privacy_category_display}
                         />
                       </td>
-                      <td className="px-4 py-2.5 text-right tabular-nums text-xs text-civic-muted">
+                      <td className="px-4 py-2.5 text-right tabular-nums text-xs text-ink-soft">
                         {(p.uniqueness_ratio * 100).toFixed(0)}%
                       </td>
                       <td className="px-4 py-2.5 text-right tabular-nums text-xs font-semibold">
                         <span
                           className={
                             p.risk_score >= 70
-                              ? "text-civic-rose"
+                              ? "text-rose-ink"
                               : p.risk_score >= 40
-                                ? "text-civic-amber"
-                                : "text-civic-muted"
+                                ? "text-gold-ink"
+                                : "text-ink-soft"
                           }
                         >
                           {p.risk_score}
                         </span>
                       </td>
-                      <td className="px-4 py-2.5 text-xs text-civic-muted">
+                      <td className="px-4 py-2.5 text-xs text-ink-soft">
                         {p.recommended_transformation || "—"}
                       </td>
                     </tr>
@@ -318,25 +318,25 @@ export function DatasetDetailPage() {
               {findings.map((f) => (
                 <div
                   key={f.id}
-                  className="space-y-2 rounded-lg border border-civic-line bg-[#14181d]/60 p-4"
+                  className="space-y-2 rounded-lg border border-paper-line bg-paper-card/60 p-4"
                 >
                   <div className="flex flex-wrap items-center gap-2">
                     <FindingSeverityBadge severity={f.severity} label={f.severity_display} />
-                    <span className="text-sm font-semibold text-white">{f.title}</span>
-                    <span className="text-xs text-civic-muted">
+                    <span className="text-sm font-semibold text-ink">{f.title}</span>
+                    <span className="text-xs text-ink-soft">
                       {(f.confidence * 100).toFixed(0)}% confidence
                     </span>
                   </div>
-                  <p className="text-xs text-civic-muted">{f.description}</p>
+                  <p className="text-xs text-ink-soft">{f.description}</p>
                   {f.affected_columns.length > 0 && (
-                    <p className="text-xs text-civic-muted">
-                      <span className="font-medium text-white">Affected columns: </span>
+                    <p className="text-xs text-ink-soft">
+                      <span className="font-medium text-ink">Affected columns: </span>
                       {f.affected_columns.join(", ")}
                     </p>
                   )}
-                  <div className="rounded border border-civic-line bg-[#111418] px-3 py-2">
-                    <p className="text-xs text-civic-muted">
-                      <span className="font-medium text-white">Recommendation: </span>
+                  <div className="rounded border border-paper-line bg-paper px-3 py-2">
+                    <p className="text-xs text-ink-soft">
+                      <span className="font-medium text-ink">Recommendation: </span>
                       {f.recommendation}
                     </p>
                   </div>
@@ -348,7 +348,7 @@ export function DatasetDetailPage() {
       )}
 
       {/* Responsible-use footer */}
-      <div className="rounded-lg border border-civic-line bg-[#14181d]/40 px-4 py-3 text-xs text-civic-muted">
+      <div className="rounded-lg border border-paper-line bg-paper-card/40 px-4 py-3 text-xs text-ink-soft">
         Automated analysis only. All findings require verification by a qualified data protection
         officer. This tool does not constitute legal advice.
       </div>
