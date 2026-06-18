@@ -15,7 +15,6 @@ from __future__ import annotations
 
 from typing import Any
 
-
 # --------------------------------------------------------------------------- #
 # Node / edge helpers                                                           #
 # --------------------------------------------------------------------------- #
@@ -215,8 +214,13 @@ def build_graph(organisation) -> dict[str, list[dict]]:
             rid = f"risk-{re.id}"
             if rid not in seen:
                 add_node(_node(
-                    node_id=rid, node_type="risk_event", label=re.title[:70], severity=re.severity,
-                    meta={"source_module": re.source_module, "event_type": re.event_type, "status": re.status},
+                    node_id=rid, node_type="risk_event", label=re.title[:70],
+                    severity=re.severity,
+                    meta={
+                        "source_module": re.source_module,
+                        "event_type": re.event_type,
+                        "status": re.status,
+                    },
                     url=f"/risk-events/{re.id}",
                 ))
             maybe_edge(anid, rid, "anomaly_generates_risk_event", "")
@@ -226,7 +230,10 @@ def build_graph(organisation) -> dict[str, list[dict]]:
     # ------------------------------------------------------------------ #
     clusters = (
         NarrativeCluster.objects
-        .filter(dataset__organisation=organisation, status__in=["needs_review", "escalated", "reviewed_concerning"])
+        .filter(
+            dataset__organisation=organisation,
+            status__in=["needs_review", "escalated", "reviewed_concerning"],
+        )
         .select_related("linked_risk_event")
         .order_by("-cluster_size")[:40]
     )
@@ -272,7 +279,11 @@ def build_graph(organisation) -> dict[str, list[dict]]:
     # ------------------------------------------------------------------ #
     datasets = (
         UploadedDataset.objects
-        .filter(organisation=organisation, processing_status="complete", risk_band__in=["high", "severe"])
+        .filter(
+            organisation=organisation,
+            processing_status="complete",
+            risk_band__in=["high", "severe"],
+        )
         .select_related("risk_event")
         .order_by("-privacy_risk_score")[:15]
     )
@@ -296,8 +307,13 @@ def build_graph(organisation) -> dict[str, list[dict]]:
             rid = f"risk-{re.id}"
             if rid not in seen:
                 add_node(_node(
-                    node_id=rid, node_type="risk_event", label=re.title[:70], severity=re.severity,
-                    meta={"source_module": re.source_module, "event_type": re.event_type, "status": re.status},
+                    node_id=rid, node_type="risk_event", label=re.title[:70],
+                    severity=re.severity,
+                    meta={
+                        "source_module": re.source_module,
+                        "event_type": re.event_type,
+                        "status": re.status,
+                    },
                     url=f"/risk-events/{re.id}",
                 ))
             maybe_edge(dnid, rid, "dataset_has_privacy_risk", "")

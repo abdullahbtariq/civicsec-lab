@@ -16,11 +16,11 @@ from apps.misinformation.models import (
 )
 from apps.misinformation.services.clustering import cluster_posts
 from apps.misinformation.services.keyword_burst import detect_keyword_bursts
+from apps.misinformation.services.language import prepare_for_sentiment
 from apps.misinformation.services.risk_events import (
     generate_risk_events_for_bursts,
     generate_risk_events_for_clusters,
 )
-from apps.misinformation.services.language import prepare_for_sentiment
 from apps.misinformation.services.sentiment import score_sentiment, score_toxicity
 from apps.misinformation.services.text_processing import (
     clean_text,
@@ -212,7 +212,7 @@ def _build_clusters(
     # Assign cluster FK to every post so the cluster detail page can load them.
     # Build a map: post pk → cluster object (cluster_objs are now saved with PKs).
     post_pk_to_cluster: dict[int, NarrativeCluster] = {}
-    for cd, cluster_obj in zip(cluster_data, cluster_objs):
+    for cd, cluster_obj in zip(cluster_data, cluster_objs, strict=False):
         for i in cd["indices"]:
             if i < total_posts:
                 post_pk_to_cluster[posts[i].pk] = cluster_obj

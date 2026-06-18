@@ -93,7 +93,7 @@ def _translate_batch(texts: list[str], source_lang: str) -> list[str]:
 
         translated = GoogleTranslator(source=source_lang, target=ENGLISH).translate_batch(texts)
         # translate_batch may return None for individual entries — fall back to original
-        return [t if t else orig for t, orig in zip(translated, texts)]
+        return [t if t else orig for t, orig in zip(translated, texts, strict=False)]
     except Exception as exc:
         logger.warning("Translation batch failed (%s) — keeping originals.", exc)
         return texts
@@ -159,7 +159,7 @@ def prepare_for_sentiment(texts: list[str]) -> tuple[list[str], str]:
     translated_subset = translate_to_english(subset, source_lang="auto")
 
     prepared = list(texts)
-    for idx, translated in zip(non_en_idx, translated_subset):
+    for idx, translated in zip(non_en_idx, translated_subset, strict=False):
         prepared[idx] = translated
 
     return prepared, dominant

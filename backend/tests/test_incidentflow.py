@@ -3,7 +3,6 @@ Tests for Phase 5 — IncidentFlow:
 playbook seeding, apply_playbook service, report generation, and API endpoints.
 """
 
-import pytest
 from django.contrib.auth import get_user_model
 from rest_framework.test import APIClient
 
@@ -75,7 +74,10 @@ class TestSeedPlaybooks:
 
     def test_builtin_templates_have_no_organisation(self, db):
         seed_builtin_playbooks()
-        assert PlaybookTemplate.objects.filter(is_builtin=True, organisation__isnull=False).count() == 0
+        assert (
+            PlaybookTemplate.objects.filter(is_builtin=True, organisation__isnull=False).count()
+            == 0
+        )
 
 
 # ---------------------------------------------------------------------------

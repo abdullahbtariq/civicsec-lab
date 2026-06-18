@@ -3,13 +3,13 @@ Tests for Misinformation Observatory — pipeline basics and API permissions.
 All tests use SQLite in-memory via civicsec.settings.test.
 """
 
+from datetime import UTC
+
 import pytest
 from django.contrib.auth import get_user_model
 
 from apps.misinformation.models import (
     DiscourseDataset,
-    EntityMention,
-    KeywordBurst,
     NarrativeCluster,
     PublicPost,
 )
@@ -80,9 +80,9 @@ def dataset(db, org, admin_user):
 @pytest.fixture
 def populated_dataset(db, dataset):
     """Dataset with 20 posts split into two narrative groups."""
-    from datetime import datetime, timezone, timedelta
+    from datetime import datetime, timedelta
 
-    base = datetime(2025, 1, 1, tzinfo=timezone.utc)
+    base = datetime(2025, 1, 1, tzinfo=UTC)
 
     positive_posts = [
         "Community coming together to support the new initiative. Great progress and hope ahead.",
@@ -218,9 +218,9 @@ class TestSentiment:
 
 class TestKeywordBurst:
     def test_detects_burst(self, db, dataset):
-        from datetime import datetime, timezone, timedelta
+        from datetime import datetime, timedelta
 
-        base = datetime(2025, 1, 1, tzinfo=timezone.utc)
+        base = datetime(2025, 1, 1, tzinfo=UTC)
         posts = []
         # Baseline: 2 mentions of "fraud"
         for i in range(10):
@@ -331,7 +331,10 @@ class TestDatasetUploadAPI:
         import io
 
         client.force_login(admin_user)
-        csv_content = b"post_id,timestamp,author_id,platform,text\n1,2025-01-01T00:00:00Z,u1,TestNet,Hello civic world\n"
+        csv_content = (
+            b"post_id,timestamp,author_id,platform,text\n"
+            b"1,2025-01-01T00:00:00Z,u1,TestNet,Hello civic world\n"
+        )
         f = io.BytesIO(csv_content)
         f.name = "test.csv"
         resp = client.post(
@@ -402,7 +405,7 @@ class TestClusterReviewAPI:
         from apps.organisations.models import Organisation
 
         other_org = Organisation.objects.create(name="Other Org", slug="other-org")
-        other_user = User.objects.create_user(
+        User.objects.create_user(
             email="other@test.org", password="pass", role="admin", organisation=other_org
         )
         other_dataset = DiscourseDataset.objects.create(
