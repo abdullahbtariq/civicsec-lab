@@ -26,14 +26,14 @@ function StatCard({
     neutral: "border-paper-line bg-paper-card",
     rose: "border-civic-rose/40 bg-civic-rose/10",
     amber: "border-civic-amber/30 bg-civic-amber/5",
-    green: "border-civic-teal/30 bg-civic-teal/5",
+    green: "border-sage/30 bg-sage/5",
     blue: "border-civic-blue/30 bg-civic-blue/5",
   };
   const valueMap = {
     neutral: "text-ink",
     rose: "text-rose-ink",
     amber: "text-gold-ink",
-    green: "text-orange-ink",
+    green: "text-sage-ink",
     blue: "text-bluec-ink",
   };
   return (

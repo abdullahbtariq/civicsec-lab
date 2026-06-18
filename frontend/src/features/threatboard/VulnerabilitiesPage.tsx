@@ -103,7 +103,7 @@ export function VulnerabilitiesPage() {
             <label className="flex min-h-10 items-center gap-3 rounded-lg border border-paper-line bg-paper px-3 text-sm text-ink-soft">
               <input
                 checked={kevOnly}
-                className="h-4 w-4 accent-civic-teal"
+                className="h-4 w-4 accent-[#d65a29]"
                 onChange={(event) => {
                   setKevOnly(event.target.checked);
                   setPage(1);

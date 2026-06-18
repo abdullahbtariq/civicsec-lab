@@ -58,7 +58,7 @@ export function ThreatBoardActionPanel({ onActionComplete }: { onActionComplete:
 
         {state.error ? <ErrorState message={state.error} /> : null}
         {state.success ? (
-          <div className="rounded-lg border border-civic-teal/40 bg-civic-teal/10 p-4 text-sm text-orange-ink">
+          <div className="rounded-lg border border-orange/40 bg-orange/10 p-4 text-sm text-orange-ink">
             {state.success}
           </div>
         ) : null}
@@ -67,7 +67,7 @@ export function ThreatBoardActionPanel({ onActionComplete }: { onActionComplete:
           <label className="flex items-center gap-3 text-sm text-ink-soft">
             <input
               checked={matchAfterKev}
-              className="h-4 w-4 accent-civic-teal"
+              className="h-4 w-4 accent-[#d65a29]"
               disabled={!canTrigger || state.isRunning}
               onChange={(event) => setMatchAfterKev(event.target.checked)}
               type="checkbox"
@@ -77,7 +77,7 @@ export function ThreatBoardActionPanel({ onActionComplete }: { onActionComplete:
           <label className="flex items-center gap-3 text-sm text-ink-soft">
             <input
               checked={enrichAfterKev}
-              className="h-4 w-4 accent-civic-teal"
+              className="h-4 w-4 accent-[#d65a29]"
               disabled={!canTrigger || state.isRunning}
               onChange={(event) => setEnrichAfterKev(event.target.checked)}
               type="checkbox"
@@ -87,7 +87,7 @@ export function ThreatBoardActionPanel({ onActionComplete }: { onActionComplete:
           <label className="flex items-center gap-3 text-sm text-ink-soft">
             <input
               checked={createRiskEvents}
-              className="h-4 w-4 accent-civic-teal"
+              className="h-4 w-4 accent-[#d65a29]"
               disabled={!canTrigger || state.isRunning}
               onChange={(event) => setCreateRiskEvents(event.target.checked)}
               type="checkbox"

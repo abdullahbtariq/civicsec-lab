@@ -205,7 +205,7 @@ export function DashboardPage() {
               onClick={() => setRangeOpen((o) => !o)}
               aria-haspopup="listbox"
               aria-expanded={rangeOpen}
-              className="inline-flex items-center gap-2 rounded-lg border border-paper-line bg-paper-card px-3.5 py-2 text-sm font-medium text-ink-soft shadow-card transition-colors hover:border-orange/40"
+              className="inline-flex min-h-[44px] items-center gap-2 rounded-lg border border-paper-line bg-paper-card px-3.5 py-2 text-sm font-medium text-ink-soft shadow-card transition-colors hover:border-orange/40"
             >
               <Calendar aria-hidden="true" className="h-4 w-4 text-ink-faint" />
               {rangeLabel}
@@ -237,6 +237,11 @@ export function DashboardPage() {
           </div>
         }
       />
+
+      {/* Screen-reader status: announces metric summary when data loads (WCAG 4.1.3) */}
+      <p role="status" aria-live="polite" aria-atomic="true" className="sr-only">
+        Dashboard loaded: {assets.data.length} assets, {openRisks.length} open risks, {activeInc.length} active incidents.
+      </p>
 
       {/* ── Metric grid ───────────────────────────────────────────────────── */}
       <motion.section
@@ -284,7 +289,7 @@ export function DashboardPage() {
             </div>
             <Link
               to="/risk-events"
-              className="inline-flex shrink-0 items-center gap-2 self-start rounded-lg bg-white px-4 py-2.5 text-sm font-semibold text-ink transition hover:bg-white/90 sm:self-auto"
+              className="inline-flex shrink-0 items-center gap-2 self-start rounded-lg bg-white px-4 py-3 text-sm font-semibold text-ink transition hover:bg-white/90 sm:self-auto"
             >
               Review now
               <ArrowRight aria-hidden="true" className="h-4 w-4" />
@@ -372,12 +377,12 @@ export function DashboardPage() {
                 />
                 <ul className="flex-1 space-y-2 text-sm">
                   {[
-                    { c: "#d65a29", label: "Handled", v: pct(handledN) },
-                    { c: "#15242f", label: "In Review", v: pct(reviewN) },
-                    { c: "#cf9c46", label: "Intake", v: pct(intakeN) },
+                    { dot: "bg-orange", label: "Handled", v: pct(handledN) },
+                    { dot: "bg-ink",    label: "In Review", v: pct(reviewN) },
+                    { dot: "bg-gold",   label: "Intake", v: pct(intakeN) },
                   ].map((row) => (
                     <li key={row.label} className="flex items-center gap-2">
-                      <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: row.c }} />
+                      <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${row.dot}`} />
                       <span className="text-ink-soft">{row.label}</span>
                       <span className="ml-auto font-semibold tabular-nums text-ink">{row.v}%</span>
                     </li>
@@ -387,7 +392,7 @@ export function DashboardPage() {
               <div className="flex items-center justify-between border-t border-paper-line pt-3 text-xs">
                 <span className="text-ink-faint">Target ≥ 80%</span>
                 <span className={`inline-flex items-center gap-1.5 font-medium ${handledPct >= 80 ? "text-sage-ink" : "text-gold-ink"}`}>
-                  <span className="h-2 w-2 rounded-full" style={{ background: handledPct >= 80 ? "#4f8a5b" : "#cf9c46" }} />
+                  <span className={`h-2 w-2 rounded-full ${handledPct >= 80 ? "bg-sage" : "bg-gold"}`} />
                   {handledPct >= 80 ? "On track" : "Below target"}
                 </span>
               </div>
@@ -428,7 +433,7 @@ export function DashboardPage() {
           <CardHeader
             title="Pending Review Queue"
             description="Risks awaiting analyst review."
-            action={<Link to="/risk-events" className="shrink-0 text-xs font-semibold text-orange-ink hover:underline">View all →</Link>}
+            action={<Link to="/risk-events" className="inline-flex shrink-0 items-center py-3.5 -my-3.5 text-xs font-semibold text-orange-ink hover:underline focus-visible:rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange/60">View all →</Link>}
           />
           <CardContent className="space-y-1">
             {reviewQueue.length ? (
@@ -458,7 +463,7 @@ export function DashboardPage() {
           <CardHeader
             title="Recent Incidents"
             description="Latest incidents and their status."
-            action={<Link to="/incidents" className="shrink-0 text-xs font-semibold text-orange-ink hover:underline">View all →</Link>}
+            action={<Link to="/incidents" className="inline-flex shrink-0 items-center py-3.5 -my-3.5 text-xs font-semibold text-orange-ink hover:underline focus-visible:rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange/60">View all →</Link>}
           />
           <CardContent className="space-y-1">
             {recentIncidents.length ? (

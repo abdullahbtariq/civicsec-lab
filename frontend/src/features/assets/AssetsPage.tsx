@@ -92,6 +92,7 @@ export function AssetsPage() {
                 {
                   key: "name",
                   header: "Name",
+                  className: "min-w-[220px]",
                   cell: (asset) => (
                     <Link className="font-medium text-ink hover:text-orange-ink" to={`/assets/${asset.id}`}>
                       {asset.name}
@@ -109,6 +110,7 @@ export function AssetsPage() {
                 {
                   key: "vendor",
                   header: "Vendor/Product",
+                  className: "min-w-[160px]",
                   cell: (asset) => [asset.vendor, asset.product].filter(Boolean).join(" / ") || "Not set",
                 },
                 { key: "updated", header: "Updated", cell: (asset) => formatDateTime(asset.updated_at), className: "whitespace-nowrap" },

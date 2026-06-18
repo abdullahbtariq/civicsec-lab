@@ -144,8 +144,10 @@ export function Topbar({ title }: { title: string; moduleColor?: string }) {
           <div className="relative">
             <button
               aria-label={`Notifications (${alertCount})`}
+              aria-expanded={open === "notif"}
+              aria-haspopup="true"
               onClick={() => setOpen(open === "notif" ? null : "notif")}
-              className="relative flex h-10 w-10 items-center justify-center rounded-lg border border-paper-line bg-paper-card text-ink-soft transition-colors hover:bg-paper-raise hover:text-ink"
+              className="relative flex h-11 w-11 items-center justify-center rounded-lg border border-paper-line bg-paper-card text-ink-soft transition-colors hover:bg-paper-raise hover:text-ink focus-visible:ring-2 focus-visible:ring-orange/60 focus-visible:ring-offset-2 focus-visible:ring-offset-paper"
             >
               <Bell aria-hidden="true" className="h-5 w-5" />
               {alertCount > 0 ? (
@@ -187,14 +189,16 @@ export function Topbar({ title }: { title: string; moduleColor?: string }) {
           {/* Help */}
           <button
             aria-label="Help"
+            aria-expanded={open === "help"}
+            aria-haspopup="dialog"
             onClick={() => setOpen("help")}
-            className="hidden h-10 w-10 items-center justify-center rounded-lg border border-paper-line bg-paper-card text-ink-soft transition-colors hover:bg-paper-raise hover:text-ink sm:flex"
+            className="hidden h-11 w-11 items-center justify-center rounded-lg border border-paper-line bg-paper-card text-ink-soft transition-colors hover:bg-paper-raise hover:text-ink focus-visible:ring-2 focus-visible:ring-orange/60 focus-visible:ring-offset-2 focus-visible:ring-offset-paper sm:flex"
           >
             <HelpCircle aria-hidden="true" className="h-5 w-5" />
           </button>
 
           {/* Mobile sign-out */}
-          <button aria-label="Sign out" className="flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm text-ink-soft transition-colors hover:bg-paper-raise hover:text-ink lg:hidden" onClick={logout}>
+          <button aria-label="Sign out" className="flex min-h-[44px] items-center gap-2 rounded-lg px-3 py-1.5 text-sm text-ink-soft transition-colors hover:bg-paper-raise hover:text-ink lg:hidden" onClick={logout}>
             <LogOut aria-hidden="true" className="h-4 w-4" />
           </button>
         </div>

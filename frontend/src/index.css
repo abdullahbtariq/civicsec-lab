@@ -66,3 +66,94 @@ select {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.45; }
 }
+
+/* App route transition — 200ms fade + 4px lift, stripped for reduced-motion */
+@keyframes app-page-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.app-page-fade {
+  animation: app-page-in 200ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .app-page-fade { animation: none; }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   ReactBits — extracted & adapted
+   ───────────────────────────────────────────────────────────────────────── */
+
+/* 1. Dot-grid texture — content area background (navy dots @ 6.5% on cream)  */
+.app-dot-grid {
+  background-image: radial-gradient(
+    circle,
+    rgba(21, 36, 47, 0.065) 1px,
+    transparent 1px
+  );
+  background-size: 28px 28px;
+}
+
+/* 2. Spotlight Card — mouse-tracking radial glow on card hover             */
+/*    JS injects --sx / --sy via onMouseMove; CSS ::after reads them.       */
+.spotlight-card {
+  position: relative;
+}
+.spotlight-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    360px circle at var(--sx, -400px) var(--sy, -400px),
+    rgba(214, 90, 41, 0.09),
+    transparent 55%
+  );
+  opacity: 0;
+  transition: opacity 220ms ease;
+  pointer-events: none;
+  z-index: 2;
+}
+.spotlight-card:hover::after { opacity: 1; }
+@media (prefers-reduced-motion: reduce) {
+  .spotlight-card::after { display: none; }
+}
+
+/* 3. Sidebar aurora — two slow-drifting orange blobs behind the nav        */
+.sidebar-aurora-1,
+.sidebar-aurora-2 {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(52px);
+  pointer-events: none;
+  will-change: transform;
+}
+.sidebar-aurora-1 {
+  top: -28px;
+  right: -28px;
+  width: 140px;
+  height: 140px;
+  background: rgba(214, 90, 41, 0.22);
+  animation: aurora-drift-1 18s ease-in-out infinite;
+}
+.sidebar-aurora-2 {
+  bottom: 90px;
+  left: -36px;
+  width: 115px;
+  height: 115px;
+  background: rgba(214, 90, 41, 0.12);
+  animation: aurora-drift-2 24s ease-in-out infinite;
+  animation-delay: -10s;
+}
+@keyframes aurora-drift-1 {
+  0%, 100% { transform: translate(0,    0)    scale(1);    }
+  33%       { transform: translate(-12px, 20px) scale(1.06); }
+  66%       { transform: translate(10px, -14px) scale(0.95); }
+}
+@keyframes aurora-drift-2 {
+  0%, 100% { transform: translate(0,    0)    scale(1);    }
+  33%       { transform: translate(20px, -18px) scale(1.08); }
+  66%       { transform: translate(-10px, 10px) scale(0.94); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sidebar-aurora-1, .sidebar-aurora-2 { animation: none; }
+}

@@ -33,7 +33,7 @@ export function ProcessingJobsPage() {
                   <div className="min-w-32">
                     <div className="h-2 rounded-full bg-paper">
                       <div
-                        className="h-2 rounded-full bg-civic-teal"
+                        className="h-2 rounded-full bg-[#d65a29]"
                         style={{ width: `${Math.max(0, Math.min(job.progress, 100))}%` }}
                       />
                     </div>

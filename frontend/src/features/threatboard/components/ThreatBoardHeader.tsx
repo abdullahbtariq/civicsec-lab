@@ -1,7 +1,5 @@
 import type { ReactNode } from "react";
 
-import { Badge } from "../../../components/ui/Badge";
-
 export function ThreatBoardHeader({
   title,
   subtitle,
@@ -17,7 +15,6 @@ export function ThreatBoardHeader({
         <div>
           <div className="flex flex-wrap items-center gap-2">
             <h1 className="font-display text-xl font-semibold text-ink">{title}</h1>
-            <Badge variant="teal">ThreatBoard MVP</Badge>
           </div>
           <p className="mt-2 max-w-3xl text-sm leading-6 text-ink-soft">{subtitle}</p>
         </div>

@@ -1,663 +1,343 @@
-import { motion, useInView, useMotionValueEvent, useScroll, type Variants } from "framer-motion";
-import { ArrowRight, CheckCircle2, GitMerge, Search, Upload } from "lucide-react";
-import Lenis from "lenis";
-import { type CSSProperties, lazy, type ReactNode, Suspense, useEffect, useRef, useState } from "react";
+import { type CSSProperties, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
-import {
-  IncidentFlowIcon,
-  LogLensIcon,
-  ObservatoryIcon,
-  PrivacyDoctorIcon,
-  RiskGraphIcon,
-  ThreatBoardIcon,
-} from "../../components/brand/icons/ModuleIcons";
-
-import { LandingFooter } from "./LandingFooter";
+import type { OrbitalHandle, OrbitalPhase } from "./orbital/orbitalField";
+import { ORBITAL_MODULES } from "./orbital/modules";
 import { LandingNav } from "./LandingNav";
+import "./orbital/orbital.css";
 
-const WebGLHero = lazy(() =>
-  import("./WebGLHero").then((m) => ({ default: m.WebGLHero })),
-);
-
-// ─── Design tokens ────────────────────────────────────────────────────────────
-const C = {
-  white:     "#ffffff",
-  grey:      "#f5f5f3",
-  border:    "#e8e8e6",
-  text:      "#111111",
-  secondary: "#3c3c3a",
-  muted:     "#6b6b68",
-  faint:     "#d4d4d0",
-  teal:      "#d65a29",
-  tealBright:"#d65a29",
-  amber:     "#d99a3c",
-  amberText: "#1a0e00",
-  ctaBg:     "#0d0f11",
-} as const;
-
-// ─── Motion ───────────────────────────────────────────────────────────────────
-const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
-
-const fadeUp: Variants = {
-  hidden:  { opacity: 0, y: 32 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: EASE } },
-};
-
-const stagger: Variants = {
-  hidden:  {},
-  visible: { transition: { staggerChildren: 0.08 } },
-};
-
-// ─── Reveal helpers ───────────────────────────────────────────────────────────
-function Reveal({ children, className = "", delay = 0 }: {
-  children: ReactNode; className?: string; delay?: number;
-}) {
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-80px" });
-  return (
-    <motion.div
-      ref={ref}
-      animate={inView ? "visible" : "hidden"}
-      className={className}
-      initial="hidden"
-      transition={{ delay }}
-      variants={fadeUp}
-    >
-      {children}
-    </motion.div>
-  );
+function webglAvailable(): boolean {
+  try {
+    const c = document.createElement("canvas");
+    return !!(
+      window.WebGLRenderingContext &&
+      (c.getContext("webgl2") || c.getContext("webgl"))
+    );
+  } catch {
+    return false;
+  }
 }
 
-function RevealGroup({ children, className = "" }: {
-  children: ReactNode; className?: string;
-}) {
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-60px" });
-  return (
-    <motion.div
-      ref={ref}
-      animate={inView ? "visible" : "hidden"}
-      className={className}
-      initial="hidden"
-      variants={stagger}
-    >
-      {children}
-    </motion.div>
-  );
-}
-
-// ─── Data ─────────────────────────────────────────────────────────────────────
-// Copy written for two audiences simultaneously:
-// — non-technical stakeholders get the "what it means"
-// — analysts get the technical precision they expect
-const MODULES = [
-  {
-    key:  "threatboard",
-    name: "ThreatBoard",
-    Icon: ThreatBoardIcon,
-    color: "#b8801f",
-    href:  "/modules/threatboard",
-    description: "Identifies which vulnerabilities in your systems are being actively exploited — and surfaces exactly where to act first.",
-  },
-  {
-    key:  "loglens",
-    name: "LogLens",
-    Icon: LogLensIcon,
-    color: "#54707d",
-    href:  "/modules/loglens",
-    description: "Detects unusual account and access patterns before they escalate. Mapped to MITRE ATT&CK techniques for analyst context.",
-  },
-  {
-    key:  "privacy-doctor",
-    name: "DataPrivacy Doctor",
-    Icon: PrivacyDoctorIcon,
-    color: "#2a5aa8",
-    href:  "/modules/privacy-doctor",
-    description: "Scans your datasets for hidden personal data, scores your privacy exposure, and flags what needs remediation.",
-  },
-  {
-    key:  "observatory",
-    name: "Misinformation Observatory",
-    Icon: ObservatoryIcon,
-    color: "#c24a0c",
-    href:  "/modules/misinformation-observatory",
-    description: "Detects coordinated narratives and information campaigns in public datasets targeting your organisation or sector.",
-  },
-  {
-    key:  "risk-graph",
-    name: "Civic Risk Graph",
-    Icon: RiskGraphIcon,
-    color: "#3d7048",
-    href:  "/modules/risk-graph",
-    description: "Connects every alert across all modules into one unified risk picture — so related threats surface together, not in isolation.",
-  },
-  {
-    key:  "incidentflow",
-    name: "IncidentFlow",
-    Icon: IncidentFlowIcon,
-    color: "#b23a2c",
-    href:  "/modules/incidentflow",
-    description: "Manages security incidents end-to-end — from initial alert through investigation, evidence capture, and formal closure.",
-  },
-];
-
-const STEPS = [
-  {
-    number: "01", Icon: Upload,
-    title: "Ingest",
-    description: "Feed the platform with your data — upload log files, scan datasets, or connect live sources. No specialist infrastructure required.",
-  },
-  {
-    number: "02", Icon: Search,
-    title: "Analyse",
-    description: "Each module independently identifies threats, anomalies, and risks within its domain using purpose-built detection models.",
-  },
-  {
-    number: "03", Icon: GitMerge,
-    title: "Correlate",
-    description: "The Risk Graph joins signals across modules — so a suspicious login alongside an unpatched CVE surfaces as a connected risk, not two separate alerts.",
-  },
-  {
-    number: "04", Icon: CheckCircle2,
-    title: "Respond",
-    description: "Investigate findings, assign actions, collect evidence, and close every risk with a full audit trail your team can stand behind.",
-  },
-];
-
-// ─── Page ─────────────────────────────────────────────────────────────────────
 export function LandingPage() {
-  // Lenis smooth scroll
-  useEffect(() => {
-    const lenis = new Lenis({
-      duration: 1.15,
-      easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-    });
-    let rafId: number;
-    function raf(time: number) { lenis.raf(time); rafId = requestAnimationFrame(raf); }
-    rafId = requestAnimationFrame(raf);
-    return () => { cancelAnimationFrame(rafId); lenis.destroy(); };
-  }, []);
+  const [webgl] = useState(webglAvailable);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const labelsRef = useRef<HTMLDivElement>(null);
+  const fieldRef = useRef<OrbitalHandle | null>(null);
+  const returnRef = useRef<HTMLButtonElement>(null);
+  const brandRef = useRef<HTMLAnchorElement>(null);
+  const prevFocused = useRef<number | null>(null);
 
-  // ── Nav visibility — hidden during WebGL story, appears after ────────────
-  // The story section is 200vh. The sticky phase ends at 1×vh; the section
-  // exits fully at 2×vh. We reveal the nav partway through the exit (130vh)
-  // so it's already in place when the platform content fills the screen.
-  const [pastStory, setPastStory] = useState(false);
+  const [phase, setPhase] = useState<OrbitalPhase>("hero");
+  const [focused, setFocused] = useState<number | null>(null);
+  const [hovered, setHovered] = useState<number | null>(null);
+  const [booted, setBooted] = useState(false);
+  const [clock, setClock] = useState("--:--:--Z");
+
+  // Navy body background while on the landing route (app body is cream).
   useEffect(() => {
-    const check = () => setPastStory(window.scrollY > window.innerHeight * 2.5);
-    check(); // handle page-refresh mid-scroll
-    window.addEventListener("scroll", check, { passive: true });
-    window.addEventListener("resize", check, { passive: true });
+    const prevBody = document.body.style.background;
+    const prevHtml = document.documentElement.style.background;
+    document.body.style.background = "#070f17";
+    document.documentElement.style.background = "#070f17";
     return () => {
-      window.removeEventListener("scroll", check);
-      window.removeEventListener("resize", check);
+      document.body.style.background = prevBody;
+      document.documentElement.style.background = prevHtml;
     };
   }, []);
 
-  // ── Scroll-driven story ─────────────────────────────────────────────────────
-  const sectionRef  = useRef<HTMLDivElement>(null);
-  const progressRef = useRef<number>(0);
-
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start start", "end end"],
-  });
-
-  // Feed scroll progress into the WebGL scene each R3F frame
+  // Live mission-elapsed clock.
   useEffect(() => {
-    const unsub = scrollYProgress.on("change", (v) => { progressRef.current = v; });
-    return unsub;
-  }, [scrollYProgress]);
+    const tick = () => setClock(new Date().toISOString().slice(11, 19) + "Z");
+    tick();
+    const id = window.setInterval(tick, 1000);
+    return () => window.clearInterval(id);
+  }, []);
 
-  // Chapter visibility — section is 340vh / sticky 100vh, so the inner pins for
-  // progress 0 → ~0.70. We derive ONE active chapter from scroll (deterministic;
-  // avoids the per-MotionValue desync that let two headlines overlap) and
-  // cross-fade with CSS, so exactly one chapter is visible at rest.
-  const [activeChapter, setActiveChapter] = useState(0);
-  useMotionValueEvent(scrollYProgress, "change", (v) => {
-    const next = v < 0.30 ? 0 : v < 0.58 ? 1 : 2;
-    setActiveChapter((prev) => (prev === next ? prev : next));
+  // Lazy-mount the 3D field so the heavy three.js chunk stays out of first paint.
+  // It reads scroll every frame and reports phase changes back (single source of truth).
+  // The async import + `cancelled` flag also makes StrictMode's double-mount a no-op.
+  useEffect(() => {
+    if (!webgl) return;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let handle: OrbitalHandle | null = null;
+    let cancelled = false;
+    let bootId = 0;
+    void import("./orbital/orbitalField").then(({ createOrbitalField }) => {
+      if (cancelled || !canvasRef.current || !labelsRef.current) return;
+      try {
+        handle = createOrbitalField(canvasRef.current, labelsRef.current, {
+          reducedMotion: reduce,
+          onHover: setHovered,
+          onSelect: setFocused,
+          onPhase: setPhase,
+        });
+      } catch {
+        return;
+      }
+      fieldRef.current = handle;
+      bootId = window.setTimeout(() => setBooted(true), reduce ? 0 : 1700);
+    });
+    return () => {
+      cancelled = true;
+      window.clearTimeout(bootId);
+      handle?.dispose();
+      fieldRef.current = null;
+    };
+  }, [webgl]);
+
+  const selectModule = (i: number) => {
+    fieldRef.current?.focus(i);
+    setFocused(i);
+  };
+  const step = (d: number) => {
+    if (focused == null) return;
+    selectModule((focused + d + ORBITAL_MODULES.length) % ORBITAL_MODULES.length);
+  };
+  const exit = () => {
+    fieldRef.current?.exit();
+    setFocused(null);
+  };
+
+  // Keyboard: Esc closes a module, arrows step between systems.
+  useEffect(() => {
+    if (focused == null) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") exit();
+      else if (e.key === "ArrowRight") step(1);
+      else if (e.key === "ArrowLeft") step(-1);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [focused]);
+
+  // Focus management: into the panel on open (after paint), back to the wordmark on close.
+  useEffect(() => {
+    let raf = 0;
+    if (focused != null) raf = requestAnimationFrame(() => returnRef.current?.focus());
+    else if (prevFocused.current != null) brandRef.current?.focus();
+    prevFocused.current = focused;
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, [focused]);
+
+  const beatStyle = (p: OrbitalPhase): CSSProperties => ({
+    opacity: phase === p ? 1 : 0,
+    pointerEvents: phase === p ? "auto" : "none",
   });
-  const chapterStyle = (i: number): CSSProperties => ({
-    opacity: activeChapter === i ? 1 : 0,
-    transform: `translateY(${activeChapter === i ? 0 : 16}px)`,
-    transition: "opacity 0.5s ease, transform 0.6s cubic-bezier(0.22,1,0.36,1)",
-    pointerEvents: activeChapter === i ? "auto" : "none",
-  });
+
+  const m = focused != null ? ORBITAL_MODULES[focused] : null;
+  const tintStyle: CSSProperties = m
+    ? { background: `radial-gradient(72% 72% at 60% 50%, ${m.hex}2e 0%, transparent 62%)`, opacity: 1 }
+    : { opacity: 0 };
+
+  // ---- no-WebGL / unsupported fallback: a static, fully readable page ----
+  if (!webgl) {
+    return (
+      <div className="ofx-root ofx-fallback">
+        <header className="ofx-nav" style={{ position: "absolute" }}>
+          <span className="ofx-brand"><span className="ofx-g" /><span>CivicSec Lab</span></span>
+          <span className="ofx-navlinks">
+            <Link to="/about">About</Link>
+            <Link className="ofx-cta" to="/login">Sign In</Link>
+          </span>
+        </header>
+        <h1 style={{ fontFamily: '"Source Serif 4",serif', fontSize: "clamp(2.4rem,5vw,4rem)", lineHeight: 1.04, maxWidth: "18ch" }}>
+          Six systems. One civic core.
+        </h1>
+        <p style={{ marginTop: "1.2rem", maxWidth: "60ch", color: "var(--muted)", lineHeight: 1.6 }}>
+          An open-source security platform for civic organisations — it watches for exploited
+          vulnerabilities, account threats, exposed data, and disinformation, then connects them
+          into one risk picture.
+        </p>
+        <ul style={{ marginTop: "2.5rem", display: "grid", gap: "1rem", maxWidth: "60ch", listStyle: "none", padding: 0 }}>
+          {ORBITAL_MODULES.map((mod) => (
+            <li key={mod.key}>
+              <strong style={{ color: "var(--cream)" }}>{mod.name}</strong>
+              <span style={{ color: "var(--muted)" }}> — {mod.what}</span>
+            </li>
+          ))}
+        </ul>
+        <Link className="ofx-btn" style={{ display: "inline-block", marginTop: "2.5rem" }} to="/login">
+          Enter the demo →
+        </Link>
+      </div>
+    );
+  }
 
   return (
-    <div style={{ backgroundColor: C.white, color: C.text }}>
-      {/* Nav hidden during story; slides in after */}
-      <LandingNav visible={pastStory} />
+    <div className="ofx-root">
+      {/* Skip link: lets keyboard-only users bypass the scroll narrative and reach the systems summary */}
+      <a href="#ofx-summary" className="ofx-skip">Skip to systems summary</a>
+      <canvas className="ofx-field" ref={canvasRef} aria-hidden="true" />
+      <div className="ofx-tint" style={tintStyle} aria-hidden="true" />
+      <div className={"ofx-modscrim" + (focused != null ? " ofx-on" : "")} aria-hidden="true" />
+      <div className="ofx-vig" aria-hidden="true" />
+<div className="ofx-labels" ref={labelsRef} aria-hidden="true" />
+      <div className="ofx-spacer" aria-hidden="true" />
 
-      {/* ── STORY — 340 vh container; inner div is sticky 100 vh ─────────── */}
-      <motion.div
-        ref={sectionRef}
-        animate={{ opacity: 1 }}
-        initial={{ opacity: 0 }}
-        style={{ position: "relative", height: "340vh" }}
-        transition={{ duration: 1.0, ease: EASE }}
-      >
-        <div
-          style={{
-            position: "sticky",
-            top: 0,
-            height: "100vh",
-            overflow: "hidden",
-            backgroundColor: "#0c1622",
-          }}
-        >
-          {/* WebGL particle network fills the full viewport */}
-          <Suspense fallback={null}>
-            <WebGLHero progressRef={progressRef} />
-          </Suspense>
+      <div className={"ofx-pre" + (booted ? " ofx-done" : "")} aria-hidden="true">
+        <div className="ofx-ring" />
+        <div className="ofx-t">Igniting Core</div>
+        <div className="ofx-x">CIVIC SIGNAL CORE · 6 SYSTEMS · ONLINE</div>
+      </div>
 
-          {/* ── Vignettes ──────────────────────────────────────────────────── */}
-          {/* Edge darkening — keeps particles from feeling flat */}
-          <div
-            className="pointer-events-none absolute inset-0 z-[1]"
-            style={{
-              background: "radial-gradient(ellipse 80% 80% at 50% 50%, transparent 45%, rgba(12,22,34,0.55) 100%)",
-            }}
-          />
-          {/* Top — nav clearance */}
-          <div
-            className="pointer-events-none absolute inset-x-0 top-0 z-[1] h-32"
-            style={{ background: "linear-gradient(to bottom, rgba(12,22,34,0.65), transparent)" }}
-          />
-          {/* Bottom — text legibility zone */}
-          <div
-            className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-52"
-            style={{ background: "linear-gradient(to top, rgba(12,22,34,0.80), transparent)" }}
-          />
+      <LandingNav visible={booted} logoRef={brandRef} />
 
-          {/* ── Chapter 1: Hero ──────────────────────────────────────────── */}
-          <motion.div
-            className="absolute inset-0 z-10 flex flex-col justify-center px-8 lg:px-16"
-            style={chapterStyle(0)}
-          >
-            <div className="mx-auto w-full max-w-5xl">
-              <p
-                className="mb-5 text-xs font-semibold uppercase tracking-[0.32em]"
-                style={{ color: C.tealBright }}
-              >
-                Public-interest security intelligence
-              </p>
-              <h1
-                className="font-display font-bold leading-[1.0] tracking-tight"
-                style={{ color: "#f0f2f5", fontSize: "clamp(2.8rem, 6.8vw, 5.8rem)" }}
-              >
-                Security intelligence<br />for civic<br />organisations.
-              </h1>
-              <p
-                className="mt-6 text-base leading-relaxed"
-                style={{ color: "rgba(240,242,245,0.48)", maxWidth: "44ch" }}
-              >
-                Vulnerability exposure, unusual account activity, privacy risks,
-                information campaigns — detected, connected, and actionable.
-                One open-source platform.
-              </p>
-              <div className="mt-8 flex flex-wrap items-center gap-4">
-                <Link
-                  className="inline-flex min-h-11 items-center gap-2.5 rounded-lg px-7 py-3 text-sm font-semibold transition-opacity hover:opacity-90"
-                  style={{ backgroundColor: C.amber, color: C.amberText }}
-                  to="/login"
-                >
-                  Get started
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-                <a
-                  className="inline-flex min-h-11 items-center gap-2 text-sm font-medium transition-colors"
-                  href="https://github.com"
-                  rel="noreferrer"
-                  style={{ color: "rgba(240,242,245,0.36)" }}
-                  target="_blank"
-                  onMouseEnter={(e) => { e.currentTarget.style.color = "rgba(240,242,245,0.80)"; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.color = "rgba(240,242,245,0.36)"; }}
-                >
-                  View on GitHub
-                </a>
-              </div>
-              <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-1">
-                {["Open source", "Apache 2.0", "Self-hosted", "No vendor lock-in"].map((tag) => (
-                  <span key={tag} className="text-xs" style={{ color: "rgba(240,242,245,0.20)" }}>
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </motion.div>
-
-          {/* ── Chapter 2: Challenge ──────────────────────────────────────── */}
-          <motion.div
-            className="absolute inset-0 z-10 flex flex-col justify-center px-8 lg:px-16"
-            style={chapterStyle(1)}
-          >
-            <div className="mx-auto w-full max-w-5xl">
-              <p
-                className="mb-5 text-xs font-semibold uppercase tracking-[0.32em]"
-                style={{ color: C.tealBright }}
-              >
-                The challenge
-              </p>
-              <h2
-                className="font-display font-bold leading-[1.0] tracking-tight"
-                style={{ color: "#f0f2f5", fontSize: "clamp(2.8rem, 6.8vw, 5.8rem)" }}
-              >
-                Small teams.<br />Enterprise-scale<br />threats.
-              </h2>
-              <p
-                className="mt-6 text-base leading-relaxed"
-                style={{ color: "rgba(240,242,245,0.48)", maxWidth: "48ch" }}
-              >
-                Civic organisations face the same adversaries as large institutions —
-                without the staff, tools, or budgets to match.
-              </p>
-              <div className="mt-10 flex flex-wrap gap-14">
-                {[
-                  { stat: "60%",      label: "of NGOs operate with no dedicated security staff" },
-                  { stat: "1 in 3",   label: "civic datasets contain undetected personal data" },
-                  { stat: "197 days", label: "average time to detect a breach without tooling" },
-                ].map((item) => (
-                  <div key={item.stat}>
-                    <p
-                      className="font-display font-bold leading-none"
-                      style={{ color: C.amber, fontSize: "clamp(1.8rem, 3.5vw, 2.6rem)" }}
-                    >
-                      {item.stat}
-                    </p>
-                    <p className="mt-2 text-xs leading-relaxed" style={{ color: "rgba(240,242,245,0.34)" }}>
-                      {item.label}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </motion.div>
-
-          {/* ── Chapter 3: Platform ───────────────────────────────────────── */}
-          <motion.div
-            className="absolute inset-0 z-10 flex flex-col justify-center px-8 lg:px-16"
-            style={chapterStyle(2)}
-          >
-            <div className="mx-auto w-full max-w-5xl">
-              <p
-                className="mb-5 text-xs font-semibold uppercase tracking-[0.32em]"
-                style={{ color: C.tealBright }}
-              >
-                The platform
-              </p>
-              <h2
-                className="font-display font-bold leading-[1.0] tracking-tight"
-                style={{ color: "#f0f2f5", fontSize: "clamp(2.8rem, 6.8vw, 5.8rem)" }}
-              >
-                Six modules.<br />One risk model.
-              </h2>
-              <p
-                className="mt-6 text-base leading-relaxed"
-                style={{ color: "rgba(240,242,245,0.48)", maxWidth: "48ch" }}
-              >
-                Every module feeds into a shared risk layer. A vulnerable system,
-                an unusual login, a coordinated narrative — surfaced together in one
-                connected picture.
-              </p>
-              <a
-                className="mt-8 inline-flex items-center gap-2 text-sm font-medium transition-colors"
-                href="#platform"
-                style={{ color: C.tealBright }}
-                onMouseEnter={(e) => { e.currentTarget.style.color = "#e2703f"; }}
-                onMouseLeave={(e) => { e.currentTarget.style.color = C.tealBright; }}
-              >
-                Explore the platform ↓
-              </a>
-            </div>
-          </motion.div>
-
-          {/* Scroll cue — fades away with chapter 1 */}
-          <motion.div
-            className="pointer-events-none absolute inset-x-0 bottom-8 z-10 flex justify-center"
-            style={{ opacity: activeChapter === 0 ? 1 : 0, transition: "opacity 0.4s ease" }}
-          >
-            <div className="flex flex-col items-center gap-2">
-              <div
-                className="h-10 w-px"
-                style={{ background: "linear-gradient(to bottom, rgba(214,90,41,0.4), transparent)" }}
-              />
-              <span className="text-xs" style={{ color: "rgba(214,90,41,0.32)" }}>scroll</span>
-            </div>
-          </motion.div>
+      <div className="ofx-hud" aria-hidden="true">
+        <div className="ofx-tick ofx-tl" /><div className="ofx-tick ofx-tr" />
+        <div className="ofx-tick ofx-bl" /><div className="ofx-tick ofx-br" />
+        <div className="ofx-met">
+          SIGNAL CORE // <b>ONLINE</b><br />SYSTEMS 6/6 · LINK <b>STABLE</b><br />MET <b>{clock}</b>
         </div>
-      </motion.div>
+        <div className="ofx-sysid">
+          ORBITAL FLIGHT<br />SECTOR <b>CIVIC-01</b><br />
+          ◦ {m ? m.name.toUpperCase() : "DESCENDING"}
+        </div>
+      </div>
 
-      {/* ── PLATFORM — white, module list ─────────────────────────────────── */}
-      <section
-        id="platform"
-        style={{ backgroundColor: C.white, paddingTop: "7rem", paddingBottom: "7rem" }}
-      >
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="mb-14 flex items-end justify-between gap-8">
-            <Reveal>
-              <p className="mb-4 text-xs font-semibold uppercase tracking-[0.32em]" style={{ color: C.teal }}>
-                The platform
-              </p>
-              <h2
-                className="font-display font-bold leading-tight"
-                style={{ color: C.text, fontSize: "clamp(2rem, 3.5vw, 2.8rem)" }}
-              >
-                Six modules.<br />One risk model.
-              </h2>
-            </Reveal>
-            <Reveal className="hidden md:block" delay={0.1}>
-              <p className="max-w-xs text-sm leading-relaxed" style={{ color: C.muted }}>
-                Every module feeds a shared risk event layer. Related threats —
-                a vulnerable system, a suspicious login, a narrative cluster —
-                surface together, not as disconnected alerts.
-              </p>
-            </Reveal>
+      <main>
+      {/* cinematic beats */}
+      <section className="ofx-beat ofx-intro" style={beatStyle("hero")}>
+        <div>
+          <h1>Six systems.<br />One civic core.</h1>
+          <p>
+            An open-source security platform for civic organisations — it watches for exploited
+            vulnerabilities, account threats, exposed data, and disinformation, then connects them
+            into one risk picture.
+          </p>
+          <div className="ofx-btns">
+            <Link className="ofx-btn" to="/login">Enter the demo →</Link>
+            <a className="ofx-btn ofx-ghost" href="https://github.com/abdullahbtariq/civicsec-lab" target="_blank" rel="noreferrer">View on GitHub</a>
           </div>
-
-          <RevealGroup>
-            {MODULES.map((mod, i) => (
-              <motion.div
-                key={mod.key}
-                style={{ borderTop: `1px solid ${C.border}` }}
-                variants={fadeUp}
-              >
-                <Link
-                  className="group flex items-center gap-6 py-6 transition-colors"
-                  style={{ backgroundColor: "transparent", display: "flex" }}
-                  to={mod.href}
-                  onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = C.grey; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "transparent"; }}
-                >
-                  <span className="shrink-0 w-8 font-mono text-xs font-medium" style={{ color: C.faint }}>
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                  <div
-                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg"
-                    style={{ backgroundColor: `${mod.color}12`, border: `1px solid ${mod.color}28` }}
-                  >
-                    <mod.Icon className="h-4 w-4" style={{ color: mod.color }} />
-                  </div>
-                  <p className="shrink-0 w-52 font-display font-semibold text-sm" style={{ color: C.text }}>
-                    {mod.name}
-                  </p>
-                  <p className="flex-1 text-sm leading-relaxed hidden md:block" style={{ color: C.muted }}>
-                    {mod.description}
-                  </p>
-                  <ArrowRight
-                    className="ml-auto h-4 w-4 shrink-0 opacity-0 transition-all group-hover:opacity-100 group-hover:translate-x-1"
-                    style={{ color: C.teal }}
-                  />
-                </Link>
-              </motion.div>
-            ))}
-            <div style={{ borderTop: `1px solid ${C.border}` }} />
-          </RevealGroup>
         </div>
       </section>
 
-      {/* ── HOW IT WORKS ──────────────────────────────────────────────────── */}
-      <section style={{ backgroundColor: C.grey, paddingTop: "7rem", paddingBottom: "7rem" }}>
-        <div className="mx-auto max-w-7xl px-6">
-          <Reveal className="mb-14">
-            <p className="mb-4 text-xs font-semibold uppercase tracking-[0.32em]" style={{ color: C.teal }}>
-              How it works
-            </p>
-            <h2
-              className="font-display font-bold leading-tight"
-              style={{ color: C.text, fontSize: "clamp(2rem, 3.5vw, 2.8rem)" }}
-            >
-              Data flows in.<br />Risks surface.<br />Actions follow.
-            </h2>
-          </Reveal>
-
-          <RevealGroup className="grid gap-0">
-            {STEPS.map((step, i) => (
-              <motion.div
-                key={step.title}
-                className="flex items-start gap-8 py-8"
-                style={{
-                  borderTop: `1px solid ${C.border}`,
-                  borderBottom: i === STEPS.length - 1 ? `1px solid ${C.border}` : undefined,
-                }}
-                variants={fadeUp}
-              >
-                <span
-                  className="font-display font-bold leading-none shrink-0 w-16"
-                  style={{ fontSize: "clamp(2.5rem, 4vw, 3.5rem)", color: C.faint }}
-                >
-                  {step.number}
-                </span>
-                <div className="flex items-start gap-6 flex-1">
-                  <div
-                    className="mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg"
-                    style={{ backgroundColor: C.white, border: `1px solid ${C.border}` }}
-                  >
-                    <step.Icon className="h-5 w-5" style={{ color: C.muted }} />
-                  </div>
-                  <div>
-                    <p className="font-display font-semibold text-lg" style={{ color: C.text }}>
-                      {step.title}
-                    </p>
-                    <p className="mt-1.5 text-sm leading-relaxed" style={{ color: C.muted, maxWidth: "42ch" }}>
-                      {step.description}
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </RevealGroup>
+      <section className="ofx-beat ofx-mid" style={beatStyle("why")}>
+        <div>
+          <div className="ofx-k">Why it exists</div>
+          <h2>Cyber-poor, target-rich.</h2>
+          <p>
+            Civic organisations face the same attackers as governments and banks — credential theft,
+            exploited vulnerabilities, leaked data, coordinated disinformation — without the staff,
+            tooling, or budget to defend themselves.
+          </p>
+          <div className="ofx-cap">“Cyber-poor, target-rich” — CyberPeace Institute</div>
         </div>
       </section>
 
-      {/* ── TRUST ─────────────────────────────────────────────────────────── */}
-      <section style={{ backgroundColor: C.white, paddingTop: "7rem", paddingBottom: "7rem" }}>
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="grid gap-16 lg:grid-cols-2 lg:items-start">
-            <Reveal>
-              <p className="mb-4 text-xs font-semibold uppercase tracking-[0.32em]" style={{ color: C.teal }}>
-                Built for trust
-              </p>
-              <h2
-                className="font-display font-bold leading-tight"
-                style={{ color: C.text, fontSize: "clamp(2rem, 3.5vw, 2.8rem)" }}
-              >
-                Open source.<br />Your infrastructure.
-              </h2>
-              <p className="mt-5 text-base leading-relaxed" style={{ color: C.muted }}>
-                No vendor lock-in. Your data never leaves your environment.
-                Apache 2.0 licensed — inspect the code, fork it, self-host it on
-                Docker in minutes.
-              </p>
-              <div className="mt-8 flex flex-wrap gap-2">
-                {["Python 3.12", "Django 5.2", "PostgreSQL", "React 18", "scikit-learn", "Docker", "Apache 2.0"].map((s) => (
-                  <span
-                    key={s}
-                    className="rounded-full px-3 py-1.5 text-xs font-medium"
-                    style={{ backgroundColor: C.grey, border: `1px solid ${C.border}`, color: C.secondary }}
-                  >
-                    {s}
-                  </span>
-                ))}
-              </div>
-            </Reveal>
+      <section className="ofx-beat ofx-mid" style={beatStyle("core")}>
+        <div>
+          <div className="ofx-k">What it does</div>
+          <h2>Six systems feed one risk core.</h2>
+          <p>
+            Each system watches one kind of threat and emits into a shared risk layer — so related
+            signals surface together, not as scattered alerts.
+          </p>
+          <div className="ofx-cap" style={{ color: "var(--orange-lt)" }}>↓ Select any system below to see what it does</div>
+        </div>
+      </section>
 
-            <RevealGroup className="grid gap-3 sm:grid-cols-2">
-              {[
-                { title: "Defensive only",        body: "No exploit code, no offensive automation. The platform detects and documents — it never acts." },
-                { title: "Shows its working",     body: "Every risk score and anomaly flag includes an explanation. No black boxes, no unexplained outputs." },
-                { title: "Human review required", body: "All outputs are decision-support signals. The platform surfaces findings — your team makes the calls." },
-                { title: "No data lock-in",       body: "Self-hosted on your own infrastructure. Your data stays exactly where you put it." },
-              ].map((p) => (
-                <motion.div
-                  key={p.title}
-                  className="rounded-xl p-5"
-                  style={{ backgroundColor: C.grey, border: `1px solid ${C.border}` }}
-                  variants={fadeUp}
-                >
-                  <div className="mb-3 h-0.5 w-6 rounded-full" style={{ backgroundColor: C.teal }} />
-                  <p className="text-sm font-semibold" style={{ color: C.text }}>{p.title}</p>
-                  <p className="mt-2 text-xs leading-relaxed" style={{ color: C.muted }}>{p.body}</p>
-                </motion.div>
+      <section className="ofx-beat ofx-mid" style={beatStyle("who")}>
+        <div>
+          <div className="ofx-k">Who it's for</div>
+          <h2>Teams without a SOC.</h2>
+          <div className="ofx-who">
+            <span>Community NGOs</span><span>Human-rights &amp; advocacy</span>
+            <span>Journalists &amp; researchers</span><span>Student civic-tech</span>
+          </div>
+        </div>
+      </section>
+
+      <section className="ofx-beat ofx-mid" style={beatStyle("cred")}>
+        <div>
+          <div className="ofx-k">Built to be trusted</div>
+          <h2>Open by design.</h2>
+          <p>
+            Self-hosted on Docker — your data never leaves your environment. Defensive-only: it
+            detects and documents, never exploits. Every score is explainable and built for human review.
+          </p>
+          <div className="ofx-tags">
+            <span>Apache-2.0</span><span>Self-hosted</span><span>CISA KEV</span><span>FIRST EPSS</span><span>MITRE ATT&amp;CK</span>
+          </div>
+          <div className="ofx-cap">A full-stack reference implementation &amp; portfolio project by Abdullah Tariq</div>
+        </div>
+      </section>
+
+      <section className="ofx-beat ofx-mid" style={beatStyle("outro")}>
+        <div>
+          <div className="ofx-k">Ready</div>
+          <h2>Step inside the system.</h2>
+          <div className="ofx-btns">
+            <Link className="ofx-btn" to="/login">Enter the demo →</Link>
+            <a className="ofx-btn ofx-ghost" href="https://github.com/abdullahbtariq/civicsec-lab" target="_blank" rel="noreferrer">Read the docs</a>
+          </div>
+        </div>
+      </section>
+
+      <div className="ofx-cue" style={{ opacity: phase === "hero" ? 1 : 0 }} aria-hidden="true">
+        <span className="ofx-pulse" />Scroll to descend into the system
+      </div>
+
+      {/* systems index — the guidance that the nodes are explorable */}
+      <nav className={"ofx-index" + (phase === "explore" && focused == null ? " ofx-on" : "")} aria-label="Systems">
+        <span className="ofx-lab">Systems —</span>
+        {ORBITAL_MODULES.map((mod, i) => (
+          <button
+            key={mod.key}
+            className={"ofx-chip" + (hovered === i ? " ofx-active" : "")}
+            onClick={() => selectModule(i)}
+            type="button"
+          >
+            <span className="ofx-d" style={{ background: mod.hex }} />
+            {mod.sec.replace("·", "-")} {mod.name.split(" ")[0]}
+          </button>
+        ))}
+      </nav>
+
+      {/* module panel */}
+      <div
+        className={"ofx-modview" + (focused != null ? " ofx-on" : "")}
+        role={m ? "region" : undefined}
+        aria-label={m ? `${m.name} — system details` : undefined}
+      >
+        {m && (
+          <>
+            <button className="ofx-mret" ref={returnRef} onClick={exit} type="button">← Return to overview</button>
+            <div className="ofx-msec">{m.sec} // SYSTEM</div>
+            <h3>{m.name}</h3>
+            <p className="ofx-mdesc">{m.what}</p>
+            <div className="ofx-mstats">
+              {m.stats.map((s) => (
+                <div key={s.k}>{s.k} : <b>{s.v}</b></div>
               ))}
-            </RevealGroup>
-          </div>
-        </div>
-      </section>
-
-      {/* ── CTA ───────────────────────────────────────────────────────────── */}
-      <section style={{ backgroundColor: C.ctaBg, paddingTop: "7rem", paddingBottom: "9rem" }}>
-        <div className="mx-auto max-w-7xl px-6">
-          <Reveal>
-            <h2
-              className="font-display font-bold leading-[1.0] tracking-tight"
-              style={{ color: "#f0f2f5", fontSize: "clamp(3rem, 7vw, 6rem)", maxWidth: "14ch" }}
-            >
-              Try it.<br />It&apos;s open<br />source.
-            </h2>
-            <p className="mt-6 text-base leading-relaxed" style={{ color: "#5a5a5a", maxWidth: "44ch" }}>
-              Clone the repo, start Docker, and run{" "}
-              <code
-                className="rounded px-1.5 py-0.5 font-mono text-sm"
-                style={{ backgroundColor: "rgba(255,255,255,0.07)", color: C.amber }}
-              >
-                seed_demo
-              </code>
-              . A fully seeded platform with real-looking data across all six modules — in under five minutes.
-            </p>
-            <div className="mt-10 flex flex-wrap items-center gap-4">
-              <Link
-                className="inline-flex min-h-12 items-center gap-2.5 rounded-lg px-7 py-3 text-sm font-semibold transition-opacity hover:opacity-90"
-                style={{ backgroundColor: C.amber, color: C.amberText }}
-                to="/login"
-              >
-                Sign In to the Demo
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-              <a
-                className="inline-flex min-h-12 items-center gap-2 rounded-lg border px-6 py-3 text-sm font-medium transition-opacity hover:opacity-80"
-                href="https://github.com"
-                rel="noreferrer"
-                style={{ borderColor: "rgba(255,255,255,0.11)", color: "#555555" }}
-                target="_blank"
-              >
-                View on GitHub
-              </a>
-              <Link
-                className="inline-flex min-h-12 items-center gap-2 text-sm font-medium transition-opacity hover:opacity-80"
-                style={{ color: "rgba(255,255,255,0.22)" }}
-                to="/about"
-              >
-                About the project →
-              </Link>
             </div>
-          </Reveal>
-        </div>
-      </section>
+            <div className="ofx-row">
+              <Link className="ofx-enter" to={m.href}>Enter full module →</Link>
+              <button className="ofx-nb" onClick={() => step(-1)} type="button" aria-label="Previous system">◂</button>
+              <button className="ofx-nb" onClick={() => step(1)} type="button" aria-label="Next system">▸</button>
+              <span className="ofx-cnt">{focused! + 1} / {ORBITAL_MODULES.length}</span>
+            </div>
+          </>
+        )}
+      </div>
 
-      <LandingFooter />
+      {/* always-in-DOM content for search engines + screen readers; target of skip link */}
+      <div id="ofx-summary" className="ofx-sr" role="region" aria-label="Systems overview">
+        <p>CivicSec Lab — open-source security intelligence for civic organisations</p>
+        <p>
+          Six systems around one civic risk core: vulnerability exposure, account threats, data
+          privacy, disinformation, correlation, and incident response. Built for civic teams without
+          a security operations centre.
+        </p>
+        <ul>
+          {ORBITAL_MODULES.map((mod) => (
+            <li key={mod.key}>{mod.name}: {mod.what}</li>
+          ))}
+        </ul>
+      </div>
+      </main>
     </div>
   );
 }

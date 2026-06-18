@@ -1,736 +1,536 @@
-import { motion, useInView, type Variants } from "framer-motion";
-import {
-  ArrowRight,
-  Database,
-  Eye,
-  GitBranch,
-  Globe,
-  Lock,
-  Server,
-  Shield,
-  ShieldCheck,
-  Users,
-} from "lucide-react";
-import Lenis from "lenis";
-import { type ReactNode, useEffect, useRef } from "react";
+// About page — rebuilt on the orbital/instrument theme.
+// Shares the ofx- token layer and nav/HUD chrome from the landing page.
+// The centerpiece is a live animated SVG architecture graph.
+
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-import { LandingFooter } from "./LandingFooter";
+import { ORBITAL_MODULES } from "./orbital/modules";
 import { LandingNav } from "./LandingNav";
+import "./orbital/orbital.css";
+import "./about.css";
 
-const C = {
-  white: "#ffffff",
-  grey: "#f5f5f3",
-  border: "#e8e8e6",
-  text: "#111111",
-  secondary: "#3c3c3a",
-  muted: "#6b6b68",
-  faint: "#d4d4d0",
-  teal: "#0a8e6e",
-  tealBright: "#d65a29",
-  amber: "#d99a3c",
-  amberText: "#1a0e00",
-  positive: "#1d7a64",
-  info: "#2060a0",
-  warning: "#8c6010",
-  error: "#8a2838",
-  dark: "#111111",
-  darkBorder: "#2a2a2a",
-  darkMuted: "#888888",
-  ctaBg: "#0d0f11",
-} as const;
+// ── Architecture SVG ──────────────────────────────────────────────────────────
+// Data-flow diagram: 4 sources → 4 analysis modules → Shared Risk Layer → outputs.
+// Animated with CSS stroke-dashoffset; reduced-motion strips the animation.
+// Fully accessible via role="img" + aria-label.
 
-const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
+const SOURCES = [
+  { id: "kev",   label: "CVE / KEV Feed", x: 115 },
+  { id: "login", label: "Login Logs",     x: 273 },
+  { id: "csv",   label: "CSV Datasets",   x: 467 },
+  { id: "posts", label: "Public Posts",   x: 625 },
+] as const;
 
-const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 32 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.72, ease: EASE } },
-};
+// Four analysis modules (ThreatBoard, LogLens, Privacy, Observatory)
+const ARCH_MODS = [
+  { id: "tb", label: "ThreatBoard",    hex: "#e7b052", x: 115 },
+  { id: "ll", label: "LogLens",        hex: "#71a7ff", x: 273 },
+  { id: "dp", label: "Privacy Doctor", hex: "#5b8def", x: 467 },
+  { id: "ob", label: "Observatory",    hex: "#e0662f", x: 625 },
+] as const;
 
-const stagger: Variants = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.09 } },
-};
+const RISK_CX = 370; // risk layer centre x
+const RISK_Y  = 292; // risk layer top
 
-function Reveal({
-  children,
-  className = "",
-  delay = 0,
-}: {
-  children: ReactNode;
-  className?: string;
-  delay?: number;
-}) {
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-80px" });
+function ArchGraph() {
+  const SY  = 54;  // source row baseline
+  const MY  = 184; // module row baseline
+  const OY  = 388; // output row baseline
+
   return (
-    <motion.div
-      ref={ref}
-      animate={inView ? "visible" : "hidden"}
-      className={className}
-      initial="hidden"
-      transition={{ delay }}
-      variants={fadeUp}
+    <svg
+      viewBox="0 0 740 426"
+      xmlns="http://www.w3.org/2000/svg"
+      role="img"
+      aria-label="CivicSec Lab architecture: four data sources (CVE/KEV feed, login logs, CSV datasets, public posts) feed four analysis modules (ThreatBoard, LogLens, Privacy Doctor, Observatory), which all emit into a shared risk event layer, then into the Civic Risk Graph and IncidentFlow."
+      className="abt-arch-svg"
     >
-      {children}
-    </motion.div>
+      <defs>
+        <filter id="aglow" x="-40%" y="-40%" width="180%" height="180%">
+          <feGaussianBlur stdDeviation="2.2" result="blur" />
+          <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+        </filter>
+      </defs>
+
+      {/* ── ROW 1: DATA SOURCES ─────────────────────────── */}
+      {SOURCES.map((s) => (
+        <g key={s.id}>
+          <rect
+            x={s.x - 66} y={SY - 17} width={132} height={30} rx={5}
+            fill="rgba(12,26,38,0.9)"
+            stroke="rgba(169,186,196,0.18)" strokeWidth={1}
+          />
+          <text
+            x={s.x} y={SY + 1}
+            textAnchor="middle"
+            fill="#7d92a0"
+            fontSize={9}
+            fontFamily="Geist Mono,monospace"
+            letterSpacing="0.09em"
+          >
+            {s.label.toUpperCase()}
+          </text>
+        </g>
+      ))}
+
+      {/* ── SOURCE → MODULE LINES (vertical, animated) ─── */}
+      {ARCH_MODS.map((m, i) => (
+        <line
+          key={m.id}
+          x1={SOURCES[i].x} y1={SY + 13}
+          x2={m.x}          y2={MY - 18}
+          stroke={m.hex}
+          strokeWidth={1.4}
+          strokeOpacity={0.38}
+          className={`abt-flow d${i + 1}`}
+        />
+      ))}
+
+      {/* ── ROW 2: ANALYSIS MODULES ─────────────────────── */}
+      {ARCH_MODS.map((m) => (
+        <g key={m.id}>
+          <rect
+            x={m.x - 70} y={MY - 20} width={140} height={38} rx={8}
+            fill={`${m.hex}1c`}
+            stroke={`${m.hex}55`} strokeWidth={1.3}
+          />
+          {/* coloured dot */}
+          <circle cx={m.x - 52} cy={MY} r={4} fill={m.hex} filter="url(#aglow)" />
+          <text
+            x={m.x - 42} y={MY + 4}
+            fill={m.hex}
+            fontSize={10.5}
+            fontFamily="Geist Mono,monospace"
+            fontWeight="500"
+          >
+            {m.label}
+          </text>
+        </g>
+      ))}
+
+      {/* ── MODULE → RISK LAYER (converging diagonals) ─── */}
+      {ARCH_MODS.map((m, i) => (
+        <line
+          key={m.id}
+          x1={m.x}     y1={MY + 18}
+          x2={RISK_CX} y2={RISK_Y}
+          stroke={m.hex}
+          strokeWidth={1.3}
+          strokeOpacity={0.4}
+          className={`abt-flow d${i + 1}`}
+        />
+      ))}
+
+      {/* ── SHARED RISK EVENT LAYER ─────────────────────── */}
+      <rect
+        x={RISK_CX - 220} y={RISK_Y}
+        width={440} height={42} rx={10}
+        fill="rgba(224,102,47,0.09)"
+        stroke="rgba(224,102,47,0.38)" strokeWidth={1.3}
+      />
+      <text
+        x={RISK_CX} y={RISK_Y + 14}
+        textAnchor="middle"
+        fill="#e0662f"
+        fontSize={9.5}
+        fontFamily="Geist Mono,monospace"
+        letterSpacing="0.2em"
+        fontWeight="600"
+      >
+        SHARED RISK EVENT LAYER
+      </text>
+      <text
+        x={RISK_CX} y={RISK_Y + 28}
+        textAnchor="middle"
+        fill="#7d92a0"
+        fontSize={8}
+        fontFamily="Geist Mono,monospace"
+        letterSpacing="0.06em"
+      >
+        RiskEvent · EvidenceItem · ActionRecommendation
+      </text>
+
+      {/* ── RISK LAYER → OUTPUTS (diverging) ───────────── */}
+      <line
+        x1={RISK_CX - 90} y1={RISK_Y + 42}
+        x2={176}           y2={OY - 18}
+        stroke="#5f8c6e" strokeWidth={1.3} strokeOpacity={0.45}
+        className="abt-flow d5"
+      />
+      <line
+        x1={RISK_CX + 90} y1={RISK_Y + 42}
+        x2={564}           y2={OY - 18}
+        stroke="#ee6c7a" strokeWidth={1.3} strokeOpacity={0.45}
+        className="abt-flow d6"
+      />
+
+      {/* ── ROW 3: OUTPUTS ──────────────────────────────── */}
+      {/* Civic Risk Graph */}
+      <rect
+        x={90} y={OY - 18} width={172} height={38} rx={8}
+        fill="rgba(95,140,110,0.13)"
+        stroke="rgba(95,140,110,0.42)" strokeWidth={1.3}
+      />
+      <circle cx={108} cy={OY} r={4} fill="#5f8c6e" filter="url(#aglow)" />
+      <text x={118} y={OY + 2} fill="#5f8c6e" fontSize={10.5}
+        fontFamily="Geist Mono,monospace" fontWeight="500">Civic Risk Graph</text>
+      <text x={118} y={OY + 15} fill="#7d92a0" fontSize={8}
+        fontFamily="Geist Mono,monospace">connected intelligence</text>
+
+      {/* IncidentFlow */}
+      <rect
+        x={478} y={OY - 18} width={172} height={38} rx={8}
+        fill="rgba(238,108,122,0.13)"
+        stroke="rgba(238,108,122,0.42)" strokeWidth={1.3}
+      />
+      <circle cx={496} cy={OY} r={4} fill="#ee6c7a" filter="url(#aglow)" />
+      <text x={506} y={OY + 2} fill="#ee6c7a" fontSize={10.5}
+        fontFamily="Geist Mono,monospace" fontWeight="500">IncidentFlow</text>
+      <text x={506} y={OY + 15} fill="#7d92a0" fontSize={8}
+        fontFamily="Geist Mono,monospace">response &amp; closure</text>
+    </svg>
   );
 }
 
-function RevealGroup({
-  children,
-  className = "",
-}: {
-  children: ReactNode;
-  className?: string;
-}) {
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-60px" });
-  return (
-    <motion.div
-      ref={ref}
-      animate={inView ? "visible" : "hidden"}
-      className={className}
-      initial="hidden"
-      variants={stagger}
-    >
-      {children}
-    </motion.div>
-  );
-}
-
+// ── Page ──────────────────────────────────────────────────────────────────────
 export function AboutPage() {
+  const [clock, setClock] = useState("--:--:--Z");
+
+  // Force the navy background (app shell is cream).
   useEffect(() => {
-    const lenis = new Lenis({
-      duration: 1.15,
-      easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-    });
-    let rafId: number;
-    function raf(time: number) {
-      lenis.raf(time);
-      rafId = requestAnimationFrame(raf);
-    }
-    rafId = requestAnimationFrame(raf);
+    const prevBody = document.body.style.background;
+    const prevHtml = document.documentElement.style.background;
+    document.body.style.background = "#070f17";
+    document.documentElement.style.background = "#070f17";
     return () => {
-      cancelAnimationFrame(rafId);
-      lenis.destroy();
+      document.body.style.background = prevBody;
+      document.documentElement.style.background = prevHtml;
     };
   }, []);
 
+  // Live mission-elapsed clock.
+  useEffect(() => {
+    const tick = () => setClock(new Date().toISOString().slice(11, 19) + "Z");
+    tick();
+    const id = window.setInterval(tick, 1000);
+    return () => window.clearInterval(id);
+  }, []);
+
   return (
-    <div style={{ backgroundColor: C.white, color: C.text }}>
+    <div className="ofx-root abt-root">
+      {/* Depth gradient background */}
+      <div className="abt-bg" aria-hidden="true" />
+
+      {/* Skip link */}
+      <a href="#abt-main" className="ofx-skip">Skip to main content</a>
+
+      {/* Instrument HUD chrome — decorative, matches landing */}
+      <div className="ofx-hud" aria-hidden="true">
+        <div className="ofx-tick ofx-tl" /><div className="ofx-tick ofx-tr" />
+        <div className="ofx-tick ofx-bl" /><div className="ofx-tick ofx-br" />
+        <div className="ofx-met">
+          SIGNAL CORE // <b>ONLINE</b><br />
+          CIVIC-SEC · ABOUT<br />
+          MET <b>{clock}</b>
+        </div>
+        <div className="ofx-sysid">
+          MISSION LOG<br />
+          DOC <b>ABOUT-01</b>
+        </div>
+      </div>
+
       <LandingNav />
 
-      {/* ── HERO ─────────────────────────────────────────────────────────── */}
-      <section
-        style={{
-          backgroundColor: C.white,
-          paddingTop: "9rem",
-          paddingBottom: "6rem",
-        }}
-      >
-        <div className="mx-auto max-w-5xl px-6">
-          <motion.p
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-6 text-xs font-semibold uppercase tracking-[0.35em]"
-            initial={{ opacity: 0, y: -10 }}
-            style={{ color: C.teal }}
-            transition={{ duration: 0.5 }}
-          >
-            About
-          </motion.p>
+      <main id="abt-main">
 
-          <motion.h1
-            animate="visible"
-            className="font-display font-bold leading-[1.0] tracking-tight"
-            initial="hidden"
-            style={{
-              color: C.text,
-              fontSize: "clamp(2.5rem, 5.5vw, 4.5rem)",
-            }}
-            variants={stagger}
-          >
-            {["A civic technology platform", "for security intelligence."].map((line, i) => (
-              <motion.span key={i} className="block" variants={fadeUp}>
-                {i === 1 ? (
-                  <span style={{ color: C.muted }}>{line}</span>
-                ) : (
-                  line
-                )}
-              </motion.span>
-            ))}
-          </motion.h1>
-
-          <motion.p
-            animate={{ opacity: 1, y: 0 }}
-            className="mt-8 text-lg leading-relaxed"
-            initial={{ opacity: 0, y: 16 }}
-            style={{ color: C.muted, maxWidth: "60ch" }}
-            transition={{ delay: 0.5, duration: 0.65 }}
-          >
-            CivicSec Lab was built to close the resource gap between small civic
-            organisations and the cyber, data, and platform risks they face every day.
-            It is a portfolio project in civic technology, security engineering, and
-            responsible AI design.
-          </motion.p>
-        </div>
-      </section>
-
-      {/* ── WHY IT EXISTS — dark section ──────────────────────────────────── */}
-      <section style={{ backgroundColor: C.dark, paddingTop: "6rem", paddingBottom: "6rem" }}>
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="grid gap-12 lg:grid-cols-[1fr_1.4fr] lg:items-start">
-            <Reveal>
-              <p
-                className="mb-4 text-xs font-semibold uppercase tracking-[0.32em]"
-                style={{ color: C.tealBright }}
+        {/* ── HERO ─────────────────────────────────────────────────────────── */}
+        <section className="abt-hero">
+          <div className="abt-hero-inner">
+            {/* Classification bar — one instance, fits the field-dispatch concept */}
+            <div className="abt-dispatch-bar" aria-hidden="true">
+              <span>CLASSIFICATION: OPEN SOURCE</span>
+              <span className="abt-dispatch-sep" />
+              <span>SECTOR: CIVIC SECURITY</span>
+              <span className="abt-dispatch-sep" />
+              <span>DOC: ABOUT-01</span>
+            </div>
+            <h1 className="abt-h1">
+              The threats are real.<br />
+              The budgets aren't.
+            </h1>
+            <p className="abt-h1-sub">
+              CivicSec Lab is what you build in the gap.
+            </p>
+            <div className="abt-hero-links">
+              <Link className="ofx-btn" to="/login">Enter the system →</Link>
+              <a
+                className="abt-ghost"
+                href="https://github.com/abdullahbtariq/civicsec-lab"
+                target="_blank"
+                rel="noreferrer"
               >
-                Why It Exists
-              </p>
-              <h2
-                className="font-display font-bold leading-tight"
-                style={{
-                  color: "#f5f5f5",
-                  fontSize: "clamp(1.8rem, 3vw, 2.4rem)",
-                }}
-              >
-                The civic security<br />gap is real.
-              </h2>
-            </Reveal>
-
-            <Reveal delay={0.1}>
-              <div
-                className="space-y-6 text-base leading-relaxed"
-                style={{ color: C.darkMuted }}
-              >
-                <p>
-                  Large institutions have SOC teams, SIEM tools, threat intelligence
-                  subscriptions, and incident response playbooks. Small civic
-                  organisations — community NGOs, human rights groups, research teams,
-                  student civic technology projects — often have none of these.
-                </p>
-                <p>
-                  The risks haven&apos;t disappeared. Login credential attacks, known
-                  vulnerability exposure, poorly handled datasets, and coordinated
-                  narrative campaigns all affect civic actors disproportionately.
-                </p>
-                <p>
-                  CivicSec Lab is an exploration of what lightweight, explainable,
-                  self-hosted security intelligence can look like when designed
-                  specifically for public-interest teams.
-                </p>
-                <p
-                  className="pl-5 italic"
-                  style={{
-                    borderLeft: `1px solid ${C.tealBright}50`,
-                    color: "#aaaaaa",
-                  }}
-                >
-                  &ldquo;Online harm leaves a trace. Signal becomes evidence. Evidence
-                  becomes action.&rdquo;
-                </p>
-              </div>
-            </Reveal>
+                View source ↗
+              </a>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ── DESIGN PRINCIPLES — white ─────────────────────────────────────── */}
-      <section style={{ backgroundColor: C.white, paddingTop: "7rem", paddingBottom: "7rem" }}>
-        <div className="mx-auto max-w-7xl px-6">
-          <Reveal>
-            <p
-              className="mb-4 text-xs font-semibold uppercase tracking-[0.32em]"
-              style={{ color: C.teal }}
-            >
-              Design Principles
+        {/* ── THE SITUATION ─────────────────────────────────────────────────── */}
+        <section className="abt-section abt-alt">
+          <div className="abt-inner">
+            {/* Stat as a field observation, not a hero metric */}
+            <div className="abt-situation-stat">
+              <div className="abt-sit-num">#1</div>
+              <div className="abt-sit-meta">
+                <span className="abt-sit-label">threat vector for civil society</span>
+                <span className="abt-sit-src">CyberPeace Institute, 2023</span>
+              </div>
+            </div>
+            <h2 className="abt-h2">Small teams. Enterprise threats.</h2>
+            <p className="abt-body">
+              Large institutions have SOC teams, SIEM tools, threat intelligence
+              subscriptions, and incident response playbooks. Small civic
+              organisations — community NGOs, human rights groups, research teams,
+              student civic technology projects — often have none of these.
             </p>
-            <h2
-              className="font-display font-bold leading-tight"
-              style={{
-                color: C.text,
-                fontSize: "clamp(1.8rem, 3vw, 2.4rem)",
-                maxWidth: "36rem",
-              }}
-            >
-              Four commitments baked in from day one.
-            </h2>
-          </Reveal>
-
-          <RevealGroup className="mt-12 grid gap-4 sm:grid-cols-2">
-            {[
-              {
-                Icon: Shield,
-                iconColor: C.positive,
-                title: "Defensive only",
-                body: "No exploit code, no credential harvesting, no offensive automation, and no capabilities for targeting individuals. Every feature protects, detects, or responds.",
-              },
-              {
-                Icon: Eye,
-                iconColor: C.info,
-                title: "Explainable outputs",
-                body: "Every anomaly, risk score, and detection shows its working. Confidence scores, evidence snapshots, and MITRE context are first-class — not afterthoughts.",
-              },
-              {
-                Icon: Users,
-                iconColor: C.warning,
-                title: "Proportionate language",
-                body: 'Outputs say "signals", "clusters", "patterns" — not "threats" or "attacks". The platform surfaces evidence for human review; it never draws conclusions.',
-              },
-              {
-                Icon: Lock,
-                iconColor: C.error,
-                title: "Human review required",
-                body: "All outputs are decision-support signals. The platform assists analysts; it does not replace them. Every result requires human judgment.",
-              },
-            ].map((p) => (
-              <motion.div
-                key={p.title}
-                className="rounded-xl p-6"
-                style={{
-                  backgroundColor: C.grey,
-                  border: `1px solid ${C.border}`,
-                }}
-                variants={fadeUp}
-              >
-                <div
-                  className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg"
-                  style={{
-                    backgroundColor: `${p.iconColor}12`,
-                    border: `1px solid ${p.iconColor}28`,
-                  }}
-                >
-                  <p.Icon className="h-5 w-5" style={{ color: p.iconColor }} />
-                </div>
-                <h3 className="font-display font-semibold text-sm" style={{ color: C.text }}>
-                  {p.title}
-                </h3>
-                <p className="mt-2.5 text-sm leading-relaxed" style={{ color: C.muted }}>
-                  {p.body}
-                </p>
-              </motion.div>
-            ))}
-          </RevealGroup>
-        </div>
-      </section>
-
-      {/* ── ARCHITECTURE — grey with dark diagram ─────────────────────────── */}
-      <section style={{ backgroundColor: C.grey, paddingTop: "7rem", paddingBottom: "7rem" }}>
-        <div className="mx-auto max-w-7xl px-6">
-          <Reveal>
-            <p
-              className="mb-4 text-xs font-semibold uppercase tracking-[0.32em]"
-              style={{ color: C.teal }}
-            >
-              Architecture
+            <p className="abt-body">
+              The risks haven't disappeared. Login credential attacks, known
+              vulnerability exposure, poorly handled datasets, and coordinated
+              narrative campaigns all affect civic actors disproportionately.
+              CivicSec Lab is an exploration of what lightweight, explainable,
+              self-hosted security intelligence can look like when designed
+              specifically for public-interest teams.
             </p>
-            <h2
-              className="font-display font-bold leading-tight"
-              style={{
-                color: C.text,
-                fontSize: "clamp(1.8rem, 3vw, 2.4rem)",
-                maxWidth: "36rem",
-              }}
-            >
-              One shared risk model.<br />Six analysis modules.
-            </h2>
-            <p
-              className="mt-4 text-base leading-relaxed"
-              style={{ color: C.muted, maxWidth: "52ch" }}
-            >
+            <blockquote className="abt-quote">
+              "Online harm leaves a trace. Signal becomes evidence.
+              Evidence becomes action."
+              <cite className="abt-quote-cite">— CivicSec Lab founding principle</cite>
+            </blockquote>
+          </div>
+        </section>
+
+        {/* ── SIGNAL ARCHITECTURE ──────────────────────────────────────────── */}
+        <section className="abt-section">
+          <div className="abt-inner">
+            <h2 className="abt-h2">How the signals flow.</h2>
+            <p className="abt-arch-sub">
               Data enters through each module. Every module emits risk events into a
               shared layer. The Risk Graph connects them. IncidentFlow closes the loop.
             </p>
-          </Reveal>
-
-          <Reveal className="mt-12" delay={0.1}>
-            <div
-              className="overflow-x-auto rounded-2xl p-8"
-              style={{
-                backgroundColor: "#0d1117",
-                border: `1px solid ${C.border}`,
-              }}
-            >
-              <div className="min-w-[640px]">
-                {/* Row 1: Data sources */}
-                <div className="flex justify-center gap-3">
-                  {[
-                    { label: "Login Logs", Icon: Server },
-                    { label: "CVE / KEV Feed", Icon: Globe },
-                    { label: "CSV Datasets", Icon: Database },
-                    { label: "Public Posts", Icon: GitBranch },
-                  ].map((s) => (
-                    <div
-                      key={s.label}
-                      className="flex flex-col items-center gap-1.5 rounded-lg px-4 py-3"
-                      style={{ backgroundColor: "#0f2230", border: "1px solid #1e2329" }}
-                    >
-                      <s.Icon className="h-4 w-4" style={{ color: "#a7b0bb" }} />
-                      <span className="text-xs" style={{ color: "#a7b0bb" }}>
-                        {s.label}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Arrow */}
-                <div className="my-4 flex justify-center">
-                  <div className="flex flex-col items-center gap-0.5">
-                    <div className="h-5 w-px" style={{ backgroundColor: "#1e2329" }} />
-                    <div className="h-0 w-0" style={{ borderLeft: "4px solid transparent", borderRight: "4px solid transparent", borderTop: "4px solid #1e2329" }} />
-                  </div>
-                </div>
-
-                {/* Row 2: Modules */}
-                <div className="flex justify-center gap-3">
-                  {[
-                    { label: "ThreatBoard", color: "#c4821a" },
-                    { label: "LogLens", color: "#a855f7" },
-                    { label: "Privacy Doctor", color: "#71a7ff" },
-                    { label: "Observatory", color: "#d99a3c" },
-                  ].map((m) => (
-                    <div
-                      key={m.label}
-                      className="rounded-lg px-4 py-3"
-                      style={{ border: `1px solid ${m.color}33`, backgroundColor: `${m.color}0d` }}
-                    >
-                      <span className="text-xs font-medium" style={{ color: m.color }}>
-                        {m.label}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Arrow */}
-                <div className="my-4 flex justify-center">
-                  <div className="flex flex-col items-center gap-0.5">
-                    <div className="h-5 w-px" style={{ backgroundColor: "#1e2329" }} />
-                    <div className="h-0 w-0" style={{ borderLeft: "4px solid transparent", borderRight: "4px solid transparent", borderTop: "4px solid #1e2329" }} />
-                  </div>
-                </div>
-
-                {/* Shared risk layer */}
-                <div className="flex justify-center">
-                  <div
-                    className="rounded-lg px-8 py-4 text-center"
-                    style={{ border: "1px solid rgba(67,217,173,0.30)", backgroundColor: "rgba(67,217,173,0.07)" }}
-                  >
-                    <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: "#d65a29" }}>
-                      Shared Risk Event Layer
-                    </p>
-                    <p className="mt-1 text-xs" style={{ color: "#a7b0bb" }}>
-                      RiskEvent · EvidenceItem · ActionRecommendation
-                    </p>
-                  </div>
-                </div>
-
-                {/* Arrow */}
-                <div className="my-4 flex justify-center">
-                  <div className="flex flex-col items-center gap-0.5">
-                    <div className="h-5 w-px" style={{ backgroundColor: "#1e2329" }} />
-                    <div className="h-0 w-0" style={{ borderLeft: "4px solid transparent", borderRight: "4px solid transparent", borderTop: "4px solid #1e2329" }} />
-                  </div>
-                </div>
-
-                {/* Row 4 */}
-                <div className="flex justify-center gap-3">
-                  <div className="rounded-lg px-6 py-3 text-center" style={{ border: "1px solid rgba(67,217,173,0.33)", backgroundColor: "rgba(67,217,173,0.09)" }}>
-                    <p className="text-xs font-semibold" style={{ color: "#d65a29" }}>Risk Graph</p>
-                    <p className="mt-0.5 text-xs" style={{ color: "#a7b0bb" }}>Connected intelligence</p>
-                  </div>
-                  <div className="rounded-lg px-6 py-3 text-center" style={{ border: "1px solid rgba(238,108,122,0.33)", backgroundColor: "rgba(238,108,122,0.09)" }}>
-                    <p className="text-xs font-semibold" style={{ color: "#ee6c7a" }}>IncidentFlow</p>
-                    <p className="mt-0.5 text-xs" style={{ color: "#a7b0bb" }}>Response workflow</p>
-                  </div>
-                </div>
-              </div>
+            <div className="abt-arch-wrap">
+              <ArchGraph />
             </div>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* ── RESPONSIBLE USE — white ───────────────────────────────────────── */}
-      <section style={{ backgroundColor: C.white, paddingTop: "7rem", paddingBottom: "7rem" }}>
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="grid gap-16 lg:grid-cols-[1fr_1.4fr] lg:items-start">
-            <Reveal>
-              <p
-                className="mb-4 text-xs font-semibold uppercase tracking-[0.32em]"
-                style={{ color: C.teal }}
-              >
-                Responsible Use
-              </p>
-              <h2
-                className="font-display font-bold leading-tight"
-                style={{ color: C.text, fontSize: "clamp(1.8rem, 3vw, 2.4rem)" }}
-              >
-                What this platform does — and does not do.
-              </h2>
-            </Reveal>
-
-            <Reveal delay={0.1}>
-              <div className="grid gap-4 sm:grid-cols-2">
-                {[
-                  {
-                    label: "✓ Does",
-                    accentColor: C.positive,
-                    items: [
-                      "Surfaces known vulnerability exposure",
-                      "Detects suspicious login patterns",
-                      "Profiles datasets for privacy risk",
-                      "Monitors public narrative signals",
-                      "Provides explainable risk scores",
-                      "Supports structured incident response",
-                    ],
-                  },
-                  {
-                    label: "✕ Does not",
-                    accentColor: C.error,
-                    items: [
-                      "Provide exploit code or PoCs",
-                      "Harvest or store credentials",
-                      "Automate offensive actions",
-                      "Label content as disinformation",
-                      "Target or profile individuals",
-                      "Draw conclusions without evidence",
-                    ],
-                  },
-                ].map((col) => (
-                  <div
-                    key={col.label}
-                    className="rounded-xl p-5"
-                    style={{ backgroundColor: C.grey, border: `1px solid ${C.border}` }}
-                  >
-                    <p
-                      className="mb-4 text-xs font-semibold uppercase tracking-wider"
-                      style={{ color: col.accentColor }}
-                    >
-                      {col.label}
-                    </p>
-                    <ul className="space-y-2">
-                      {col.items.map((item) => (
-                        <li
-                          key={item}
-                          className="flex items-start gap-2 text-sm"
-                          style={{ color: C.muted }}
-                        >
-                          <span
-                            className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full"
-                            style={{ backgroundColor: col.accentColor }}
-                          />
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
-              </div>
-            </Reveal>
+            <div className="abt-arch-legend">
+              {ORBITAL_MODULES.map((m) => (
+                <div key={m.key} className="abt-legend-item">
+                  <span
+                    className="abt-legend-dot"
+                    style={{ background: m.hex }}
+                    aria-hidden="true"
+                  />
+                  <span className="abt-legend-name">{m.name}</span>
+                  <span className="abt-legend-sec">{m.sec}</span>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ── TECHNICAL DEPTH — grey ────────────────────────────────────────── */}
-      <section style={{ backgroundColor: C.grey, paddingTop: "7rem", paddingBottom: "7rem" }}>
-        <div className="mx-auto max-w-7xl px-6">
-          <Reveal>
-            <p
-              className="mb-4 text-xs font-semibold uppercase tracking-[0.32em]"
-              style={{ color: C.teal }}
-            >
-              Technical Depth
-            </p>
-            <h2
-              className="font-display font-bold leading-tight"
-              style={{ color: C.text, fontSize: "clamp(1.8rem, 3vw, 2.4rem)", maxWidth: "36rem" }}
-            >
-              Full-stack from database to WebGL.
-            </h2>
-            <p
-              className="mt-4 text-base leading-relaxed"
-              style={{ color: C.muted, maxWidth: "52ch" }}
-            >
-              Eight phases, end-to-end engineering: data pipelines, REST API design,
+        {/* ── FIELD DOCTRINE ───────────────────────────────────────────────── */}
+        <section className="abt-section abt-alt">
+          <div className="abt-inner">
+            <h2 className="abt-h2">Field doctrine.</h2>
+            <div className="abt-doctrine-list">
+              {[
+                {
+                  title: "Defensive only.",
+                  body: "No exploit code, no credential harvesting, no offensive automation, and no capabilities for targeting individuals. Every feature protects, detects, or responds.",
+                },
+                {
+                  title: "Explainable outputs.",
+                  body: "Every anomaly, risk score, and detection shows its working. Confidence scores, evidence snapshots, and MITRE ATT&CK context are first-class — not afterthoughts.",
+                },
+                {
+                  title: "Proportionate language.",
+                  body: "Outputs say \"signals\", \"clusters\", \"patterns\" — not \"threats\" or \"attacks\". The platform surfaces evidence for human review; it never draws conclusions.",
+                },
+                {
+                  title: "Human review required.",
+                  body: "All outputs are decision-support signals. The platform assists analysts; it does not replace them. Every result requires human judgment before any action is taken.",
+                },
+              ].map((rule) => (
+                <div key={rule.title} className="abt-doctrine-rule">
+                  <h3 className="abt-doctrine-title">{rule.title}</h3>
+                  <p className="abt-doctrine-body">{rule.body}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── DEPLOYMENT LOG ───────────────────────────────────────────────── */}
+        <section className="abt-section">
+          <div className="abt-inner">
+            <h2 className="abt-h2">Deployment log.</h2>
+            <p className="abt-arch-sub">
+              Eight phases. End-to-end engineering: data pipelines, REST API design,
               NLP, anomaly detection, graph theory, and interactive 3D visualisation.
             </p>
-          </Reveal>
+            <div className="abt-deploy-list">
+              {[
+                {
+                  phase: "PHASE 0–1",
+                  title: "Platform shell",
+                  body: "Django 5.2 monorepo, custom user model with org scoping, role-based permissions, Docker Compose, React 18 + TypeScript.",
+                },
+                {
+                  phase: "PHASE 2",
+                  title: "ThreatBoard",
+                  body: "KEV-style CVE ingestion, EPSS score enrichment with decay, asset matching, explainable composite risk scoring.",
+                },
+                {
+                  phase: "PHASE 3",
+                  title: "LogLens",
+                  body: "Synthetic log ingestion, six rule-based anomaly detectors, confidence scoring, MITRE ATT&CK-style tactic mapping.",
+                },
+                {
+                  phase: "PHASE 4",
+                  title: "DataPrivacy Doctor",
+                  body: "CSV upload, type inference, PII + quasi-identifier detection across 14 categories, five-factor composite risk scoring.",
+                },
+                {
+                  phase: "PHASE 5",
+                  title: "Observatory",
+                  body: "TF-IDF + MiniBatchKMeans clustering, keyword burst detection, spaCy NER, multilingual auto-translation.",
+                },
+                {
+                  phase: "PHASE 6",
+                  title: "Civic Risk Graph",
+                  body: "Cross-module graph builder, React Flow with custom node types, click-to-inspect panels, minimap + zoom controls.",
+                },
+                {
+                  phase: "PHASE 7",
+                  title: "IncidentFlow",
+                  body: "Full incident lifecycle: alert → triage → response → closure. Templated playbooks and a full audit timeline.",
+                },
+                {
+                  phase: "PHASE 8",
+                  title: "WebGL landing",
+                  body: "Three.js orbital flight — a cinematic marketing instrument with six gyroscope ring-nodes and a scroll-driven mission narrative.",
+                },
+              ].map((p) => (
+                <div key={p.phase} className="abt-deploy-entry">
+                  <div className="abt-deploy-hd">
+                    <div className="abt-deploy-phase">{p.phase}</div>
+                    <div className="abt-deploy-status">COMPLETE</div>
+                  </div>
+                  <div className="abt-deploy-content">
+                    <h3 className="abt-deploy-title">{p.title}</h3>
+                    <p className="abt-deploy-body">{p.body}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
 
-          <RevealGroup className="mt-12 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {[
-              { phase: "Phase 0–1", title: "Platform shell", body: "Django 5.2 monorepo, custom user model with org scoping, role-based permissions, Docker Compose, React 18 + TypeScript." },
-              { phase: "Phase 2", title: "ThreatBoard", body: "KEV-style CVE ingestion, EPSS score enrichment with decay, asset matching, explainable composite risk scoring." },
-              { phase: "Phase 3", title: "LogLens", body: "Synthetic log ingestion, six rule-based anomaly detectors, confidence scoring, MITRE ATT&CK-style tactic mapping." },
-              { phase: "Phase 4", title: "DataPrivacy Doctor", body: "CSV upload, type inference, PII + quasi-identifier detection across 14 categories, five-factor composite risk scoring." },
-              { phase: "Phase 5–6", title: "Observatory + IncidentFlow", body: "TF-IDF + MiniBatchKMeans clustering, keyword burst detection, spaCy NER. Incident management with timeline and playbooks." },
-              { phase: "Phase 7", title: "Civic Risk Graph", body: "Cross-module graph builder, React Flow with custom node types, click-to-inspect panels, minimap + zoom controls." },
-            ].map((item) => (
-              <motion.div
-                key={item.phase}
-                className="rounded-xl p-5"
-                style={{ backgroundColor: C.white, border: `1px solid ${C.border}` }}
-                variants={fadeUp}
-              >
-                <p
-                  className="mb-2 text-xs font-semibold uppercase tracking-wider"
-                  style={{ color: `${C.teal}` }}
-                >
-                  {item.phase}
+        {/* ── SIGNAL ORIGIN ────────────────────────────────────────────────── */}
+        <section className="abt-section abt-alt">
+          <div className="abt-inner">
+            <div className="abt-builder-grid">
+              <div className="abt-builder-left">
+                <h2 className="abt-h2">Abdullah Tariq</h2>
+                <p className="abt-lead">
+                  I built CivicSec Lab because small civic organisations face the
+                  same attackers as banks — without the budget to see them coming.
                 </p>
-                <h3 className="font-display font-semibold text-sm" style={{ color: C.text }}>
-                  {item.title}
-                </h3>
-                <p className="mt-2 text-sm leading-relaxed" style={{ color: C.muted }}>
-                  {item.body}
+                <p className="abt-body">
+                  The platform is the proof: eight phases of engineering, one
+                  coherent system. From database schema to WebGL instrument.
                 </p>
-              </motion.div>
-            ))}
-          </RevealGroup>
-        </div>
-      </section>
-
-      {/* ── BUILDER — white ───────────────────────────────────────────────── */}
-      <section style={{ backgroundColor: C.white, paddingTop: "7rem", paddingBottom: "7rem" }}>
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="grid gap-12 lg:grid-cols-[1fr_1.2fr] lg:items-start">
-            <Reveal>
-              <p
-                className="mb-4 text-xs font-semibold uppercase tracking-[0.32em]"
-                style={{ color: C.teal }}
-              >
-                The Builder
-              </p>
-              <h2
-                className="font-display font-bold leading-tight"
-                style={{ color: C.text, fontSize: "clamp(1.8rem, 3vw, 2.4rem)" }}
-              >
-                Abdullah Tariq
-              </h2>
-              <p className="mt-4 text-base leading-relaxed" style={{ color: C.muted }}>
-                Full-stack engineer and civic technologist. CivicSec Lab demonstrates
-                competency across backend engineering, data pipeline design, NLP and ML
-                integration, security tooling, and interactive frontend development.
-              </p>
-              <p className="mt-4 text-base leading-relaxed" style={{ color: C.muted }}>
-                The project is a portfolio artefact intended to show how a complete,
-                production-grade platform is designed, built, and documented — from
-                database schema to WebGL visualisation.
-              </p>
-              <div className="mt-8 flex flex-wrap gap-3">
-                {[
-                  { label: "Portfolio", href: "https://www.abdullahbtariq.com", Icon: ShieldCheck },
-                  { label: "GitHub", href: "https://github.com", Icon: null },
-                  { label: "LinkedIn", href: "https://linkedin.com", Icon: null },
-                ].map((link) => (
+                <div className="abt-builder-links">
                   <a
-                    key={link.label}
-                    className="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm transition-colors"
-                    href={link.href}
-                    rel="noreferrer"
-                    style={{ border: `1px solid ${C.border}`, color: C.muted }}
+                    href="https://www.abdullahbtariq.com"
                     target="_blank"
-                    onMouseEnter={(e) => { e.currentTarget.style.color = C.text; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.color = C.muted; }}
+                    rel="noreferrer"
+                    className="abt-extlink"
                   >
-                    {link.Icon && <link.Icon className="h-4 w-4" style={{ color: C.teal }} />}
-                    {link.label}
+                    Portfolio ↗
                   </a>
-                ))}
-              </div>
-            </Reveal>
-
-            <Reveal delay={0.1}>
-              <div
-                className="rounded-xl p-8"
-                style={{ backgroundColor: C.grey, border: `1px solid ${C.border}` }}
-              >
-                <p
-                  className="mb-6 text-xs font-semibold uppercase tracking-wider"
-                  style={{ color: C.muted }}
-                >
-                  Skills demonstrated in this project
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {[
-                    "Django 5.2", "Django REST Framework", "PostgreSQL", "Celery",
-                    "React 18", "TypeScript", "Vite", "Tailwind CSS", "React Router 7",
-                    "Three.js / R3F", "Framer Motion", "pandas", "scikit-learn",
-                    "spaCy", "TF-IDF clustering", "k-Means", "Docker Compose",
-                    "GitHub Actions", "Ruff", "pytest", "API design", "data modelling",
-                    "security tooling", "NLP pipelines", "graph visualisation",
-                  ].map((skill) => (
-                    <span
-                      key={skill}
-                      className="rounded-full px-3 py-1 text-xs"
-                      style={{
-                        backgroundColor: C.white,
-                        border: `1px solid ${C.border}`,
-                        color: C.muted,
-                      }}
-                    >
-                      {skill}
-                    </span>
-                  ))}
+                  <a
+                    href="https://github.com/abdullahbtariq/civicsec-lab"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="abt-extlink"
+                  >
+                    GitHub ↗
+                  </a>
+                  <a
+                    href="https://linkedin.com"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="abt-extlink"
+                  >
+                    LinkedIn ↗
+                  </a>
                 </div>
               </div>
-            </Reveal>
-          </div>
-        </div>
-      </section>
-
-      {/* ── CTA — dark ────────────────────────────────────────────────────── */}
-      <section
-        style={{
-          backgroundColor: C.ctaBg,
-          paddingTop: "6rem",
-          paddingBottom: "7rem",
-        }}
-      >
-        <div className="mx-auto max-w-3xl px-6 text-center">
-          <Reveal>
-            <div
-              className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-xl"
-              style={{
-                border: "1px solid rgba(255,255,255,0.12)",
-                backgroundColor: "rgba(255,255,255,0.06)",
-              }}
-            >
-              <ShieldCheck className="h-6 w-6" style={{ color: "#f5f5f5" }} />
+              <div className="abt-builder-right">
+                <div className="abt-terminal" role="region" aria-label="Skills log">
+                  <div className="abt-terminal-bar" aria-hidden="true">
+                    <span className="abt-tb-dot" style={{ background: "#ff5f57" }} />
+                    <span className="abt-tb-dot" style={{ background: "#ffbd2e" }} />
+                    <span className="abt-tb-dot" style={{ background: "#28c841" }} />
+                    <span className="abt-tb-title">skills.log</span>
+                  </div>
+                  <div className="abt-terminal-body">
+                    {([
+                      ["backend",  "Django 5.2 · DRF · PostgreSQL · Celery · Redis"],
+                      ["frontend", "React 18 · TypeScript · Vite · Tailwind · R3F"],
+                      ["3d / viz", "Three.js · @react-three/fiber · React Flow"],
+                      ["nlp / ml", "pandas · scikit-learn · spaCy · VADER · NLTK"],
+                      ["security", "CISA KEV · EPSS · MITRE ATT&CK · OWASP"],
+                      ["infra",    "Docker Compose · GitHub Actions · pytest · Ruff"],
+                      ["design",   "WebGL instruments · orbital systems · HUD UX"],
+                    ] as [string, string][]).map(([k, v]) => (
+                      <div key={k} className="abt-term-row">
+                        <span className="abt-term-key">{k}</span>
+                        <span className="abt-term-sep"> › </span>
+                        <span className="abt-term-val">{v}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
             </div>
-            <h2
-              className="font-display font-bold tracking-tight"
-              style={{ color: "#f5f5f5", fontSize: "clamp(1.8rem, 3vw, 2.4rem)" }}
-            >
-              Ready to run the platform?
-            </h2>
-            <p
-              className="mx-auto mt-4 text-base leading-relaxed"
-              style={{ color: "#666666", maxWidth: "44ch" }}
-            >
+          </div>
+        </section>
+
+        {/* ── CTA ──────────────────────────────────────────────────────────── */}
+        <section className="abt-section abt-cta">
+          <div className="abt-cta-inner">
+            <div className="abt-status-tag">STATUS: ONLINE</div>
+            <h2 className="abt-h2">The system is live.</h2>
+            <p className="abt-body">
               Clone the repository, start Docker, and have a fully seeded demo
               running in under five minutes.
             </p>
-            <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-              <Link
-                className="inline-flex min-h-11 items-center gap-2 rounded-lg px-6 py-2.5 text-sm font-semibold transition-opacity hover:opacity-90"
-                style={{ backgroundColor: C.amber, color: C.amberText }}
-                to="/login"
+            <div className="abt-cta-links">
+              <Link className="ofx-btn" to="/login">Enter the demo →</Link>
+              <a
+                className="abt-ghost"
+                href="https://github.com/abdullahbtariq/civicsec-lab"
+                target="_blank"
+                rel="noreferrer"
               >
-                Sign In to Demo
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-              <Link
-                className="inline-flex min-h-11 items-center gap-2 rounded-lg border px-6 py-2.5 text-sm font-semibold transition-opacity hover:opacity-80"
-                style={{ borderColor: "rgba(255,255,255,0.14)", color: "#666666" }}
-                to="/"
-              >
-                Back to Home
-              </Link>
+                View the source ↗
+              </a>
             </div>
-          </Reveal>
-        </div>
-      </section>
+          </div>
+        </section>
 
-      <LandingFooter />
+      </main>
     </div>
   );
 }

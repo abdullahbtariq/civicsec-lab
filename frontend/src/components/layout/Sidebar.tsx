@@ -12,6 +12,7 @@ import {
   ThreatBoardIcon,
 } from "../brand/icons/ModuleIcons";
 import { useAuth } from "../../hooks/useAuth";
+import { MODULE_COLORS } from "../../lib/modules";
 import { cn } from "../../lib/utils";
 
 type IconType = ComponentType<SVGProps<SVGSVGElement>>;
@@ -32,12 +33,12 @@ export const mainItems: NavItem[] = [
 ];
 
 export const moduleItems: NavItem[] = [
-  { label: "ThreatBoard",                to: "/modules/threatboard",                icon: ThreatBoardIcon,   color: "#d99a3c" },
-  { label: "LogLens",                    to: "/modules/loglens",                    icon: LogLensIcon,       color: "#8fa7b0" },
-  { label: "DataPrivacy Doctor",         to: "/modules/privacy-doctor",             icon: PrivacyDoctorIcon, color: "#71a7ff" },
-  { label: "Misinformation Observatory", to: "/modules/misinformation-observatory", icon: ObservatoryIcon,   color: "#e2703f" },
-  { label: "Civic Risk Graph",           to: "/modules/risk-graph",                 icon: RiskGraphIcon,     color: "#5f8c6e" },
-  { label: "IncidentFlow",               to: "/modules/incidentflow",               icon: IncidentFlowIcon,  color: "#ee6c7a" },
+  { label: "ThreatBoard",                to: "/modules/threatboard",                icon: ThreatBoardIcon,   color: MODULE_COLORS.threatboard },
+  { label: "LogLens",                    to: "/modules/loglens",                    icon: LogLensIcon,       color: MODULE_COLORS.loglens },
+  { label: "DataPrivacy Doctor",         to: "/modules/privacy-doctor",             icon: PrivacyDoctorIcon, color: MODULE_COLORS["privacy-doctor"] },
+  { label: "Misinformation Observatory", to: "/modules/misinformation-observatory", icon: ObservatoryIcon,   color: MODULE_COLORS["misinformation-observatory"] },
+  { label: "Civic Risk Graph",           to: "/modules/risk-graph",                 icon: RiskGraphIcon,     color: MODULE_COLORS["risk-graph"] },
+  { label: "IncidentFlow",               to: "/modules/incidentflow",               icon: IncidentFlowIcon,  color: MODULE_COLORS.incidentflow },
 ];
 
 function SidebarLink({ item }: { item: NavItem }) {
@@ -46,7 +47,8 @@ function SidebarLink({ item }: { item: NavItem }) {
     <NavLink
       className={({ isActive }) =>
         cn(
-          "relative flex min-h-10 items-center gap-3 rounded-lg px-3 py-2 text-sm transition",
+          "relative flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-2 text-sm transition",
+          "outline-none focus-visible:ring-2 focus-visible:ring-orange/60 focus-visible:ring-offset-2 focus-visible:ring-offset-civic-surface",
           isActive
             ? "bg-civic-panel font-semibold text-civic-text shadow-[inset_0_1px_0_rgba(243,234,220,0.05)]"
             : "font-medium text-civic-muted hover:bg-civic-panel/60 hover:text-civic-text",
@@ -58,10 +60,10 @@ function SidebarLink({ item }: { item: NavItem }) {
         <>
           <Icon
             aria-hidden="true"
-            className="h-4 w-4 shrink-0"
-            style={{ color: isActive ? "#d65a29" : item.color }}
+            className={cn("h-4 w-4 shrink-0", isActive && "text-orange")}
+            style={isActive ? undefined : { color: item.color }}
           />
-          <span>{item.label}</span>
+          <span className="truncate" title={item.label}>{item.label}</span>
         </>
       )}
     </NavLink>
@@ -104,6 +106,10 @@ export function Sidebar() {
 
   return (
     <aside className="relative hidden min-h-screen w-[264px] shrink-0 overflow-hidden border-r border-civic-line bg-civic-surface lg:sticky lg:top-0 lg:flex lg:flex-col">
+      {/* ReactBits aurora — two slow-drifting orange blobs */}
+      <div aria-hidden="true" className="sidebar-aurora-1" />
+      <div aria-hidden="true" className="sidebar-aurora-2" />
+
       <SidebarWatermark />
 
       {/* Brand */}
@@ -114,7 +120,7 @@ export function Sidebar() {
       {/* Navigation */}
       <nav aria-label="Primary" className="relative z-10 flex-1 space-y-6 overflow-y-auto px-3.5 py-2">
         <section>
-          <p className="mb-2 px-3 text-label font-semibold uppercase text-civic-muted/60">Workspace</p>
+          <p className="mb-2 px-3 text-label font-semibold uppercase text-civic-muted">Workspace</p>
           <div className="space-y-0.5">
             {mainItems.map((item) => (
               <SidebarLink item={item} key={item.to} />
@@ -123,7 +129,7 @@ export function Sidebar() {
         </section>
 
         <section>
-          <p className="mb-2 px-3 text-label font-semibold uppercase text-civic-muted/60">Modules</p>
+          <p className="mb-2 px-3 text-label font-semibold uppercase text-civic-muted">Modules</p>
           <div className="space-y-0.5">
             {moduleItems.map((item) => (
               <SidebarLink item={item} key={item.to} />

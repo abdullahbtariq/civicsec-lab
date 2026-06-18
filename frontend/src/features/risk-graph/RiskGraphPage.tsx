@@ -187,6 +187,13 @@ function toFlowEdges(graphEdges: GraphEdge[]): Edge[] {
 const nodeTypes: NodeTypes = { civicNode: CivicGraphNode };
 const edgeTypes: EdgeTypes = {};
 
+// ReactFlow panel chrome — matches paper-card background + paper-line border from design tokens
+const flowPanelStyle = {
+  background: "#fcf9f2",       // paper-card
+  border: "1px solid #e7dcc7", // paper-line
+  borderRadius: 8,
+};
+
 function GraphCanvas({
   nodes,
   edges,
@@ -226,7 +233,7 @@ function GraphCanvas({
       <Background color="#ddd0b8" gap={22} size={1} variant={BackgroundVariant.Dots} />
       <Controls
         position="top-right"
-        style={{ background: "#fcf9f2", border: "1px solid #e7dcc7", borderRadius: 8 }}
+        style={flowPanelStyle}
         showFitView
         fitViewOptions={{ padding: 0.16, duration: 500 }}
       />
@@ -234,7 +241,7 @@ function GraphCanvas({
         position="bottom-right"
         nodeColor={(node) => nodeTypeColor((node.data as { graphNode: GraphNode }).graphNode.type)}
         nodeStrokeWidth={3}
-        style={{ background: "#fcf9f2", border: "1px solid #e7dcc7", borderRadius: 8 }}
+        style={flowPanelStyle}
         maskColor="rgba(244,236,219,0.65)"
         zoomable
         pannable

@@ -18,8 +18,8 @@ export function ThreatBoardTabs() {
             cn(
               "inline-flex min-h-10 shrink-0 items-center rounded-lg border px-3 py-2 text-sm font-semibold transition",
               isActive
-                ? "border-civic-teal/50 bg-civic-teal/10 text-orange-ink"
-                : "border-paper-line bg-paper-card text-ink-soft hover:bg-paper-raise hover:text-ink",
+                ? "border-[#d65a29]/60 bg-[#d65a29]/[0.12] text-orange-ink"
+                : "border-transparent bg-transparent text-ink-soft hover:border-paper-line hover:bg-paper-raise hover:text-ink",
             )
           }
           end={tab.to === "/modules/threatboard"}

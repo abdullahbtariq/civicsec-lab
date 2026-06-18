@@ -6,11 +6,11 @@ import { cn } from "../../lib/utils";
 const variants = {
   // Orange is the brand action color.
   primary:
-    "border border-orange bg-orange text-white shadow-[0_8px_24px_-12px_rgba(214,90,41,0.7)] hover:bg-[#c24a1c]",
+    "border border-orange bg-orange text-white shadow-glow hover:brightness-90",
   secondary:
-    "border border-paper-line bg-paper-card text-ink hover:border-orange/40 hover:bg-paper-raise",
+    "border border-ink/25 bg-paper-card text-ink hover:border-orange/50 hover:bg-paper-raise",
   tertiary:
-    "border border-paper-line bg-transparent text-ink hover:bg-paper-raise",
+    "border border-ink/15 bg-transparent text-ink hover:bg-paper-raise",
   ghost:
     "border border-transparent bg-transparent text-ink-soft hover:bg-paper-raise hover:text-ink",
   danger:
@@ -18,7 +18,7 @@ const variants = {
 };
 
 const base =
-  "inline-flex min-h-10 items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-orange/60 focus-visible:ring-offset-2 focus-visible:ring-offset-paper disabled:cursor-not-allowed disabled:opacity-50";
+  "inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-orange/60 focus-visible:ring-offset-2 focus-visible:ring-offset-paper disabled:cursor-not-allowed disabled:opacity-50";
 
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: keyof typeof variants;

@@ -7,8 +7,9 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: "autoUpdate",
-      // Enable service worker in dev so the install prompt fires on localhost
-      devOptions: { enabled: true },
+      // Service worker is disabled in dev — a caching SW serves stale JS/CSS on
+      // localhost and breaks HMR/verification. It still ships in production builds.
+      devOptions: { enabled: false },
       workbox: {
         // Pre-cache static assets
         globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],

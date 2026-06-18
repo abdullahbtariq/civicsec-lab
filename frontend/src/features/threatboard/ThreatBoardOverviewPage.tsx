@@ -85,7 +85,7 @@ export function ThreatBoardOverviewPage() {
           </section>
 
           <div className="grid gap-5 xl:grid-cols-[1fr_24rem]">
-            <Card>
+            <Card className="min-w-0">
               <CardHeader
                 action={
                   <ButtonLink to="/modules/threatboard/matches" variant="secondary">

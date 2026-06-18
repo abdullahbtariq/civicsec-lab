@@ -25,7 +25,7 @@ function MetricCard({
     neutral: "border-paper-line bg-paper-card",
     rose:    "border-civic-rose/30 bg-civic-rose/5",
     amber:   "border-civic-amber/30 bg-civic-amber/5",
-    teal:    "border-civic-teal/30 bg-civic-teal/5",
+    teal:    "border-slatec/30 bg-slatec/5",
     sage:    "border-civic-sage/30 bg-civic-sage/5",
     blue:    "border-civic-blue/30 bg-civic-blue/5",
   };
@@ -33,7 +33,7 @@ function MetricCard({
     neutral: value === 0 ? "text-ink-soft" : "text-ink",
     rose:    "text-rose-ink",
     amber:   "text-gold-ink",
-    teal:    "text-orange-ink",
+    teal:    "text-slatec-ink",
     sage:    "text-sage-ink",
     blue:    "text-bluec-ink",
   };

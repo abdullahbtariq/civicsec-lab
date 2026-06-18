@@ -1,0 +1,504 @@
+/* About page — orbital / instrument theme.
+   Shares the ofx- token layer from orbital.css (imported in AboutPage.tsx).
+   All selectors are abt- prefixed to avoid collisions.                       */
+
+/* ── base ──────────────────────────────────────────────────────────────────── */
+.abt-root {
+  /* Align exactly with the landing page token set so both pages feel like
+     one continuous instrument world.
+     --navy, --cream, --muted, --orange, --orange-lt, --gold are set by
+     .ofx-root in orbital.css (same element — "ofx-root abt-root").
+     We only re-declare tokens that genuinely need a page-specific value.  */
+  --navy:  #070f17;
+  --line:  rgba(224, 150, 90, 0.3);
+  --faint: #7d92a0;
+
+  background: var(--navy);
+  color: var(--cream);
+  min-height: 100vh;
+  position: relative;
+  font-family: Inter, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Ambient background — simulates the warm orange orbital core from the landing's
+   Three.js canvas. Centred glow at ~38% (hero zone) fades toward the edges,
+   with a dark vignette matching .ofx-vig on the landing.                         */
+.abt-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 72% 68% at 50% 38%, rgba(224, 102, 47, 0.22) 0%, rgba(224, 102, 47, 0.04) 46%, transparent 70%),
+    radial-gradient(ellipse 130% 130% at 50% 50%, transparent 52%, rgba(4, 9, 15, 0.82) 100%);
+}
+
+/* Content layers sit above the fixed bg */
+.abt-root header,
+.abt-root main,
+.ofx-hud { position: relative; z-index: 2; }
+
+/* ── shared section helpers ─────────────────────────────────────────────────── */
+.abt-section { position: relative; border-top: 1px solid var(--line); }
+.abt-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: clamp(4rem, 9vmin, 8rem) clamp(1.5rem, 6vw, 5rem);
+}
+
+/* Alternate section background — barely deeper than the base field             */
+.abt-alt { background: #05090e; }
+
+/* ── typography ─────────────────────────────────────────────────────────────── */
+.abt-h1 {
+  font-family: "Source Serif 4", serif;
+  font-weight: 700;
+  font-size: clamp(2.4rem, 5.2vw, 4.2rem);
+  line-height: 1.04;
+  letter-spacing: -0.025em;
+  color: #f9f3e9;
+  text-wrap: balance;
+  margin: 0;
+}
+
+/* Hero sub-statement — lighter weight, italic, reads as a thesis below the h1  */
+.abt-h1-sub {
+  font-family: "Source Serif 4", serif;
+  font-weight: 400;
+  font-style: italic;
+  font-size: clamp(1.05rem, 2vw, 1.4rem);
+  color: var(--muted);
+  line-height: 1.42;
+  margin: 1.1rem 0 0;
+  max-width: 44ch;
+}
+
+.abt-h2 {
+  font-family: "Source Serif 4", serif;
+  font-weight: 700;
+  font-size: clamp(1.8rem, 3.4vw, 2.8rem);
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  color: #f9f3e9;
+  text-wrap: balance;
+  margin: 0 0 clamp(1rem, 2vmin, 1.5rem);
+}
+
+/* Slightly elevated body — used for section lead paragraphs                    */
+.abt-lead {
+  color: var(--cream);
+  opacity: 0.88;
+  font-size: 1.05rem;
+  line-height: 1.65;
+  max-width: 56ch;
+  text-wrap: pretty;
+}
+
+.abt-body {
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.7;
+  max-width: 62ch;
+  text-wrap: pretty;
+}
+.abt-body + .abt-body { margin-top: 1rem; }
+.abt-alt .abt-body { color: var(--muted); }
+
+/* ── hero ───────────────────────────────────────────────────────────────────── */
+.abt-hero {
+  display: flex;
+  align-items: center;
+  min-height: 86vh;
+  padding: clamp(6rem, 16vh, 11rem) clamp(1.5rem, 6vw, 5rem) clamp(4rem, 8vh, 6rem);
+}
+.abt-hero-inner { max-width: 720px; }
+
+/* Classification bar — one instance on the page, reads as a field report header */
+.abt-dispatch-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  row-gap: 0.4rem;
+  margin-bottom: 1.8rem;
+  font-family: "Geist Mono", monospace;
+  font-size: 9px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+.abt-dispatch-sep {
+  display: inline-block;
+  width: 1px;
+  height: 10px;
+  background: var(--faint);
+  opacity: 0.35;
+  margin: 0 12px;
+  flex-shrink: 0;
+}
+
+.abt-hero-links {
+  margin-top: 2.2rem;
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.abt-ghost {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.abt-ghost:hover { color: var(--cream); }
+
+/* Hero entrance — single deliberate animation, not a universal stagger reflex  */
+@media (prefers-reduced-motion: no-preference) {
+  .abt-hero-inner {
+    animation: abt-rise 0.75s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  }
+}
+@keyframes abt-rise {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── situation ──────────────────────────────────────────────────────────────── */
+/* The stat is a field observation — evidence in the report, not a hero metric  */
+.abt-situation-stat {
+  display: flex;
+  align-items: baseline;
+  gap: 1.4rem;
+  margin-bottom: 2.8rem;
+  padding-bottom: 2.5rem;
+  border-bottom: 1px solid var(--line);
+}
+.abt-sit-num {
+  font-family: "Source Serif 4", serif;
+  font-weight: 700;
+  font-size: clamp(3rem, 6vw, 5rem);
+  color: var(--orange-lt);
+  line-height: 1;
+  flex-shrink: 0;
+}
+.abt-sit-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.abt-sit-label {
+  font-family: "Geist Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--faint);
+  line-height: 1.5;
+}
+.abt-sit-src {
+  font-family: "Geist Mono", monospace;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: var(--faint);
+  opacity: 0.65;
+}
+.abt-quote {
+  margin-top: 2rem;
+  padding: 1.2rem 1.6rem;
+  background: rgba(224, 102, 47, 0.06);
+  border: 1px solid rgba(224, 102, 47, 0.18);
+  border-radius: 10px;
+  font-style: italic;
+  color: var(--cream);
+  opacity: 0.82;
+  font-size: 0.97rem;
+  line-height: 1.62;
+  max-width: 62ch;
+}
+.abt-quote-cite {
+  display: block;
+  margin-top: 0.7rem;
+  font-style: normal;
+  font-family: "Geist Mono", monospace;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: var(--faint);
+  opacity: 0.75;
+}
+
+/* ── architecture ───────────────────────────────────────────────────────────── */
+.abt-arch-sub {
+  margin: 1rem 0 2.5rem;
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.65;
+  max-width: 56ch;
+}
+.abt-arch-wrap {
+  /* Recessed panel — deepest dark so the SVG graph's coloured nodes pop        */
+  background: #04070c;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: clamp(1.2rem, 3vw, 2.5rem);
+  overflow-x: auto;
+}
+.abt-arch-svg {
+  display: block;
+  width: 100%;
+  max-width: 740px;
+  margin: 0 auto;
+  height: auto;
+}
+
+/* Flow animation for SVG paths */
+.abt-flow {
+  stroke-dasharray: 5 9;
+  stroke-dashoffset: 70;
+  animation: abt-signal 2s linear infinite;
+}
+.abt-flow.d1 { animation-delay: 0s; }
+.abt-flow.d2 { animation-delay: 0.28s; }
+.abt-flow.d3 { animation-delay: 0.56s; }
+.abt-flow.d4 { animation-delay: 0.84s; }
+.abt-flow.d5 { animation-delay: 0.12s; }
+.abt-flow.d6 { animation-delay: 0.6s; }
+@keyframes abt-signal {
+  to { stroke-dashoffset: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .abt-flow { animation: none; stroke-dasharray: none; stroke-dashoffset: 0; }
+  .abt-hero-inner { animation: none; }
+}
+
+/* Module legend row */
+.abt-arch-legend {
+  margin-top: 1.6rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 22px;
+}
+.abt-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.abt-legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.abt-legend-name {
+  font-family: "Geist Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--cream);
+}
+.abt-legend-sec {
+  font-family: "Geist Mono", monospace;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  color: var(--faint);
+}
+
+/* ── field doctrine ─────────────────────────────────────────────────────────── */
+/* Rules as pull-quote statements — large serif title, body below, hairlines.
+   No numbers; rules don't need sequence, they need weight.                     */
+.abt-doctrine-list { margin-top: 2.5rem; }
+.abt-doctrine-rule {
+  padding: 2.2rem 0;
+  border-top: 1px solid var(--line);
+}
+.abt-doctrine-rule:last-child { border-bottom: 1px solid var(--line); }
+.abt-doctrine-title {
+  font-family: "Source Serif 4", serif;
+  font-weight: 700;
+  font-size: clamp(1.4rem, 2.4vw, 2rem);
+  color: var(--cream);
+  margin: 0 0 0.7rem;
+  line-height: 1.1;
+}
+.abt-doctrine-body {
+  color: var(--muted);
+  font-size: 0.97rem;
+  line-height: 1.68;
+  max-width: 64ch;
+  margin: 0;
+  text-wrap: pretty;
+}
+
+/* ── deployment log ─────────────────────────────────────────────────────────── */
+/* Two-column per entry: phase identifier (left) + title & body (right).
+   Hairlines between entries read as a build log, not a card grid.             */
+.abt-deploy-list { margin-top: 2.5rem; }
+.abt-deploy-entry {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: 0 clamp(2rem, 5vw, 4rem);
+  padding: 1.8rem 0;
+  border-top: 1px solid var(--line);
+  align-items: start;
+}
+.abt-deploy-entry:last-child { border-bottom: 1px solid var(--line); }
+.abt-deploy-hd { padding-top: 0.15rem; }
+.abt-deploy-phase {
+  font-family: "Geist Mono", monospace;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--orange-lt);
+  line-height: 1.5;
+}
+.abt-deploy-status {
+  font-family: "Geist Mono", monospace;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--faint);
+  opacity: 0.6;
+  margin-top: 0.45rem;
+}
+.abt-deploy-title {
+  font-family: "Source Serif 4", serif;
+  font-weight: 600;
+  font-size: clamp(1rem, 1.8vw, 1.25rem);
+  color: var(--cream);
+  margin: 0 0 0.4rem;
+  line-height: 1.2;
+}
+.abt-deploy-body {
+  font-size: 0.88rem;
+  line-height: 1.65;
+  color: var(--muted);
+  margin: 0;
+  text-wrap: pretty;
+}
+
+/* ── builder (signal origin) ────────────────────────────────────────────────── */
+.abt-builder-grid {
+  display: grid;
+  grid-template-columns: 1fr 0.85fr;
+  gap: clamp(2rem, 6vw, 5rem);
+  align-items: start;
+}
+.abt-builder-left .abt-lead + .abt-body { margin-top: 1rem; }
+.abt-builder-links {
+  margin-top: 2rem;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.abt-extlink {
+  font-family: "Geist Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  text-decoration: none;
+  padding: 7px 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  transition: border-color 0.2s, color 0.2s;
+}
+.abt-extlink:hover { border-color: var(--orange); color: var(--cream); }
+
+/* Terminal-style skills log */
+.abt-terminal {
+  /* Darkest element on the page — provides max contrast for the mono readout   */
+  background: #04070c;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+  font-family: "Geist Mono", monospace;
+}
+.abt-terminal-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--line);
+  background: #060911;
+}
+.abt-tb-dot { width: 10px; height: 10px; border-radius: 50%; }
+.abt-tb-title {
+  margin-left: 8px;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--faint);
+}
+.abt-terminal-body { padding: 1.2rem 1.4rem; }
+.abt-term-row {
+  display: grid;
+  grid-template-columns: 76px 16px 1fr;
+  font-size: 11px;
+  line-height: 2;
+  gap: 0;
+}
+.abt-term-key { color: var(--orange-lt); }
+.abt-term-sep { color: var(--faint); }
+.abt-term-val { color: var(--muted); }
+
+/* ── CTA ─────────────────────────────────────────────────────────────────────── */
+/* Deepest section — the landing pad before you sign in                          */
+.abt-cta { background: #04070c; text-align: center; }
+.abt-cta-inner {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: clamp(4rem, 9vmin, 7rem) clamp(1.5rem, 6vw, 3rem);
+}
+/* Operational status tag — second and final mono element on the page           */
+.abt-status-tag {
+  font-family: "Geist Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--faint);
+  margin-bottom: 1.2rem;
+}
+.abt-cta .abt-body {
+  max-width: none;
+  margin: 1rem auto 0;
+  color: var(--faint);
+}
+.abt-cta-links {
+  margin-top: 2rem;
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* ── focus / keyboard ────────────────────────────────────────────────────────── */
+.abt-ghost:focus-visible,
+.abt-extlink:focus-visible {
+  outline: 2px solid var(--orange-lt);
+  outline-offset: 3px;
+}
+
+/* ── responsive ──────────────────────────────────────────────────────────────── */
+@media (max-width: 820px) {
+  .abt-builder-grid { grid-template-columns: 1fr; }
+  .abt-situation-stat { align-items: flex-start; }
+  .abt-sit-num { font-size: 3.2rem; }
+  /* Deployment log: stack header above content on tablet */
+  .abt-deploy-entry {
+    grid-template-columns: 1fr;
+    gap: 0.5rem 0;
+  }
+  .abt-deploy-hd {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    padding-top: 0;
+  }
+  .abt-deploy-status { margin-top: 0; }
+  .abt-doctrine-rule { padding: 1.8rem 0; }
+  .abt-arch-legend { gap: 8px 16px; }
+}
+@media (max-width: 540px) {
+  .abt-hero { min-height: 76vh; }
+  /* Collapse the dispatch bar to a single column on narrow screens             */
+  .abt-dispatch-bar { flex-direction: column; gap: 0.3rem; }
+  .abt-dispatch-sep { display: none; }
+  .abt-sit-num { font-size: 2.8rem; }
+}
