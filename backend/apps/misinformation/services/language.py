@@ -85,35 +85,55 @@ def detect_dataset_language(texts: list[str]) -> str:
 
 
 # ── Translation ──────────────────────────────────────────────────────────────
+# Uses `requests` (already a project dependency) to call the free Google
+# Translate web endpoint directly. deep-translator was removed because its
+# PyPI account was compromised (PYSEC-2022-252) and no clean release exists.
+
+import requests as _requests  # noqa: E402 — imported here to keep top of file clean
+
+
+def _google_translate_one(text: str, source_lang: str = "auto") -> str | None:
+    """
+    Translate a single text to English via the free Google Translate endpoint.
+
+    Returns the translated string, or None on any failure — callers fall back
+    to the original text so the NLP pipeline never hard-fails.
+    """
+    try:
+        resp = _requests.get(
+            "https://translate.googleapis.com/translate_a/single",
+            params={
+                "client": "gtx",
+                "sl": source_lang,
+                "tl": ENGLISH,
+                "dt": "t",
+                "q": text,
+            },
+            timeout=8,
+        )
+        resp.raise_for_status()
+        data = resp.json()
+        # Response shape: [[[translated_chunk, original_chunk, ...], ...], ...]
+        return "".join(chunk[0] for chunk in data[0] if chunk and chunk[0])
+    except Exception as exc:
+        logger.debug("Translation failed for snippet '%.40s…': %s", text, exc)
+        return None
+
 
 def _translate_batch(texts: list[str], source_lang: str) -> list[str]:
     """Translate one batch of texts to English. Returns originals on error."""
-    try:
-        from deep_translator import GoogleTranslator  # type: ignore[import]
-
-        translated = GoogleTranslator(source=source_lang, target=ENGLISH).translate_batch(texts)
-        # translate_batch may return None for individual entries — fall back to original
-        return [t if t else orig for t, orig in zip(translated, texts, strict=False)]
-    except Exception as exc:
-        logger.warning("Translation batch failed (%s) — keeping originals.", exc)
-        return texts
+    return [_google_translate_one(t, source_lang) or t for t in texts]
 
 
 def translate_to_english(texts: list[str], source_lang: str = "auto") -> list[str]:
     """
     Translate all texts to English in batches of _BATCH_SIZE.
 
-    ``source_lang`` defaults to ``"auto"`` so the translator detects each text
-    on its own — correct for batches that mix languages. Falls back to the
-    original text for any batch that errors.
+    ``source_lang`` defaults to ``"auto"`` so each text is auto-detected —
+    correct for mixed-language corpora. Falls back to the original text for
+    any text whose translation request fails (network error, rate limit, etc.).
     """
     if not texts:
-        return texts
-
-    try:
-        from deep_translator import GoogleTranslator  # noqa: F401  # check installed
-    except ImportError:
-        logger.warning("deep-translator not installed — returning original texts.")
         return texts
 
     results: list[str] = []
