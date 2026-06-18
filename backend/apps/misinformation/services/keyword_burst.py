@@ -10,9 +10,9 @@ from apps.misinformation.services.text_processing import clean_text, tokenize
 if TYPE_CHECKING:
     from apps.misinformation.models import PublicPost
 
-_BURST_THRESHOLD = 2.0    # recent_count / baseline_count must exceed this
-_MIN_BURST_COUNT = 3      # minimum occurrences in recent window
-_TOP_N = 20               # max bursts to return
+_BURST_THRESHOLD = 2.0  # recent_count / baseline_count must exceed this
+_MIN_BURST_COUNT = 3  # minimum occurrences in recent window
+_TOP_N = 20  # max bursts to return
 
 
 def detect_keyword_bursts(posts: list[PublicPost]) -> list[dict]:

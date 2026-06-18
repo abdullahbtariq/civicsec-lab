@@ -265,9 +265,7 @@ class TestIncidentTaskAPI:
         org = make_org()
         user = make_user(org)
         incident = make_incident(org, user)
-        IncidentTask.objects.create(
-            organisation=org, incident=incident, title="Task 1", order=1
-        )
+        IncidentTask.objects.create(organisation=org, incident=incident, title="Task 1", order=1)
         response = auth_client(user).get(f"/api/incidentflow/incidents/{incident.id}/tasks/")
         assert response.status_code == 200
         assert len(response.data) == 1
@@ -371,7 +369,5 @@ class TestReportAPI:
         org_b = make_org("B", "b")
         user_a = make_user(org_a)
         incident_b = make_incident(org_b)
-        response = auth_client(user_a).get(
-            f"/api/incidentflow/incidents/{incident_b.id}/report/"
-        )
+        response = auth_client(user_a).get(f"/api/incidentflow/incidents/{incident_b.id}/report/")
         assert response.status_code == 404

@@ -13,8 +13,16 @@ logger = logging.getLogger(__name__)
 
 # Columns we attempt to read; all optional except ``text``
 _KNOWN_COLS = {
-    "post_id", "timestamp", "author_id", "author_identifier",
-    "platform", "text", "url", "engagement_count", "reply_to", "shared_url",
+    "post_id",
+    "timestamp",
+    "author_id",
+    "author_identifier",
+    "platform",
+    "text",
+    "url",
+    "engagement_count",
+    "reply_to",
+    "shared_url",
 }
 
 _MAX_ROWS = 5_000
@@ -49,7 +57,9 @@ def ingest_csv(dataset: DiscourseDataset, file_bytes: bytes) -> int:
                 dataset=dataset,
                 post_id=(row.get("post_id") or "")[:255],
                 timestamp=timestamp,
-                author_identifier=(row.get("author_id") or row.get("author_identifier") or "")[:255],
+                author_identifier=(row.get("author_id") or row.get("author_identifier") or "")[
+                    :255
+                ],
                 platform=(row.get("platform") or "")[:100],
                 text=text,
                 url=(row.get("url") or "")[:2000],

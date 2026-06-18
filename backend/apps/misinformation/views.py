@@ -38,12 +38,14 @@ class ObservatoryOverviewView(APIView):
                 "total_datasets": datasets.count(),
                 "total_posts": sum(d.row_count for d in datasets),
                 "total_clusters": clusters.count(),
-                "needs_review": clusters.filter(status=NarrativeCluster.ClusterStatus.NEEDS_REVIEW).count(),
-                "escalated": clusters.filter(status=NarrativeCluster.ClusterStatus.ESCALATED).count(),
+                "needs_review": clusters.filter(
+                    status=NarrativeCluster.ClusterStatus.NEEDS_REVIEW
+                ).count(),
+                "escalated": clusters.filter(
+                    status=NarrativeCluster.ClusterStatus.ESCALATED
+                ).count(),
                 "total_keyword_bursts": bursts.count(),
-                "recent_datasets": DiscourseDatasetSerializer(
-                    datasets[:5], many=True
-                ).data,
+                "recent_datasets": DiscourseDatasetSerializer(datasets[:5], many=True).data,
                 "recent_clusters_needing_review": NarrativeClusterListSerializer(
                     clusters.filter(status=NarrativeCluster.ClusterStatus.NEEDS_REVIEW)[:5],
                     many=True,
@@ -71,16 +73,22 @@ class DiscourseDatasetListView(APIView):
         if not file:
             return Response({"detail": "No file uploaded."}, status=status.HTTP_400_BAD_REQUEST)
         if not file.name.lower().endswith(".csv"):
-            return Response({"detail": "Only CSV files are accepted."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"detail": "Only CSV files are accepted."}, status=status.HTTP_400_BAD_REQUEST
+            )
         if file.size > 10 * 1024 * 1024:
-            return Response({"detail": "File exceeds 10 MB limit."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"detail": "File exceeds 10 MB limit."}, status=status.HTTP_400_BAD_REQUEST
+            )
 
         dataset = DiscourseDataset.objects.create(
             organisation=request.user.organisation,
             uploaded_by=request.user,
             original_filename=file.name[:255],
             description=request.data.get("description", ""),
-            retention_policy=request.data.get("retention_policy", DiscourseDataset.RetentionPolicy.MEDIUM),
+            retention_policy=request.data.get(
+                "retention_policy", DiscourseDataset.RetentionPolicy.MEDIUM
+            ),
         )
 
         file_bytes = file.read()
@@ -98,7 +106,9 @@ class DiscourseDatasetDetailView(APIView):
 
     def _get_dataset(self, request: Request, dataset_id: int):
         try:
-            return DiscourseDataset.objects.get(pk=dataset_id, organisation=request.user.organisation)
+            return DiscourseDataset.objects.get(
+                pk=dataset_id, organisation=request.user.organisation
+            )
         except DiscourseDataset.DoesNotExist:
             return None
 
@@ -195,7 +205,9 @@ class ClusterReviewView(APIView):
         }
         new_status = request.data.get("status")
         if new_status and new_status not in allowed_statuses:
-            return Response({"detail": f"Invalid status: {new_status}"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"detail": f"Invalid status: {new_status}"}, status=status.HTTP_400_BAD_REQUEST
+            )
 
         if new_status:
             cluster.status = new_status
@@ -204,7 +216,9 @@ class ClusterReviewView(APIView):
 
         cluster.reviewed_by = request.user
         cluster.reviewed_at = timezone.now()
-        cluster.save(update_fields=["status", "review_notes", "reviewed_by", "reviewed_at", "updated_at"])
+        cluster.save(
+            update_fields=["status", "review_notes", "reviewed_by", "reviewed_at", "updated_at"]
+        )
 
         return Response(NarrativeClusterDetailSerializer(cluster).data)
 
@@ -258,6 +272,7 @@ class DatasetPostsView(APIView):
         search = request.query_params.get("search", "").strip()
         if search:
             from django.db.models import Q
+
             qs = qs.filter(Q(text__icontains=search) | Q(author_identifier__icontains=search))
 
         # Optional platform filter
@@ -274,10 +289,12 @@ class DatasetPostsView(APIView):
         except (ValueError, TypeError):
             limit, offset = 50, 0
 
-        page_qs = qs[offset: offset + limit]
-        return Response({
-            "count": total,
-            "limit": limit,
-            "offset": offset,
-            "results": PublicPostSerializer(page_qs, many=True).data,
-        })
+        page_qs = qs[offset : offset + limit]
+        return Response(
+            {
+                "count": total,
+                "limit": limit,
+                "offset": offset,
+                "results": PublicPostSerializer(page_qs, many=True).data,
+            }
+        )

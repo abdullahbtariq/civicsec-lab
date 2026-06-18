@@ -141,7 +141,11 @@ def _build_csv() -> bytes:
             text = random.choice(posts)
             # Add some variation
             if random.random() < 0.3:
-                text = text + " " + random.choice(["Thoughts?", "Discuss.", "Share widely.", "Important!"])
+                text = (
+                    text
+                    + " "
+                    + random.choice(["Thoughts?", "Discuss.", "Share widely.", "Important!"])
+                )
             rows.append(
                 {
                     "post_id": f"p{post_counter:06d}",
@@ -174,8 +178,17 @@ def _build_csv() -> bytes:
     buf = io.StringIO()
     writer = csv.DictWriter(
         buf,
-        fieldnames=["post_id", "timestamp", "author_id", "platform", "text",
-                    "url", "engagement_count", "reply_to", "shared_url"],
+        fieldnames=[
+            "post_id",
+            "timestamp",
+            "author_id",
+            "platform",
+            "text",
+            "url",
+            "engagement_count",
+            "reply_to",
+            "shared_url",
+        ],
     )
     writer.writeheader()
     writer.writerows(rows)
@@ -186,14 +199,22 @@ class Command(BaseCommand):
     help = "Seed a fictional DiscourseDataset for the demo organisation and run the Observatory pipeline."
 
     def add_arguments(self, parser):
-        parser.add_argument("--clear", action="store_true", help="Delete existing demo dataset before seeding.")
-        parser.add_argument("--org-slug", default="open-civic-aid", help="Organisation slug (default: open-civic-aid).")
+        parser.add_argument(
+            "--clear", action="store_true", help="Delete existing demo dataset before seeding."
+        )
+        parser.add_argument(
+            "--org-slug",
+            default="open-civic-aid",
+            help="Organisation slug (default: open-civic-aid).",
+        )
 
     def handle(self, *args, **options):
         try:
             org = Organisation.objects.get(slug=options["org_slug"])
         except Organisation.DoesNotExist:
-            self.stderr.write(f"Organisation '{options['org_slug']}' not found. Run seed_demo first.")
+            self.stderr.write(
+                f"Organisation '{options['org_slug']}' not found. Run seed_demo first."
+            )
             return
 
         if options["clear"]:

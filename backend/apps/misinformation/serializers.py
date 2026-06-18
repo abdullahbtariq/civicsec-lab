@@ -113,10 +113,23 @@ class NarrativeClusterDetailSerializer(serializers.ModelSerializer):
             "updated_at",
         ]
         read_only_fields = [
-            "id", "dataset", "title", "summary", "representative_terms",
-            "representative_posts", "cluster_size", "start_time", "end_time",
-            "sentiment_score", "toxicity_signal", "growth_rate", "confidence",
-            "reviewed_at", "linked_risk_event_id", "created_at", "updated_at",
+            "id",
+            "dataset",
+            "title",
+            "summary",
+            "representative_terms",
+            "representative_posts",
+            "cluster_size",
+            "start_time",
+            "end_time",
+            "sentiment_score",
+            "toxicity_signal",
+            "growth_rate",
+            "confidence",
+            "reviewed_at",
+            "linked_risk_event_id",
+            "created_at",
+            "updated_at",
         ]
 
 

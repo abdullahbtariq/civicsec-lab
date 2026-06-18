@@ -32,8 +32,8 @@ from collections import Counter
 logger = logging.getLogger(__name__)
 
 ENGLISH = "en"
-_BATCH_SIZE = 50        # texts per translation request (avoids rate-limiting)
-_MIN_DETECT_LEN = 10    # shorter texts are too noisy to detect — assume English
+_BATCH_SIZE = 50  # texts per translation request (avoids rate-limiting)
+_MIN_DETECT_LEN = 10  # shorter texts are too noisy to detect — assume English
 
 # langdetect is non-deterministic unless its RNG is seeded. Seed once at import
 # so the same corpus always yields the same detection result.
@@ -49,6 +49,7 @@ except ImportError:  # pragma: no cover - exercised only when dependency missing
 
 
 # ── Language detection ───────────────────────────────────────────────────────
+
 
 def _detect_one(text: str) -> str:
     """Detect a single text's language; default to English on short text or failure."""
@@ -145,6 +146,7 @@ def translate_to_english(texts: list[str], source_lang: str = "auto") -> list[st
 
 
 # ── Main entry point ─────────────────────────────────────────────────────────
+
 
 def prepare_for_sentiment(texts: list[str]) -> tuple[list[str], str]:
     """

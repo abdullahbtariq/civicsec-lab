@@ -117,10 +117,10 @@ class NarrativeCluster(models.Model):
     cluster_size = models.PositiveIntegerField(default=0)
     start_time = models.DateTimeField(null=True, blank=True)
     end_time = models.DateTimeField(null=True, blank=True)
-    sentiment_score = models.FloatField(default=0.0)   # -1.0 to 1.0
-    toxicity_signal = models.FloatField(default=0.0)   # 0.0 to 1.0
-    growth_rate = models.FloatField(default=0.0)       # fraction of posts in recent window
-    confidence = models.FloatField(default=0.5)        # 0.0 to 1.0
+    sentiment_score = models.FloatField(default=0.0)  # -1.0 to 1.0
+    toxicity_signal = models.FloatField(default=0.0)  # 0.0 to 1.0
+    growth_rate = models.FloatField(default=0.0)  # fraction of posts in recent window
+    confidence = models.FloatField(default=0.5)  # 0.0 to 1.0
     status = models.CharField(
         max_length=30,
         choices=ClusterStatus.choices,

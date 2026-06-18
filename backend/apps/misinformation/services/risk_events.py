@@ -114,4 +114,6 @@ def generate_risk_events_for_bursts(
                 "Check associated narrative clusters for context before escalating."
             ),
         )
-        logger.info("Created keyword burst RiskEvent for '%s' (dataset %s)", bd["keyword"], dataset.id)
+        logger.info(
+            "Created keyword burst RiskEvent for '%s' (dataset %s)", bd["keyword"], dataset.id
+        )

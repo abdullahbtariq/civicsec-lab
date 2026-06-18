@@ -156,9 +156,7 @@ def _build_clusters(
         mid_idx = len(timestamps) // 2
         if mid_idx < len(timestamps) and timestamps:
             mid_ts = timestamps[mid_idx]
-            second_half = sum(
-                1 for p in cluster_post_list if p.timestamp and p.timestamp >= mid_ts
-            )
+            second_half = sum(1 for p in cluster_post_list if p.timestamp and p.timestamp >= mid_ts)
             growth_rate = second_half / n
         else:
             growth_rate = 0.5
@@ -246,10 +244,7 @@ def _make_summary(terms: list[str], size: int, sentiment: float) -> str:
         tone = "positive"
     else:
         tone = "neutral"
-    return (
-        f"Cluster of {size} posts with {tone} framing. "
-        f"Representative terms: {term_str}."
-    )
+    return f"Cluster of {size} posts with {tone} framing. " f"Representative terms: {term_str}."
 
 
 def _extract_entities(dataset: DiscourseDataset, posts: list[PublicPost]) -> None:
